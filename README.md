@@ -8,6 +8,7 @@ Copyright (C) 2018 "Brandon Goldbeck" <code>&lt;bpg@pdx.edu&gt;</code>,
   
 ## Contact Us ##
 Brandon Goldbeck: bpg@pdx.edu <br />
+Anthony Namba: anamba@pdx.edu <br />
 
 ## Bug Tracker ##
 https://github.com/bgoldbeck/lego-scan/issues
