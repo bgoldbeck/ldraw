@@ -31,6 +31,7 @@ class LScan(wx.App):
         self.frame.Show()
         return True
 
+
 # Call the main application loop.
 if __name__ == "__main__":
     app = LScan()

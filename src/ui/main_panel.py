@@ -8,13 +8,22 @@
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 import wx
+from src.ui.opengl_canvas import OpenGLCanvas
 
 
 class MainPanel(wx.Panel):
+
+    """The child of the MainFrame. This panel will hold the main applications
+    remaining controls.
+    """
     def __init__(self, parent):
+        """Default constructor for MainPanel class.
+        """
         wx.Panel.__init__(self, parent)
         self.parent = parent
         self.SetBackgroundColour("#777777")
 
-        self.parent.Layout()
+        # Create the OpenGL canvas to render our 3D objects within.
+        self.canvas = OpenGLCanvas(self)
 
+        self.parent.Layout()

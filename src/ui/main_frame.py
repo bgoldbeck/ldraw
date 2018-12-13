@@ -14,7 +14,6 @@ from src.ui.main_panel import MainPanel
 
 class MainFrame(wx.Frame):
     """The root Wx Frame that will be the parent of all Wx controls.
-
     """
     min_size = (1024, 640)
     max_size = (1024, 640)
