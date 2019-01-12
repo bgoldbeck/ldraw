@@ -15,7 +15,7 @@ from stl import Mesh
 class LDrawModel:
     def __init__(self, name, mesh: Mesh):
         self.name = ""
-        self.mesh = None
+        self.mesh = mesh
         self.children = []
 
     def get_mesh(self):

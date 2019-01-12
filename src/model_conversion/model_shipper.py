@@ -34,28 +34,29 @@ class ModelShipper:
         # Open file
         file = open(file_path, "w")
         # Loop through main model
-        ModelShipper._line_type3_to_file(file, model)
+        ModelShipper._line_type3_to_file(file, model.get_mesh())
         # Loop through child models
-        for i in range(len(model.get_children().count())):
+        for i in range(len(model.get_children())):
             ModelShipper._line_type3_to_file(file, model.get_children()[i])
 
     @staticmethod
-    def _line_type3_to_file(file, model):
+    def _line_type3_to_file(file, mesh):
         """
 
         :param file:
-        :param model:
+        :param mesh:
         :return:
         """
-        for i in range(len(model.mesh.normals)):
+
+        for i in range(len(mesh.normals)):
             # Export vertices information in ldraw format
-            file.write("3 4 " + model.mesh_data.v2[i][0]
-                       + " " + model.mesh_data.v2[i][1]
-                       + " " + model.mesh_data.v2[i][2]
-                       + " " + model.mesh_data.v1[i][0]
-                       + " " + model.mesh_data.v1[i][1]
-                       + " " + model.mesh_data.v1[i][2]
-                       + " " + model.mesh_data.v0[i][0]
-                       + " " + model.mesh_data.v0[i][1]
-                       + " " + model.mesh_data.v0[i][2]
+            file.write("3 4 " + str(mesh.v2[i][0])
+                       + " " + str(mesh.v2[i][1])
+                       + " " + str(mesh.v2[i][2])
+                       + " " + str(mesh.v1[i][0])
+                       + " " + str(mesh.v1[i][1])
+                       + " " + str(mesh.v1[i][2])
+                       + " " + str(mesh.v0[i][0])
+                       + " " + str(mesh.v0[i][1])
+                       + " " + str(mesh.v0[i][2])
                        + "\n")
