@@ -11,7 +11,7 @@
 # See LICENSE file for the full text.
 from stl import Mesh
 from src.model_conversion.ldraw_model import LDrawModel
-
+import os
 
 class ModelShipper:
     @staticmethod
@@ -25,7 +25,7 @@ class ModelShipper:
         return Mesh.from_file(file_path)
 
     @staticmethod
-    def save_ldraw_file_model(file_path, model : LDrawModel):
+    def save_ldraw_file_model(file_path, model: LDrawModel):
         """
         :param file_path:
         :param model:
@@ -33,11 +33,30 @@ class ModelShipper:
         """
         # Open file
         file = open(file_path, "w")
-        # Loop through main model
+
+        if model.get_name() != "":
+            ModelShipper._line_type0_to_file(file, model.get_name())
+
+        if model.get_author() != "":
+            ModelShipper._line_type0_to_file(file, "Author: " + model.get_author())
+
+        # Loop through main model mesh facets
         ModelShipper._line_type3_to_file(file, model.get_mesh())
-        # Loop through child models
+
+        # Loop through child models mesh
         for i in range(len(model.get_children())):
             ModelShipper._line_type3_to_file(file, model.get_children()[i])
+
+    @staticmethod
+    def _line_type0_to_file(file, comment):
+        """
+
+        :param file:
+        :param comment:
+        :return:
+        """
+        file.write("0 // " + comment + "\n")
+
 
     @staticmethod
     def _line_type3_to_file(file, mesh):

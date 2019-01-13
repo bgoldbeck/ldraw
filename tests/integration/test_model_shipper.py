@@ -28,7 +28,7 @@ class ModelShipperTest(unittest.TestCase):
 
         # Import the model
         mesh_data = ModelShipper.load_stl_model("assets/models/plane.stl")
-        model = LDrawModel("plane", mesh_data)
+        model = LDrawModel("plane", "Rando", mesh_data)
 
         # Export the model
         ModelShipper.save_ldraw_file_model(file_path, model)
@@ -43,4 +43,4 @@ class ModelShipperTest(unittest.TestCase):
 
         self.assertEqual(
             file_data,
-            "3 4 -0.5 0.0 0.5 -0.5 0.0 -0.5 0.5 0.0 -0.5\n3 4 0.5 0.0 -0.5 0.5 0.0 0.5 -0.5 0.0 0.5\n")
+            "0 // plane\n0 // Author: Rando\n3 4 -0.5 0.0 0.5 -0.5 0.0 -0.5 0.5 0.0 -0.5\n3 4 0.5 0.0 -0.5 0.5 0.0 0.5 -0.5 0.0 0.5\n")

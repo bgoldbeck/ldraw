@@ -13,8 +13,9 @@ from stl import Mesh
 
 
 class LDrawModel:
-    def __init__(self, name, mesh: Mesh):
-        self.name = ""
+    def __init__(self, name, author, mesh: Mesh):
+        self.name = name
+        self.author = author
         self.mesh = mesh
         self.children = []
 
@@ -23,6 +24,9 @@ class LDrawModel:
 
     def get_name(self):
         return self.name
+
+    def get_author(self):
+        return self.author
 
     def add_child(self, ldraw_model):
         self.children.append(ldraw_model)
