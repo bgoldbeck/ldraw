@@ -10,7 +10,6 @@
 # This software is licensed under the MIT License.
 # See LICENSE file for the full text.
 from stl import Mesh
-from src.model_conversion.ldraw_model import *
 
 
 class LDrawModel:
@@ -18,7 +17,7 @@ class LDrawModel:
 
     """
     def __init__(self, name: str, author: str, license_info: str, mesh: Mesh):
-        """
+        """Contructor for the LDrawModel class.
 
         :param name: Name of the model.
         :param author: Author of the model.
@@ -59,13 +58,12 @@ class LDrawModel:
         """
         return self.license_info
 
-    def add_child(self, ldraw_model: LDrawModel):
+    def add_child(self, ldraw_model):
         """Add a child LDrawModel object to this one.
 
         :param ldraw_model: The child LDrawModel to add.
         :return: None
         """
-
         self.children.append(ldraw_model)
 
     def get_children(self):
