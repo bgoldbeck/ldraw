@@ -17,7 +17,7 @@ class LDrawModel:
 
     """
     def __init__(self, name: str, author: str, license_info: str, mesh: Mesh):
-        """Contructor for the LDrawModel class.
+        """Constructor for the LDrawModel class.
 
         :param name: Name of the model.
         :param author: Author of the model.

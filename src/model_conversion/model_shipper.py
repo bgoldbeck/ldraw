@@ -27,8 +27,6 @@ class ModelShipper:
         :param file_path: The path to the stl file.
         :return: The BaseStl model (numpy-stl) loaded from the file_path or None.
         """
-
-        #TODO: confirm valid filepath
         return Mesh.from_file(file_path)
 
     @staticmethod
@@ -61,11 +59,13 @@ class ModelShipper:
         for i in range(len(model.get_children())):
             ModelShipper._line_type3_to_file(file, model.get_children()[i])
 
+        file.close()
+
     @staticmethod
     def _line_type0_to_file(file, comment):
         """Write a comment line to the file using LDraw File Format line type 0
-        Line type 3 is a filled triangle drawn between three points. The generic format is:
-        3 <colour> x1 y1 z1 x2 y2 z2 x3 y3 z3
+        A comment line is formatted:
+        0 // <comment>
 
         :param file: The file reference.
         :param comment: The comment to write
@@ -76,8 +76,8 @@ class ModelShipper:
     @staticmethod
     def _line_type3_to_file(file, mesh):
         """Write a line using LDraw File Format line type 3
-        A comment line is formatted:
-        0 // <comment>
+        Line type 3 is a filled triangle drawn between three points. The generic format is:
+        3 <colour> x1 y1 z1 x2 y2 z2 x3 y3 z3
 
         :param file: The file reference
         :param mesh: The mesh (vertex data) structure.
