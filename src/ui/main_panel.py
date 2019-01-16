@@ -17,6 +17,8 @@ from src.ui.application_state import ApplicationState
 from src.ui.user_event import UserEvent
 from src.ui.user_event_type import UserEventType
 from src.ui.ui_style import *
+from src.threading.thread_manager import *
+# Adding the threading system files
 
 
 class MainPanel(wx.Panel, IUIBehavior):
@@ -123,3 +125,7 @@ class MainPanel(wx.Panel, IUIBehavior):
         UI_style.log_output_size = (920, 165)
         UI_style.log_panel_size = (1022, 500)
         UI_style.log_font_size = 10
+        self.parent.Layout()
+
+        wx.PaintDC(self)
+        self.Refresh()
