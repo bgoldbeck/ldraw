@@ -10,7 +10,8 @@
 import wx
 import sys
 from src.ui.main_panel import MainPanel
-
+from src.ui.log_panel import LogPanel
+from src.ui.procctrl_panel import ProcCtrlPanel
 
 class MainFrame(wx.Frame):
     """The root Wx Frame that will be the parent of all Wx controls.
@@ -36,6 +37,14 @@ class MainFrame(wx.Frame):
         # Create a MainPanel instance, pass ourselves to the constructor to make
         # this MainFrame the parent.
         self.panel = MainPanel(self)
+        self.procctrl_panel = ProcCtrlPanel(self)
+        self.log_panel = LogPanel(self)
+        self.sizer = wx.BoxSizer(wx.VERTICAL)
+        self.sizer.Add(self.panel, 0, wx.ALIGN_CENTER)
+        self.sizer.Add(self.procctrl_panel, 0, wx.ALIGN_CENTER)
+        self.sizer.Add(self.log_panel, 0, wx.ALIGN_CENTER)
+        self.SetSizer(self.sizer)
+        self.SetBackgroundColour("#777777")
 
     def _on_close(self, event):
         """Called when the user clicks the close button on the frame.

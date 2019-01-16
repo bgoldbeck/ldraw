@@ -20,7 +20,7 @@ class MainPanel(wx.Panel):
     big_button = (100, 30)
     text_size = (100, 30)
     text_ctrl_size = (400, 20)
-    output_log_size = (800, 120)
+    #output_log_size = (800, 120)
 
     """The child of the MainFrame. This panel will hold the main applications remaining controls.
     """
@@ -42,7 +42,7 @@ class MainPanel(wx.Panel):
         """
 
         vbox = wx.BoxSizer(wx.VERTICAL)
-        # input stl file
+        # input stl file and help and about
         hbox_input = wx.BoxSizer(wx.HORIZONTAL)
 
         # metadata
@@ -101,6 +101,7 @@ class MainPanel(wx.Panel):
         hbox_license.Add(license_text, 0, wx.ALIGN_CENTER)
         license_text.SetMaxLength(self.max_path_length)
 
+        """
         # process control
         convert_button = wx.Button(self, label="Convert to LDraw", size=self.big_button)
         hbox_procctrl.Add(convert_button, 0, wx.ALIGN_CENTER)
@@ -120,20 +121,21 @@ class MainPanel(wx.Panel):
         hbox_procctrl.Add(save_button, 0, wx.ALIGN_CENTER)
         self.Bind(wx.EVT_BUTTON, self.save, save_button)
         save_button.Disable()
+        """
 
-        save_log_button = wx.Button(self, label="Save Log", pos=(750, 150), size=self.big_button)
-        self.Bind(wx.EVT_BUTTON, self.save_log, save_log_button)
-        style = wx.TE_MULTILINE | wx.TE_READONLY | wx.HSCROLL | wx.TE_RICH
-        self.log = wx.TextCtrl(self, wx.ID_ANY, size=self.output_log_size, style=style)
+        #save_log_button = wx.Button(self, label="Save Log", pos=(750, 150), size=self.big_button)
+        #self.Bind(wx.EVT_BUTTON, self.save_log, save_log_button)
+        #style = wx.TE_MULTILINE | wx.TE_READONLY | wx.HSCROLL | wx.TE_RICH
+        #self.log = wx.TextCtrl(self, wx.ID_ANY, size=self.output_log_size, style=style)
 
         vbox.Add(hbox_input, 0, wx.ALIGN_CENTER)
         vbox.Add(hbox_output, 0, wx.ALIGN_CENTER)
         vbox.Add(hbox_author, 0, wx.ALIGN_CENTER)
         vbox.Add(hbox_license, 0, wx.ALIGN_CENTER)
-        vbox.Add(hbox_procctrl, 0, wx.ALIGN_CENTER)
+        #vbox.Add(hbox_procctrl, 0, wx.ALIGN_CENTER)
         vbox.Add(hbox_opengl, 0, wx.ALIGN_CENTER)
-        vbox.Add(save_log_button, 0, wx.ALIGN_RIGHT)
-        vbox.Add(self.log, 0, wx.ALIGN_CENTER)
+        #vbox.Add(save_log_button, 0, wx.ALIGN_RIGHT)
+        #vbox.Add(self.log, 0, wx.ALIGN_CENTER)
         self.SetSizer(vbox)
 
     def help(self, event):
@@ -177,51 +179,6 @@ class MainPanel(wx.Panel):
         """
         pass
 
-    def convert(self, event):
-        """Convert the selected STL file into an LDraw file.
-        :param event:
-        :return:
-        """
-        pass
-
-    def pause(self, e):
-        """Pause the conversion process.
-        :param e:
-        :return:
-        """
-        pass
-
-    def resume(self, event):
-        """Continue/resume the conversion process again.
-        :param event:
-        :return:
-        """
-        pass
-
-    def cancel(self, event):
-        """Cancel the conversion operation.
-        :param event:
-        :return:
-        """
-        pass
-
-    def save(self, event):
-        """Save the finalized conversion of the input file. Hide main window options and replace them with metadata
-        options. Once the user finalizes their metadata options (back or save), they return to the original options.
-        :param event:
-        :return:
-        """
-        pass
-
-
-    def save_log(self, event):
-        """Save the feedback log to a file.
-
-        :param event:
-        :return:
-        """
-        pass
-
     def browse_output(self, event):
         """
 
@@ -229,3 +186,48 @@ class MainPanel(wx.Panel):
         :return:
         """
         pass
+
+    #def convert(self, event):
+        """Convert the selected STL file into an LDraw file.
+        :param event:
+        :return:
+        """
+     #   pass
+
+    #def pause(self, e):
+        """Pause the conversion process.
+        :param e:
+        :return:
+        """
+    #    pass
+
+    #def resume(self, event):
+        """Continue/resume the conversion process again.
+        :param event:
+        :return:
+        """
+    #    pass
+
+    #def cancel(self, event):
+        """Cancel the conversion operation.
+        :param event:
+        :return:
+        """
+     #   pass
+
+    #def save(self, event):
+        """Save the finalized conversion of the input file. Hide main window options and replace them with metadata
+        options. Once the user finalizes their metadata options (back or save), they return to the original options.
+        :param event:
+        :return:
+        """
+     #   pass
+
+    #def save_log(self, event):
+        """Save the feedback log to a file.
+
+        :param event:
+        :return:
+        """
+    #    pass
+
