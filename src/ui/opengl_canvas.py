@@ -15,7 +15,7 @@ from OpenGL.GL import *
 class OpenGLCanvas(glcanvas.GLCanvas):
     """This is the canvas for OpenGL to render objects to.
     """
-    size = (600, 400)
+    size = (600, 300)
 
     def __init__(self, parent):
         """Default constructor for MainPanel class.
@@ -26,8 +26,8 @@ class OpenGLCanvas(glcanvas.GLCanvas):
         self.aspect_ratio = self.size[0] / self.size[1]
 
         # Call the base constructor for the OpenGL canvas.
-        glcanvas.GLCanvas.__init__(self, parent, -1, size=self.size,
-                                   pos=wx.Point(125, 100))
+        glcanvas.GLCanvas.__init__(self, parent, -1, size=self.size)#,
+                                   #pos=wx.Point(125, 100))
 
         # Bind events to functions.
         self.Bind(wx.EVT_PAINT, self.on_paint)
