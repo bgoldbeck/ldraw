@@ -11,46 +11,56 @@ import wx
 
 
 class ConversionPanel(wx.Panel):
-    big_button = (100, 30)
+    big_button_size = (100, 30)
 
     def __init__(self, parent):
-        """Default constructor for MainPanel class."""
+        """Default constructor for ConversionPanel class.
+
+        :param parent: The parent wx object for this panel.
+        """
         wx.Panel.__init__(self, parent, size=(1024, 30), style=wx.SIMPLE_BORDER)
         self.parent = parent
-        self.SetBackgroundColour("#444444")
         self._build_gui()
-        self.parent.Layout()
 
     def _build_gui(self):
-        """Initializing input, output, process control, and log panel elements
-        :return:
+        """Initializing wx objects that make up this conversion panel and their layout within.
+
+        :return: None
         """
-        vertical_layout = wx.BoxSizer(wx.VERTICAL)
-        horizontal_layout = wx.BoxSizer(wx.HORIZONTAL)
+        self.SetBackgroundColour("#456eab")
 
-        # process control
-        convert_button = wx.Button(self, label="Convert to LDraw", size=self.big_button)
-        self.Bind(wx.EVT_BUTTON, self.convert, convert_button)
+        # Create the wx controls for this conversion panel.
+        convert_button = wx.Button(self, label="Convert to LDraw", size=self.big_button_size)
 
-        pause_button = wx.Button(self, label="Pause/Continue", size=self.big_button)
-        self.Bind(wx.EVT_BUTTON, self.pause, pause_button)
+        pause_button = wx.Button(self, label="Pause/Continue", size=self.big_button_size)
         pause_button.Disable()
 
-        cancel_button = wx.Button(self, label="Cancel", size=self.big_button)
-        self.Bind(wx.EVT_BUTTON, self.cancel, cancel_button)
+        cancel_button = wx.Button(self, label="Cancel", size=self.big_button_size)
         cancel_button.Disable()
 
-        save_button = wx.Button(self, label="Save Conversion", size=self.big_button)
-        self.Bind(wx.EVT_BUTTON, self.save, save_button)
+        save_button = wx.Button(self, label="Save Conversion", size=self.big_button_size)
         save_button.Disable()
 
+        # Create the layout.
+        horizontal_layout = wx.BoxSizer(wx.HORIZONTAL)
         horizontal_layout.Add(save_button, 0, wx.ALIGN_CENTER_HORIZONTAL)
+        horizontal_layout.AddSpacer(5)
         horizontal_layout.Add(cancel_button, 0, wx.ALIGN_CENTER_HORIZONTAL)
+        horizontal_layout.AddSpacer(5)
         horizontal_layout.Add(pause_button, 0, wx.ALIGN_CENTER_HORIZONTAL)
+        horizontal_layout.AddSpacer(5)
         horizontal_layout.Add(convert_button, 0, wx.ALIGN_CENTER_HORIZONTAL)
+
+        vertical_layout = wx.BoxSizer(wx.VERTICAL)
         vertical_layout.Add(horizontal_layout, 0, wx.ALIGN_CENTER)
 
         self.SetSizer(vertical_layout)
+
+        # Bind the events for each wx control.
+        self.Bind(wx.EVT_BUTTON, self.convert, convert_button)
+        self.Bind(wx.EVT_BUTTON, self.pause, pause_button)
+        self.Bind(wx.EVT_BUTTON, self.cancel, cancel_button)
+        self.Bind(wx.EVT_BUTTON, self.save, save_button)
 
     def convert(self, event):
         """Convert the selected STL file into an LDraw file.

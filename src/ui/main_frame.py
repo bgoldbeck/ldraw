@@ -16,7 +16,7 @@ class MainFrame(wx.Frame):
     """The root Wx Frame that will be the parent of all Wx controls.
     """
     min_size = (1024, 640)
-    max_size = (1024, 640)
+    max_size = (1024, 900)
     current_size = min_size
 
     def __init__(self):
@@ -25,7 +25,12 @@ class MainFrame(wx.Frame):
         wx.Frame.__init__(self, None, title="LScan", size=self.current_size,
                           style=wx.DEFAULT_FRAME_STYLE
                           | wx.FULL_REPAINT_ON_RESIZE)
+        self._build_gui()
 
+    def _build_gui(self):
+        """Create all the sub-panels and their layout on this main panel.
+        :return: None
+        """
         # Set the limitations on the frame.
         self.SetMinSize(self.min_size)
         self.SetMaxSize(self.max_size)
@@ -36,8 +41,6 @@ class MainFrame(wx.Frame):
         # Create a MainPanel instance, pass ourselves to the constructor to make
         # this MainFrame the parent.
         self.panel = MainPanel(self)
-
-        self.SetBackgroundColour("#777777")
 
     def _on_close(self, event):
         """Called when the user clicks the close button on the frame.

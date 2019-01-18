@@ -15,18 +15,18 @@ class MetadataPanel(wx.Panel):
     program. These widgets may include, but not limited to author, license, stl file input,
     and ldraw file output.
     """
-
     text_ctrl_size = (400, 20)
     max_path_length = 256
     big_button = (120, 25)
     small_button_size = (30, 25)
+    panel_size = (1024, 100)
+    label_size = (150, 25)
 
     def __init__(self, parent):
         """Default constructor for MainPanel class.
         """
-        wx.Panel.__init__(self, parent, size=(1024, 100))
+        wx.Panel.__init__(self, parent, size=self.panel_size, style=wx.BORDER_SUNKEN)
         self.parent = parent
-        self.SetBackgroundColour("#777777")
         self._build_gui()
         self.parent.Layout()
 
@@ -34,10 +34,14 @@ class MetadataPanel(wx.Panel):
         """Initializing input, output, process control, and log panel elements
         :return:
         """
-        label_size = (150, 25)
+        self.SetBackgroundColour("#777fea")
 
         # Input
-        path_name_static_text = wx.StaticText(self, label="Path to Input STL File", size=label_size, style=wx.ALIGN_RIGHT)
+        path_name_static_text = wx.StaticText(
+            self,
+            label="Path to Input STL File",
+            size=self.label_size,
+            style=wx.ALIGN_RIGHT)
 
         stl_path_name_text = wx.TextCtrl(self, size=self.text_ctrl_size)
         stl_path_name_text.SetMaxLength(self.max_path_length)
@@ -52,7 +56,7 @@ class MetadataPanel(wx.Panel):
         self.Bind(wx.EVT_BUTTON, self.about, about_button)
 
         # Output path/selection
-        path_part_static_text = wx.StaticText(self, label="Part Name", size=label_size, style=wx.ALIGN_RIGHT)
+        path_part_static_text = wx.StaticText(self, label="Part Name", size=self.label_size, style=wx.ALIGN_RIGHT)
         ldraw_name_text = wx.TextCtrl(self, size=self.text_ctrl_size)
         ldraw_name_text.SetMaxLength(self.max_path_length)
 
@@ -60,12 +64,12 @@ class MetadataPanel(wx.Panel):
         self.Bind(wx.EVT_BUTTON, self.browse_output, browse_output_button)
 
         # Author
-        author_static_text = wx.StaticText(self, label="Author", size=label_size, style=wx.ALIGN_RIGHT)
+        author_static_text = wx.StaticText(self, label="Author", size=self.label_size, style=wx.ALIGN_RIGHT)
         author_text = wx.TextCtrl(self, size=self.text_ctrl_size)
         author_text.SetMaxLength(self.max_path_length)
 
         # License information.
-        license_static_text = wx.StaticText(self, label="License", size=label_size, style=wx.ALIGN_RIGHT)
+        license_static_text = wx.StaticText(self, label="License", size=self.label_size, style=wx.ALIGN_RIGHT)
         license_text = wx.TextCtrl(self, size=self.text_ctrl_size)
         license_text.SetMaxLength(self.max_path_length)
 
