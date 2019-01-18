@@ -10,44 +10,47 @@
 import wx
 
 
-class ProcCtrlPanel(wx.Panel):
+class ConversionPanel(wx.Panel):
     big_button = (100, 30)
 
     def __init__(self, parent):
         """Default constructor for MainPanel class."""
-        wx.Panel.__init__(self, parent)
+        wx.Panel.__init__(self, parent, size=(1024, 30), style=wx.SIMPLE_BORDER)
         self.parent = parent
-        self.SetBackgroundColour("#777777")
-        self.gui()
+        self.SetBackgroundColour("#444444")
+        self._build_gui()
         self.parent.Layout()
 
-    def gui(self):
+    def _build_gui(self):
         """Initializing input, output, process control, and log panel elements
         :return:
         """
-        vbox = wx.BoxSizer(wx.VERTICAL)
-        hbox_procctrl = wx.BoxSizer(wx.HORIZONTAL)
+        vertical_layout = wx.BoxSizer(wx.VERTICAL)
+        horizontal_layout = wx.BoxSizer(wx.HORIZONTAL)
+
         # process control
         convert_button = wx.Button(self, label="Convert to LDraw", size=self.big_button)
-        hbox_procctrl.Add(convert_button, 0, wx.ALIGN_CENTER)
         self.Bind(wx.EVT_BUTTON, self.convert, convert_button)
 
         pause_button = wx.Button(self, label="Pause/Continue", size=self.big_button)
-        hbox_procctrl.Add(pause_button, 0, wx.ALIGN_CENTER)
         self.Bind(wx.EVT_BUTTON, self.pause, pause_button)
         pause_button.Disable()
 
         cancel_button = wx.Button(self, label="Cancel", size=self.big_button)
-        hbox_procctrl.Add(cancel_button, 0, wx.ALIGN_CENTER)
         self.Bind(wx.EVT_BUTTON, self.cancel, cancel_button)
         cancel_button.Disable()
 
         save_button = wx.Button(self, label="Save Conversion", size=self.big_button)
-        hbox_procctrl.Add(save_button, 0, wx.ALIGN_CENTER)
         self.Bind(wx.EVT_BUTTON, self.save, save_button)
         save_button.Disable()
-        vbox.Add(hbox_procctrl, 0, wx.ALIGN_CENTER)
-        self.SetSizer(vbox)
+
+        horizontal_layout.Add(save_button, 0, wx.ALIGN_CENTER_HORIZONTAL)
+        horizontal_layout.Add(cancel_button, 0, wx.ALIGN_CENTER_HORIZONTAL)
+        horizontal_layout.Add(pause_button, 0, wx.ALIGN_CENTER_HORIZONTAL)
+        horizontal_layout.Add(convert_button, 0, wx.ALIGN_CENTER_HORIZONTAL)
+        vertical_layout.Add(horizontal_layout, 0, wx.ALIGN_CENTER)
+
+        self.SetSizer(vertical_layout)
 
     def convert(self, event):
         """Convert the selected STL file into an LDraw file.
