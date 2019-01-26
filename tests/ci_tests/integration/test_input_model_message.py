@@ -12,7 +12,7 @@ from src.log_messages.input_model_message import InputModelMessage
 from src.log_messages.log_type import LogType
 from src.model_conversion.model_shipper import ModelShipper
 from stl import Mesh
-from util import path_conversion
+from util import Util
 
 
 class TestInputModelMessage(unittest.TestCase):
@@ -22,7 +22,7 @@ class TestInputModelMessage(unittest.TestCase):
     def test_(self):
         test_message = "test input model message"
 
-        input_model = ModelShipper.load_stl_model(path_conversion("/assets/models/plane.stl"))
+        input_model = ModelShipper.load_stl_model(Util.path_conversion("/assets/models/plane.stl"))
 
         model_message = InputModelMessage(LogType.INFORMATION, test_message, input_model)
 

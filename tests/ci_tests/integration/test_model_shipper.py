@@ -11,14 +11,14 @@ import unittest
 import os
 from src.model_conversion.model_shipper import *
 from pyrr import *
-from util import path_conversion
+from util import Util
 
 
 class ModelShipperTest(unittest.TestCase):
 
     def testImportPlane(self):
         # Load the model from the assets folder.
-        mesh_data = ModelShipper.load_stl_model(path_conversion("/assets/models/plane.stl"))
+        mesh_data = ModelShipper.load_stl_model(Util.path_conversion("/assets/models/plane.stl"))
 
         # First triangle facet.
         self.assertEqual(mesh_data.v0[0], Vector3([0.5, 0., -0.5]))
@@ -33,15 +33,15 @@ class ModelShipperTest(unittest.TestCase):
     def testExportPlane(self):
         # Create an empty temp folder to use for temporary model files.
         try:
-            os.mkdir(path_conversion("/tests/temp"))
+            os.mkdir(Util.path_conversion("/tests/temp"))
         except OSError:
             pass
 
         # The file path we will use.
-        file_path = path_conversion("/tests/temp/plane.dat")
+        file_path = Util.path_conversion("/tests/temp/plane.dat")
 
         # Import the model.
-        mesh_data = ModelShipper.load_stl_model(path_conversion("/assets/models/plane.stl"))
+        mesh_data = ModelShipper.load_stl_model(Util.path_conversion("/assets/models/plane.stl"))
         model = LDrawModel(
             "plane",  # Model name
             "Rando",  # Author

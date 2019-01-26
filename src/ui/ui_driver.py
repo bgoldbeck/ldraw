@@ -13,7 +13,7 @@ from pathlib import Path
 from src.ui.application_state import ApplicationState
 from src.ui.user_event import UserEvent
 from src.ui.iui_behavior import IUIBehavior
-from util import path_conversion
+from util import Util
 
 
 class UIDriver:
@@ -100,7 +100,7 @@ class UIDriver:
         """
         enc = "utf-8"
 
-        file_path = path_conversion("/assets/info/") + file_name
+        file_path = Util.path_conversion("/assets/info/") + file_name
 
         text = None
         # Try to open the complete file path and record the text.
