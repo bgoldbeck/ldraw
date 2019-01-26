@@ -10,6 +10,7 @@
 import wx
 from src.ui.application_state import ApplicationState
 from src.ui.user_event import UserEvent
+from src.ui.user_event_type import UserEventType
 from src.ui.iui_behavior import IUIBehavior
 
 

@@ -7,16 +7,33 @@
 # “An Huynh” <an35@pdx.edu>
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
-from enum import Enum
+from src.ui.user_event_type import UserEventType
+from src.log_messages.log_message import LogMessage
 
 
-class UserEvent(Enum):
-    """The enumerated class the stores the possible user events.
+class UserEvent:
+    """The class that contains a UI event with event type and log message.
     """
-    INPUT_MODEL_READY = 0
-    SELECTED_OUTPUT_FILE = 1
-    CONVERSION_COMPLETE = 2
-    CONVERSION_FAILED = 3
-    CONVERSION_CANCELED = 4
-    CONVERSION_PAUSED = 5
-    CONVERSION_STARTED = 6
+
+    def __init__(self, event_type: UserEventType, log_message: LogMessage):
+        """Constructor for UserEvent.
+
+        :param event_type: The UserEventType to store.
+        :param log_message: The LogMessage to store.
+        """
+        self.event_type = event_type
+        self.log_message = log_message
+
+    def get_event_type(self):
+        """Get the user event type stored with this user event.
+
+        :return: The UserEventType stored in this user event.
+        """
+        return self.event_type
+
+    def get_log_message(self):
+        """Get the log message stored with this user event.
+
+        :return: The LogMessage stored in this user event.
+        """
+        return self.log_message

@@ -15,6 +15,7 @@ from src.ui.metadata_panel import MetadataPanel
 from src.ui.iui_behavior import IUIBehavior
 from src.ui.application_state import ApplicationState
 from src.ui.user_event import UserEvent
+from src.ui.user_event_type import UserEventType
 
 
 class MainPanel(wx.Panel, IUIBehavior):
