@@ -13,6 +13,9 @@ from src.ui.application_state import ApplicationState
 from src.ui.user_event import UserEvent
 from src.ui.user_event_type import UserEventType
 from src.ui.ui_driver import UIDriver
+from src.log_messages.log_message import LogMessage
+from src.log_messages.log_type import LogType
+
 
 class ConversionPanel(wx.Panel, IUIBehavior):
     """Holds wx controls relevant to controlling the program behavior for starting, stopping,
@@ -70,31 +73,44 @@ class ConversionPanel(wx.Panel, IUIBehavior):
 
     def convert(self, event):
         """Convert the selected STL file into an LDraw file.
-        :param event:
-        :return:
+
+        :param event: The wx event that was recorded.
+        :return: None
         """
+        UIDriver.fire_event(
+            UserEvent(UserEventType.CONVERSION_STARTED,
+                      LogMessage(LogType.INFORMATION, "Conversion process started..")))
         UIDriver.change_application_state(ApplicationState.WORKING)
 
     def pause_resume(self, event):
         """Pause/resume the conversion process.
-        :param e:
-        :return:
+
+        :param event: The wx event that was recorded.
+        :return: None
         """
         self.is_paused = not self.is_paused
+        if self.is_paused:
+            UIDriver.fire_event(
+                UserEvent(UserEventType.CONVERSION_PAUSED,
+                          LogMessage(LogType.INFORMATION, "Conversion process paused.")))
 
     def cancel(self, event):
         """Cancel the conversion operation.
-        :param event:
-        :return:
-        """
-        UIDriver.change_application_state(ApplicationState.WAITING_GO)
 
+        :param event: The wx event that was recorded.
+        :return: None
+        """
+        UIDriver.fire_event(
+            UserEvent(UserEventType.CONVERSION_PAUSED,
+                      LogMessage(LogType.INFORMATION, "Conversion process canceled.")))
+        UIDriver.change_application_state(ApplicationState.WAITING_GO)
 
     def save(self, event):
         """Save the finalized conversion of the input file. Hide main window options and replace them with metadata
         options. Once the user finalizes their metadata options (back or save), they return to the original options.
-        :param event:
-        :return:
+
+        :param event: The wx event that was recorded.
+        :return: None
         """
         pass
 

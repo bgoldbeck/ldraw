@@ -138,7 +138,6 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self.stl_path_input.Bind(wx.EVT_KILL_FOCUS, self.check_input)
         self.ldraw_name_input.Bind(wx.EVT_KILL_FOCUS, self.check_input)
 
-
     def check_input(self, event):
         """Checks if stl input field has changed since last check. If it has
         changed, input is checked for validity and program state may be changed.
@@ -146,28 +145,28 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         :return:
         """
         current_stl = self.stl_path_input.GetValue()
-        if (current_stl != self.stl_path_text):
+        if current_stl != self.stl_path_text:
             self.stl_path_text = current_stl
-            self.stl_path_isvalid = self.stl_input_isvalid(current_stl)
+            self.stl_path_isvalid = self.stl_input_is_valid(current_stl)
 
         current_ldraw = self.ldraw_name_input.GetValue()
-        if (current_ldraw != self.ldraw_name_text):
+        if current_ldraw != self.ldraw_name_text:
             self.ldraw_name_text = current_ldraw
-            self.ldraw_name_isvalid = self.ldraw_input_isvalid(current_ldraw)
+            self.ldraw_name_isvalid = self.ldraw_input_is_valid(current_ldraw)
 
-        if (self.ldraw_name_isvalid and self.stl_path_isvalid):
-            if(UIDriver.application_state != ApplicationState.WAITING_GO):
+        if self.ldraw_name_isvalid and self.stl_path_isvalid:
+            if UIDriver.application_state != ApplicationState.WAITING_GO:
                 UIDriver.change_application_state(ApplicationState.WAITING_GO)
-                #save settings here
-                #clear log
+                # Save settings here
+                # Clear log
         else:
-            if(UIDriver.application_state != ApplicationState.WAITING_INPUT):
+            if UIDriver.application_state != ApplicationState.WAITING_INPUT:
                 UIDriver.change_application_state(
                     ApplicationState.WAITING_INPUT)
-                #log errors
+                # Log errors
         event.Skip()
 
-    def stl_input_isvalid(self, input):
+    def stl_input_is_valid(self, input):
         """Checks if input stl is a valid path.
         :param input: The input path
         :return: Boolean if valid or not
@@ -176,7 +175,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         # ONLY CHECKS FOR LENGTH, put in actual validation check here
         return len(input) > 0
 
-    def ldraw_input_isvalid(self, input):
+    def ldraw_input_is_valid(self, input):
         """Checks if ldraw name is a valid path.
         :param input: The input path
         :return: Boolean if valid or not
