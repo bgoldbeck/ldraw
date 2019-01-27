@@ -228,15 +228,24 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         :param new_state: The recorded ApplicationState.
         :return: None
         """
-        if new_state == ApplicationState.STARTUP:
+        if new_state == ApplicationState.WAITING_GO:
             self.stl_path_input.Enable()
             self.ldraw_name_input.Enable()
-        elif new_state == ApplicationState.WAITING_GO:
-            self.stl_path_input.Enable()
-            self.ldraw_name_input.Enable()
+            self.author_input.Enable()
+            self.license_input.Enable()
+            self.about_button.Enable()
+            self.browse_output_button.Enable()
+            self.help_button.Enable()
+            self.browse_stl_button.Enable()
         elif new_state == ApplicationState.WORKING:
             self.stl_path_input.Disable()
             self.ldraw_name_input.Disable()
+            self.author_input.Disable()
+            self.license_input.Disable()
+            self.about_button.Disable()
+            self.browse_output_button.Disable()
+            self.help_button.Disable()
+            self.browse_stl_button.Disable()
 
     def on_event(self, event: UserEvent):
         """A user event was passed to the MetadataPanel.
