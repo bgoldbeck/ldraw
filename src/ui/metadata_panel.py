@@ -36,8 +36,14 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self.help_button = None
         self.about_button = None
         self.browse_stl_button = None
-        self.author_text = None
-        self.license_text = None
+        self.author_input = None
+        self.license_input = None
+        self.stl_path_input = None
+        self.stl_path_text = None
+        self.stl_path_isvalid = False
+        self.ldraw_name_input = None
+        self.ldraw_name_text = None
+        self.ldraw_name_isvalid = False
         self._build_gui()
         self.parent.Layout()
 
@@ -55,8 +61,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             style=wx.ALIGN_RIGHT)
 
         # Stl input.
-        stl_path_name_text = wx.TextCtrl(self, size=self.text_ctrl_size)
-        stl_path_name_text.SetMaxLength(self.max_path_length)
+        self.stl_path_input = wx.TextCtrl(self, size=self.text_ctrl_size)
+        self.stl_path_input.SetMaxLength(self.max_path_length)
 
         self.browse_stl_button = wx.Button(self, label="Browse STL", size=self.big_button)
 
@@ -66,20 +72,20 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
         # Output path selection.
         path_part_static_text = wx.StaticText(self, label="Part Name", size=self.label_size, style=wx.ALIGN_RIGHT)
-        ldraw_name_text = wx.TextCtrl(self, size=self.text_ctrl_size)
-        ldraw_name_text.SetMaxLength(self.max_path_length)
+        self.ldraw_name_input = wx.TextCtrl(self, size=self.text_ctrl_size)
+        self.ldraw_name_input.SetMaxLength(self.max_path_length)
 
         self.browse_output_button = wx.Button(self, label="Browse Output", size=self.big_button)
 
         # Author
         author_static_text = wx.StaticText(self, label="Author", size=self.label_size, style=wx.ALIGN_RIGHT)
-        self.author_text = wx.TextCtrl(self, size=self.text_ctrl_size)
-        self.author_text.SetMaxLength(self.max_path_length)
+        self.author_input = wx.TextCtrl(self, size=self.text_ctrl_size)
+        self.author_input.SetMaxLength(self.max_path_length)
 
         # License information.
         license_static_text = wx.StaticText(self, label="License", size=self.label_size, style=wx.ALIGN_RIGHT)
-        self.license_text = wx.TextCtrl(self, size=self.text_ctrl_size)
-        self.license_text.SetMaxLength(self.max_path_length)
+        self.license_input = wx.TextCtrl(self, size=self.text_ctrl_size)
+        self.license_input.SetMaxLength(self.max_path_length)
 
         # Create the layout.
         horizontal_input = wx.BoxSizer(wx.HORIZONTAL)
@@ -88,7 +94,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         horizontal_license = wx.BoxSizer(wx.HORIZONTAL)
         horizontal_input.Add(path_name_static_text, 0, wx.ALIGN_CENTER)
         horizontal_input.AddSpacer(5)
-        horizontal_input.Add(stl_path_name_text, 0, wx.ALIGN_CENTER)
+        horizontal_input.Add(self.stl_path_input, 0, wx.ALIGN_CENTER)
         horizontal_input.AddSpacer(5)
         horizontal_input.Add(self.browse_stl_button, 0, wx.ALIGN_CENTER)
         horizontal_input.AddSpacer(5)
@@ -98,17 +104,17 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
         horizontal_output.Add(path_part_static_text, 0, wx.ALIGN_LEFT)
         horizontal_output.AddSpacer(5)
-        horizontal_output.Add(ldraw_name_text, 0, wx.ALIGN_LEFT)
+        horizontal_output.Add(self.ldraw_name_input, 0, wx.ALIGN_LEFT)
         horizontal_output.AddSpacer(5)
         horizontal_output.Add(self.browse_output_button, 0, wx.ALIGN_LEFT)
 
         horizontal_author.Add(author_static_text, 0, wx.ALIGN_LEFT)
         horizontal_author.AddSpacer(5)
-        horizontal_author.Add(self.author_text, 0, wx.ALIGN_LEFT)
+        horizontal_author.Add(self.author_input, 0, wx.ALIGN_LEFT)
 
         horizontal_license.Add(license_static_text, 0, wx.ALIGN_LEFT)
         horizontal_license.AddSpacer(5)
-        horizontal_license.Add(self.license_text, 0, wx.ALIGN_LEFT)
+        horizontal_license.Add(self.license_input, 0, wx.ALIGN_LEFT)
 
         vertical_layout = wx.BoxSizer(wx.VERTICAL)
         vertical_layout.Add(horizontal_input, 0, wx.ALIGN_LEFT)
@@ -127,6 +133,57 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self.Bind(wx.EVT_BUTTON, self.browse_output, self.browse_output_button)
         self.Bind(wx.EVT_BUTTON, self.help, self.help_button)
         self.Bind(wx.EVT_BUTTON, self.browse_file, self.browse_stl_button)
+
+        # Bind input field change events
+        self.stl_path_input.Bind(wx.EVT_KILL_FOCUS, self.check_input)
+        self.ldraw_name_input.Bind(wx.EVT_KILL_FOCUS, self.check_input)
+
+
+    def check_input(self, event):
+        """Checks if stl input field has changed since last check. If it has
+        changed, input is checked for validity and program state may be changed.
+        :param event:
+        :return:
+        """
+        current_stl = self.stl_path_input.GetValue()
+        if (current_stl != self.stl_path_text):
+            self.stl_path_text = current_stl
+            self.stl_path_isvalid = self.stl_input_isvalid(current_stl)
+
+        current_ldraw = self.ldraw_name_input.GetValue()
+        if (current_ldraw != self.ldraw_name_text):
+            self.ldraw_name_text = current_ldraw
+            self.ldraw_name_isvalid = self.ldraw_input_isvalid(current_ldraw)
+
+        if (self.ldraw_name_isvalid and self.stl_path_isvalid):
+            if(UIDriver.application_state != ApplicationState.WAITING_GO):
+                UIDriver.change_application_state(ApplicationState.WAITING_GO)
+                #save settings here
+                #clear log
+        else:
+            if(UIDriver.application_state != ApplicationState.WAITING_INPUT):
+                UIDriver.change_application_state(
+                    ApplicationState.WAITING_INPUT)
+                #log errors
+        event.Skip()
+
+    def stl_input_isvalid(self, input):
+        """Checks if input stl is a valid path.
+        :param input: The input path
+        :return: Boolean if valid or not
+        """
+
+        # ONLY CHECKS FOR LENGTH, put in actual validation check here
+        return len(input) > 0
+
+    def ldraw_input_isvalid(self, input):
+        """Checks if ldraw name is a valid path.
+        :param input: The input path
+        :return: Boolean if valid or not
+        """
+
+        # ONLY CHECKS FOR LENGTH, put in actual validation check here
+        return len(input) > 0
 
     def help(self, event):
         """Presents program limitations, common troubleshooting steps, and steps to update LDraw parts library.
