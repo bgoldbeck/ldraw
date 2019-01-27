@@ -12,7 +12,7 @@ from src.ui.iui_behavior import IUIBehavior
 from src.ui.application_state import ApplicationState
 from src.ui.user_event import UserEvent
 from src.ui.user_event_type import UserEventType
-
+from src.ui.ui_driver import UIDriver
 
 class ConversionPanel(wx.Panel, IUIBehavior):
     """Holds wx controls relevant to controlling the program behavior for starting, stopping,
@@ -31,6 +31,7 @@ class ConversionPanel(wx.Panel, IUIBehavior):
         self.pause_button = None
         self.cancel_button = None
         self.save_button = None
+        self.is_paused = False
         self._build_gui()
 
     def _build_gui(self):
@@ -63,7 +64,7 @@ class ConversionPanel(wx.Panel, IUIBehavior):
 
         # Bind the events for each wx control.
         self.Bind(wx.EVT_BUTTON, self.convert, self.convert_button)
-        self.Bind(wx.EVT_BUTTON, self.pause, self.pause_button)
+        self.Bind(wx.EVT_BUTTON, self.pause_resume, self.pause_button)
         self.Bind(wx.EVT_BUTTON, self.cancel, self.cancel_button)
         self.Bind(wx.EVT_BUTTON, self.save, self.save_button)
 
@@ -72,28 +73,22 @@ class ConversionPanel(wx.Panel, IUIBehavior):
         :param event:
         :return:
         """
-        pass
+        UIDriver.change_application_state(ApplicationState.WORKING)
 
-    def pause(self, e):
-        """Pause the conversion process.
+    def pause_resume(self, event):
+        """Pause/resume the conversion process.
         :param e:
         :return:
         """
-        pass
-
-    def resume(self, event):
-        """Continue/resume the conversion process again.
-        :param event:
-        :return:
-        """
-        pass
+        self.is_paused = not self.is_paused
 
     def cancel(self, event):
         """Cancel the conversion operation.
         :param event:
         :return:
         """
-        pass
+        UIDriver.change_application_state(ApplicationState.WAITING_GO)
+
 
     def save(self, event):
         """Save the finalized conversion of the input file. Hide main window options and replace them with metadata
@@ -114,8 +109,18 @@ class ConversionPanel(wx.Panel, IUIBehavior):
             self.cancel_button.Disable()
             self.pause_button.Disable()
             self.convert_button.Disable()
+        elif new_state == ApplicationState.WAITING_INPUT:
+            self.convert_button.Disable()
         elif new_state == ApplicationState.WAITING_GO:
+            self.save_button.Disable()
+            self.cancel_button.Disable()
+            self.pause_button.Disable()
             self.convert_button.Enable()
+        elif new_state == ApplicationState.WORKING:
+            self.save_button.Disable() # I assume this will be enabled after
+            self.cancel_button.Enable()
+            self.pause_button.Enable()
+            self.convert_button.Disable()
 
     def on_event(self, event: UserEvent):
         """A user event was passed to the ConversionPanel.
