@@ -64,7 +64,7 @@ class ModelShipper:
 
         # Write out the license
         if model.get_name() != "":
-            ModelShipper._line_type0_to_file(file, "!License: " + model.get_license_info())
+            ModelShipper._line_type0_to_file(file, "!LICENSE " + model.get_license_info())
 
         # Loop through main model mesh facets
         ModelShipper._line_type3_to_file(file, model.get_mesh())
@@ -79,7 +79,7 @@ class ModelShipper:
     def _line_type0_to_file(file, command):
         """Write a meta-command line to the file using LDraw File Format line type 0
         A meta-command line is formatted:
-        0 <meta-command>
+        0 <meta-command> <additional parameters>
 
         :param file: The file reference.
         :param command: The command
