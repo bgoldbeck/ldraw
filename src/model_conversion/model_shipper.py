@@ -9,8 +9,11 @@
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License.
 # See LICENSE file for the full text.
+import logging
 from stl import Mesh
 from src.model_conversion.ldraw_model import LDrawModel
+from src.log_messages.log_type import LogType
+from src.log_messages.log_message import LogMessage
 
 
 class ModelShipper:
@@ -27,7 +30,18 @@ class ModelShipper:
         :param file_path: The path to the stl file.
         :return: The BaseStl model (numpy-stl) loaded from the file_path or None.
         """
-        return Mesh.from_file(file_path)
+        try:
+            return Mesh.from_file(file_path)
+        except (RuntimeError, AssertionError, AttributeError, ValueError) as err:
+            message = f"Failed to open the STL file : {err}"
+
+            # Log to Dev Logger
+            logging.error(message)
+
+            # Log to log module
+            log_message = LogMessage(LogType.WARNING, message)
+
+            # TODO Display the log message and change the state to WAITING_GO
 
     @staticmethod
     def save_ldraw_file_model(file_path, model: LDrawModel):
@@ -40,17 +54,17 @@ class ModelShipper:
         # Open file
         file = open(file_path, "w")
 
-        # Write out the license
-        if model.get_name() != "":
-            ModelShipper._line_type0_to_file(file, model.get_license_info())
-
         # Write out the model name.
         if model.get_name() != "":
-            ModelShipper._line_type0_to_file(file, model.get_name())
+            ModelShipper._line_type0_to_file(file, "Name: " + model.get_name())
 
         # Write out the author name.
         if model.get_author() != "":
             ModelShipper._line_type0_to_file(file, "Author: " + model.get_author())
+
+        # Write out the license
+        if model.get_name() != "":
+            ModelShipper._line_type0_to_file(file, "!License: " + model.get_license_info())
 
         # Loop through main model mesh facets
         ModelShipper._line_type3_to_file(file, model.get_mesh())
@@ -62,16 +76,16 @@ class ModelShipper:
         file.close()
 
     @staticmethod
-    def _line_type0_to_file(file, comment):
-        """Write a comment line to the file using LDraw File Format line type 0
-        A comment line is formatted:
-        0 // <comment>
+    def _line_type0_to_file(file, command):
+        """Write a meta-command line to the file using LDraw File Format line type 0
+        A meta-command line is formatted:
+        0 <meta-command>
 
         :param file: The file reference.
-        :param comment: The comment to write
+        :param command: The command
         :return: None
         """
-        file.write("0 // " + comment + "\n")
+        file.write("0 " + command + "\n")
 
     @staticmethod
     def _line_type3_to_file(file, mesh):
@@ -96,3 +110,4 @@ class ModelShipper:
                        + " " + str(mesh.v0[i][1])
                        + " " + str(mesh.v0[i][2])
                        + "\n")
+
