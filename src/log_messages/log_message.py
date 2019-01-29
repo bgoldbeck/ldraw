@@ -46,3 +46,20 @@ class LogMessage:
         """
         return self.timestamp
 
+    def get_log_message_color(self):
+        """Returns a tuple of a log message color dependent on the state of the LogType.
+
+        :return: A tuple in the form of [r, g, b]. Where r, g, b range from 0-255 for the
+        intensity of each color value.
+        """
+        if self.message_type == LogType.INFORMATION:
+            return [225, 225, 225]
+        elif self.message_type == LogType.WARNING:
+            return [255, 255, 0]
+        elif self.message_type == LogType.ERROR:
+            return [255, 0, 0]
+        elif self.message_type == LogType.DEBUG:
+            return [0, 0, 255]
+        else:
+            return [255, 255, 255]
+

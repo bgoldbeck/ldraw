@@ -24,7 +24,7 @@ class UserEventTest(unittest.TestCase):
         :return: None
         """
         event_type = UserEventType.INPUT_MODEL_READY
-        log_type = LogType.INFORMATION
+        log_type = LogType.ERROR
         log_message = "test user event"
 
         user_event = UserEvent(event_type, LogMessage(log_type, log_message))
@@ -33,3 +33,5 @@ class UserEventTest(unittest.TestCase):
         self.assertTrue(user_event.log_message.get_message_type(), log_type)
         self.assertTrue(user_event.log_message.get_message(), log_message)
 
+        # The log message color for ERROR should return full Red intensity. [255, 0, 0]
+        self.assertTrue(user_event.get_log_message().get_log_message_color(), [255, 0, 0])
