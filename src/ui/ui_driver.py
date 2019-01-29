@@ -100,8 +100,9 @@ class UIDriver:
         """
         enc = "utf-8"
 
-        file_path = Util.path_conversion("/assets/info/") + file_name
+        file_path = Util.path_conversion("/assets/info/" + file_name)
 
+        print(file_path)
         text = None
         # Try to open the complete file path and record the text.
         try:

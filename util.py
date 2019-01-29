@@ -8,21 +8,24 @@
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 import os
-from sys import platform
+from pathlib import Path
 
 
 class Util:
+    """This class is responsible for being a helper function library.
+
+    """
 
     @staticmethod
     def path_conversion(file_path: str):
         """
         Used to convert file paths depending on operating system.
+
         :param file_path: file path to convert
         :return: converted file path
         """
         root_dir = os.path.dirname(os.path.abspath(__file__))
-        if platform == 'win32' or os.name == 'nt':
-            return root_dir + file_path.replace("/", "\\")
-        elif platform == "linux" or platform == "darwin":
-            return root_dir + file_path.replace("\\", "/")
+
+        return str(root_dir) + str(Path(file_path))
+
 
