@@ -57,6 +57,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self.part_dir = None
         self.author = None
         self.license = None
+        self.default_settings = None
         self.load_settings()
 
     def _build_gui(self):
@@ -394,13 +395,13 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         # default license
         default_license = "Redistributable under CCAL version 2.0 : see CAreadme.txt"
 
-        default_settings = [default_stl_dir, default_part_name, default_part_dir, default_author, default_license]
+        self.default_settings = [default_stl_dir, default_part_name, default_part_dir, default_author, default_license]
         name = "assets/settings/" + name + ".txt"
         filepath = Path.cwd() / name
 
         try:
             with open(str(filepath), "w") as file:
-                for setting in default_settings:
+                for setting in self.default_settings:
                     print(setting, file=file)
         except FileNotFoundError as ferr:
             print(ferr)
@@ -412,22 +413,18 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         # Write out changes to stl_dir, part_dir, author, license
         # default_part_name is always "untitled.dat"
 
-        print("\n\nSave settings function\n\n")
-
         settings = [self.stl_dir, "untitled.dat", self.part_dir, self.author, self.license]
         filepath = Path.cwd() / "assets/settings/user_settings.txt"
         try:
             with open(str(filepath), "w") as file:
-                print(settings)
                 for setting in settings:
-                    print(setting)
                     if setting is not None:
                         print(setting, file=file)
 
         except FileNotFoundError as ferr:
             print(ferr)
 
-        self.display_settings()
+        # self.display_settings()
 
     def load_settings(self):
         """Load settings values into memory on startup."""
@@ -449,7 +446,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             self.author = file_settings[3].rstrip()
             self.license = file_settings[4].rstrip()
 
-        self.display_settings()
+        # self.display_settings()
 
     def display_settings(self):
         """Display all settings and stl file path to standard out."""

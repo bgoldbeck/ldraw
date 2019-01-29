@@ -1,0 +1,5 @@
+C:\Users\melon\Documents\Programming\Python\lscan\src\assets\models
+untitled.dat
+C:\Users\melon\Documents\Programming\Python\lscan\src\assets\parts
+First Last
+Redistributable under CCAL version 2.0 : see CAreadme.txt
