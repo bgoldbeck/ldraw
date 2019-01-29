@@ -103,3 +103,7 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+.idea/workspace.xml
+.idea/workspace.xml
+.idea/misc.xml
+.idea/lscan.iml

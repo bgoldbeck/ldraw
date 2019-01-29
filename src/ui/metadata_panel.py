@@ -440,15 +440,9 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             self.create_settings("default_user_settings")
             self.create_settings("user_settings")
 
-        settings = [self.stl_dir, self.part_name, self.part_dir, self.author, self.license]
         with open(str(filepath), "r") as file:
             file_settings = file.readlines()
-            """"
-            for s, f in zip(settings, file_settings):
-                s = f.rstrip()
-                print("file " + f)
-                print("settings " + s)
-            """
+
             self.stl_dir = file_settings[0].rstrip()
             self.part_name = file_settings[1].rstrip()
             self.part_dir = file_settings[2].rstrip()
@@ -461,7 +455,6 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         """Display all settings and stl file path to standard out."""
         print("\n\nDisplay settings\n")
         all_settings = [self.stl_file, self.stl_dir, self.part_name, self.part_dir, self.author, self.license]
-        print(all_settings)
         for setting in all_settings:
             print(setting)
 
