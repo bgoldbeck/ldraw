@@ -46,8 +46,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self.ldraw_name_input = None
         self.ldraw_name_text = None
         self.ldraw_name_isvalid = False
-        self._build_gui()
-        self.parent.Layout()
+
 
         self.stl_file = None
         self.out_file = None
@@ -55,10 +54,14 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self.stl_dir = None
         self.part_name = None
         self.part_dir = None
-        self.author = None
-        self.license = None
+        self.author_default = None # The one loaded from file at start
+        self.license_default = None
         self.default_settings = None
         self.load_settings()
+        self.license_text = self.license_default
+        self.author_text = self.author_default # The text entered by user
+        self._build_gui()
+        self.parent.Layout()
 
     def _build_gui(self):
         """Initializing input, output, process control, and log panel elements
@@ -144,6 +147,10 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
         self.SetSizer(horizontal_split)
 
+        # Fill in default fields
+        self.reset_author()
+        self.reset_license()
+
         # Register events.
         self.Bind(wx.EVT_BUTTON, self.about, self.about_button)
         self.Bind(wx.EVT_BUTTON, self.browse_output, self.browse_output_button)
@@ -153,6 +160,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         # Bind input field change events
         self.stl_path_input.Bind(wx.EVT_KILL_FOCUS, self.check_input)
         self.ldraw_name_input.Bind(wx.EVT_KILL_FOCUS, self.check_input)
+        self.author_input.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_author)
+        self.license_input.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_license)
 
     def check_input(self, event):
         """Checks if stl input field has changed since last check. If it has
@@ -169,6 +178,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         if current_ldraw != self.ldraw_name_text:
             self.ldraw_name_text = current_ldraw
             self.ldraw_name_isvalid = self.ldraw_input_is_valid(current_ldraw)
+
+
 
         if self.ldraw_name_isvalid and self.stl_path_isvalid:
             if UIDriver.application_state != ApplicationState.WAITING_GO:
@@ -311,11 +322,12 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         author = self.author_input.GetValue()
 
         # Update settings file author info
-        if author != self.author and author != "":
-            self.author = author
+        if author != self.author_text and author != "":
+            self.author_text = author
             self.save_settings()
 
-        self.display_settings()
+        elif len(author) == 0:
+            self.reset_author()
         event.Skip()
 
     def text_ctrl_license(self, event):
@@ -323,12 +335,21 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         license = self.license_input.GetValue()
 
         # Update settings file license info
-        if license != self.license and license != "":
-            self.license = license
+        if license != self.license_text and license != "":
+            self.license_text = license
             self.save_settings()
 
-        self.display_settings()
+        elif len(license) == 0:
+            self.reset_license()
         event.Skip()
+
+    def reset_author(self):
+        """Fill in author field with default"""
+        self.author_input.SetValue(self.author_default)
+
+    def reset_license(self):
+        """Fill in license field with default"""
+        self.license_input.SetValue(self.license_default)
 
     # States and events
 
@@ -406,6 +427,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         except FileNotFoundError as ferr:
             print(ferr)
 
+
     def save_settings(self):
         """Save changes to user settings file.
         """
@@ -413,7 +435,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         # Write out changes to stl_dir, part_dir, author, license
         # default_part_name is always "untitled.dat"
 
-        settings = [self.stl_dir, "untitled.dat", self.part_dir, self.author, self.license]
+        settings = [self.stl_dir, "untitled.dat", self.part_dir, self.author_text, self.license_text]
         filepath = Path.cwd() / "assets/settings/user_settings.txt"
         try:
             with open(str(filepath), "w") as file:
@@ -443,15 +465,16 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             self.stl_dir = file_settings[0].rstrip()
             self.part_name = file_settings[1].rstrip()
             self.part_dir = file_settings[2].rstrip()
-            self.author = file_settings[3].rstrip()
-            self.license = file_settings[4].rstrip()
+            self.author_default = file_settings[3].rstrip()
+            self.license_default = file_settings[4].rstrip()
 
         # self.display_settings()
 
     def display_settings(self):
         """Display all settings and stl file path to standard out."""
         print("\n\nDisplay settings\n")
-        all_settings = [self.stl_file, self.stl_dir, self.part_name, self.part_dir, self.author, self.license]
+        all_settings = [self.stl_file, self.stl_dir, self.part_name,
+                        self.part_dir, self.author_default, self.license_default]
         for setting in all_settings:
             print(setting)
 
@@ -475,8 +498,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
     def get_author(self):
         """Return the string of the author."""
-        return self.author
+        return self.author_text
 
     def get_license(self):
         """Return the string of the license."""
-        return self.license
+        return self.license_text
