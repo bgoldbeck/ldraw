@@ -44,15 +44,15 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self.stl_path_text = None # The text entered
         self.stl_path_isvalid = False
         self.ldraw_name_input = None
-        self.ldraw_name_text = None
+        self.ldraw_name_text = None # Entire path
         self.ldraw_name_isvalid = False
 
 
         self.out_file = None
         # Settings
         self.stl_dir = None # Essentially stl_path_text minus file part
-        self.part_name = None
-        self.part_dir = None
+        self.part_dir = None # ldraw_name_text minus file part
+        self.part_name = None # "untitled.dat" or whatever user entered
         self.author_default = None # The one loaded from file at start
         self.license_default = None
         self.default_settings = None
@@ -275,13 +275,29 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         :param event:
         :return:
         """
-        dialog = wx.FileDialog(self, "Choose a location for the LDraw file", defaultDir="",
-                               style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
+        dat_wildcard = "*.dat"
+        dialog = wx.FileDialog(self, "Choose a location for the LDraw file",
+                               defaultDir=self.part_dir,
+                               style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT,
+                               wildcard=dat_wildcard)
+        dialog.SetFilename(self.part_name)
         if dialog.ShowModal() == wx.ID_OK:
             pathname = dialog.GetPath()
-            self.part_name = pathname
+
+            # Check if part name ends with .dat, if not append that
+            if not pathname.endswith('.dat'):
+                pathname = pathname + '.dat'
+
+            self.ldraw_name_text = pathname # Full path
+            self.part_dir = str(Path(pathname).parent) # Only the dir
+            self.part_name = str(Path(pathname).parts[-1]) # Only filename
+            print(self.part_dir)
+            print(self.part_name)
+            self.ldraw_name_isvalid = True
             self.save_settings()
         dialog.Destroy()
+
+        self.ldraw_name_input.SetValue(self.ldraw_name_text)
 
     def text_ctrl_output(self, event):
         """Get file output path from user in TextCtrl element.
@@ -303,7 +319,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             # If there isn't an existing file with this name
             if not full_output_path.is_file():
                 # Append the default parts directory to the path
-                self.part_name = output_path
+                self.ldraw_name_text = output_path
                 self.out_file = full_output_path
                 self.save_settings()
 
@@ -314,7 +330,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
                 # The user wants to overwrite the existing file
                 if confirm_choice == wx.ID_YES:
-                    self.part_name = output_path
+                    self.ldraw_name_text = output_path
                     self.out_file = full_output_path
                     self.save_settings()
                 #elif confirm_choice == wx.ID_NO:
@@ -495,7 +511,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
     def get_dat_file(self):
         """Return the string of the path to the output dat file."""
-        return self.part_name
+        return self.ldraw_name_text
 
     def get_part_dir(self):
         """Return the string of to the parts directory."""
