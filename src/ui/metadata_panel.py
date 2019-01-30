@@ -18,8 +18,9 @@ from sys import platform
 import re
 
 class MetadataPanel(wx.Panel, IUIBehavior):
-    """This class contains the wx widgets for control over metadata information in the
-    program. These widgets may include, but not limited to author, license, stl file input,
+    """This class contains the wx widgets for control over
+    metadata information in the program. These widgets may include,
+    but not limited to author, license, stl file input,
     and ldraw file output.
     """
     text_ctrl_size = (400, 20)
@@ -32,7 +33,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
     def __init__(self, parent):
         """Default constructor for MainPanel class.
         """
-        wx.Panel.__init__(self, parent, size=self.panel_size, style=wx.BORDER_SUNKEN)
+        wx.Panel.__init__(self, parent, size=self.panel_size,
+                          style=wx.BORDER_SUNKEN)
         self.parent = parent
         self.browse_stl_button = None
         self.help_button = None
@@ -44,11 +46,9 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self.stl_path_text = None # The text entered
         self.stl_path_isvalid = False
         self.ldraw_name_input = None
-        self.ldraw_name_text = None # Entire path
         self.ldraw_name_isvalid = False
+        self.out_file = None #entire output file path
 
-
-        self.out_file = None
         # Settings
         self.stl_dir = None # Essentially stl_path_text minus file part
         self.part_dir = None # ldraw_name_text minus file part
@@ -79,26 +79,34 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self.stl_path_input = wx.TextCtrl(self, size=self.text_ctrl_size)
         self.stl_path_input.SetMaxLength(self.max_path_length)
 
-        self.browse_stl_button = wx.Button(self, label="Browse STL", size=self.big_button)
+        self.browse_stl_button = wx.Button(self, label="Browse STL",
+                                           size=self.big_button)
 
         # Help / About.
-        self.help_button = wx.Button(self, label="?", size=self.small_button_size)
-        self.about_button = wx.Button(self, label="i", size=self.small_button_size)
+        self.help_button = wx.Button(self, label="?",
+                                     size=self.small_button_size)
+        self.about_button = wx.Button(self, label="i",
+                                      size=self.small_button_size)
 
         # Output path selection.
-        path_part_static_text = wx.StaticText(self, label="Part Name", size=self.label_size, style=wx.ALIGN_RIGHT)
+        path_part_static_text = wx.StaticText(self, label="Part Name",
+                                              size=self.label_size,
+                                              style=wx.ALIGN_RIGHT)
         self.ldraw_name_input = wx.TextCtrl(self, size=self.text_ctrl_size)
         self.ldraw_name_input.SetMaxLength(self.max_path_length)
 
-        self.browse_output_button = wx.Button(self, label="Browse Output", size=self.big_button)
+        self.browse_output_button = wx.Button(self, label="Output Location",
+                                              size=self.big_button)
 
         # Author
-        author_static_text = wx.StaticText(self, label="Author", size=self.label_size, style=wx.ALIGN_RIGHT)
+        author_static_text = wx.StaticText(self, label="Author",
+                                           size=self.label_size, style=wx.ALIGN_RIGHT)
         self.author_input = wx.TextCtrl(self, size=self.text_ctrl_size)
         self.author_input.SetMaxLength(self.max_path_length)
 
         # License information.
-        license_static_text = wx.StaticText(self, label="License", size=self.label_size, style=wx.ALIGN_RIGHT)
+        license_static_text = wx.StaticText(self, label="License",
+                                            size=self.label_size, style=wx.ALIGN_RIGHT)
         self.license_input = wx.TextCtrl(self, size=self.text_ctrl_size)
         self.license_input.SetMaxLength(self.max_path_length)
 
@@ -158,7 +166,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
         # Bind input field change events
         self.stl_path_input.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_input)
-        #self.ldraw_name_input.Bind(wx.EVT_KILL_FOCUS, self.check_input)
+        self.ldraw_name_input.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_output)
         self.author_input.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_author)
         self.license_input.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_license)
 
@@ -179,7 +187,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                 # Log errors
 
     def help(self, event):
-        """Presents program limitations, common troubleshooting steps, and steps to update LDraw parts library.
+        """Presents program limitations, common troubleshooting steps,
+        and steps to update LDraw parts library.
         :param event:
         :return:
         """
@@ -187,7 +196,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         if help_text is not None:
             wx.MessageBox(help_text, "Help", wx.OK | wx.ICON_QUESTION)
         else:
-            wx.MessageBox("Could not read help text file, sorry.", "Error", wx.OK | wx.ICON_INFORMATION)
+            wx.MessageBox("Could not read help text file, sorry.", "Error",
+                          wx.OK | wx.ICON_INFORMATION)
 
     def about(self, event):
         """Presents program name, program version, copyright information, licensing information, and authors to user.
@@ -198,7 +208,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         if about_text is not None:
             wx.MessageBox(about_text, "About LScan", wx.OK | wx.ICON_INFORMATION)
         else:
-            wx.MessageBox("Could not read about text file, sorry.", "Error", wx.OK | wx.ICON_INFORMATION)
+            wx.MessageBox("Could not read about text file, sorry.", "Error",
+                          wx.OK | wx.ICON_INFORMATION)
 
     def browse_input(self, event):
         """Browse for a valid STL input file.
@@ -206,7 +217,9 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         :return:
         """
         stl_wildcard = "*.stl"
-        dialog = wx.FileDialog(self, "Choose a STL file", defaultDir=self.stl_dir, wildcard=stl_wildcard, style=wx.FD_OPEN
+        dialog = wx.FileDialog(self, "Choose a STL file",
+                               defaultDir=self.stl_dir, wildcard=stl_wildcard,
+                               style=wx.FD_OPEN
                                | wx.FD_FILE_MUST_EXIST)
 
         if dialog.ShowModal() == wx.ID_OK:
@@ -271,17 +284,17 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         if dialog.ShowModal() == wx.ID_OK:
             pathname = dialog.GetPath()
 
-            if self.ldraw_name_text != pathname:
+            if str(Path(self.part_dir) / self.part_name) != pathname:
                 # Check if part name ends with .dat, if not append that
                 if not pathname.endswith('.dat'):
                     pathname = pathname + '.dat'
 
-                self.ldraw_name_text = pathname # Full path
+                self.out_file = pathname # Full path
                 self.part_dir = str(Path(pathname).parent) # Only the dir
                 self.part_name = str(Path(pathname).parts[-1]) # Only filename
                 self.ldraw_name_isvalid = True
                 self.save_settings()
-                self.ldraw_name_input.SetValue(self.ldraw_name_text)
+                self.ldraw_name_input.SetValue(self.part_name)
                 self.check_input()
         dialog.Destroy()
 
@@ -294,39 +307,52 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         # Detect if you need to use:
         # default directory and default part name
         # current default directory and new part name
-        # new part directory and new part name
 
-        output_path = self.ldraw_name_input.GetValue()
+        prev_text = self.part_name
+        self.part_name = self.ldraw_name_input.GetValue()
+        if prev_text != self.part_name or not self.ldraw_name_isvalid:
 
-        if output_path is not None:
-            full_output_path = Path(self.part_dir + output_path)
+            # Need to filter part name to check for valid chars...
+            if self.is_good_path(self.part_name):
 
-            # Only needs to be a filename like part.dat. Cannot be an entire filepath.
+                if not self.part_name.endswith('.dat'):
+                    self.part_name = self.part_name + '.dat'
 
-            # If there isn't an existing file with this name
-            if not full_output_path.is_file():
-                # Append the default parts directory to the path
-                self.ldraw_name_text = output_path
-                self.out_file = full_output_path
-                self.save_settings()
+                full_path = Path(self.part_dir) / self.part_name
 
-            # There exists a file in that path
-            elif full_output_path.is_file():
-                confirm = wx.MessageDialog(None, "A file already exists with that name. Overwrite?", wx.YES_NO)
-                confirm_choice = confirm.ShowModal()
+                # The file already exists
+                if full_path.is_file():
+                    confirm = wx.MessageDialog(None, "The file\n" +
+                                               str(full_path) +
+                                               "\nalready exists. Overwrite?",
+                                               "Overwrite Warning",
+                                               wx.YES_NO)
+                    confirm_choice = confirm.ShowModal()
 
-                # The user wants to overwrite the existing file
-                if confirm_choice == wx.ID_YES:
-                    self.ldraw_name_text = output_path
-                    self.out_file = full_output_path
+                    # The user wants to overwrite the existing file
+                    if confirm_choice == wx.ID_YES:
+                        self.out_file = full_path
+                        self.ldraw_name_isvalid = True
+                        self.ldraw_name_input.SetValue(self.part_name)
+                        self.save_settings()
+                    elif confirm_choice == wx.ID_NO:
+                        self.ldraw_name_isvalid = False
+
+                # File didn't already exist and is ok
+                else:
+                    self.out_file = full_path
+                    self.ldraw_name_isvalid = True
+                    self.ldraw_name_input.SetValue(self.part_name)
                     self.save_settings()
-                #elif confirm_choice == wx.ID_NO:
-        
-        self.display_settings()
+            else:
+                self.ldraw_name_isvalid = False
+            self.check_input()
+
         event.Skip()
 
     def text_ctrl_author(self, event):
-        """Get the author value from the user and update the settings file as needed."""
+        """Get the author value from the user and update the settings file
+        as needed."""
         author = self.author_input.GetValue()
 
         # Update settings file author info
@@ -339,7 +365,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         event.Skip()
 
     def text_ctrl_license(self, event):
-        """Get the license value from the user and update the settings file as needed."""
+        """Get the license value from the user and update the settings file
+        as needed."""
         license = self.license_input.GetValue()
 
         # Update settings file license info
@@ -396,7 +423,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
     # Checks
 
-    def check_good_path(self, str):
+    def is_good_path(self, str):
         """Returns True if the string doesn't contain invalid values."""
         # Windows
         #if platform == "win32":
@@ -406,7 +433,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
         # Linux
         #if platform == "linux":
-        pass
+        return re.match("^[a-zA-Z0-9_,-/+ ]+$", str)
 
     # Settings
 
@@ -424,7 +451,9 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         # default license
         default_license = "Redistributable under CCAL version 2.0 : see CAreadme.txt"
 
-        self.default_settings = [default_stl_dir, default_part_name, default_part_dir, default_author, default_license]
+        self.default_settings = [default_stl_dir, default_part_name,
+                                 default_part_dir, default_author,
+                                 default_license]
         name = "assets/settings/" + name + ".txt"
         filepath = Path.cwd() / name
 
@@ -443,7 +472,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         # Write out changes to stl_dir, part_dir, author, license
         # default_part_name is always "untitled.dat"
 
-        settings = [self.stl_dir, "untitled.dat", self.part_dir, self.author_text, self.license_text]
+        settings = [self.stl_dir, "untitled.dat", self.part_dir,
+                    self.author_text, self.license_text]
         filepath = Path.cwd() / "assets/settings/user_settings.txt"
         try:
             with open(str(filepath), "w") as file:
@@ -461,7 +491,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         default_filepath = Path.cwd() / "assets/settings/default_user_settings.txt"
         filepath = Path.cwd() / "assets/settings/user_settings.txt"
 
-        # If there isn't a default user settings file, create one and create a user settings file. The default is
+        # If there isn't a default user settings file, create one and
+        # create a user settings file. The default is
         # is to remain the same. The user settings file will change.
         if not default_filepath.is_file():
             self.create_settings("default_user_settings")
@@ -482,7 +513,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         """Display all settings and stl file path to standard out."""
         print("\n\nDisplay settings\n")
         all_settings = [self.stl_path_text, self.stl_dir, self.part_name,
-                        self.part_dir, self.author_default, self.license_default]
+                        self.part_dir, self.author_default,
+                        self.license_default]
         for setting in all_settings:
             print(setting)
 
@@ -496,9 +528,9 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         """Return the string of the stl directory."""
         return self.stl_dir
 
-    def get_dat_file(self):
+    def get_out_file(self):
         """Return the string of the path to the output dat file."""
-        return self.ldraw_name_text
+        return self.out_file
 
     def get_part_dir(self):
         """Return the string of to the parts directory."""
