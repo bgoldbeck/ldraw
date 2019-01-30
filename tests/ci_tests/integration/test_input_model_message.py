@@ -10,8 +10,9 @@
 import unittest
 from src.log_messages.input_model_message import InputModelMessage
 from src.log_messages.log_type import LogType
-from src.model_conversion.ldraw_model import LDrawModel
 from src.model_conversion.model_shipper import ModelShipper
+from stl import Mesh
+from util import Util
 
 
 class TestInputModelMessage(unittest.TestCase):
@@ -19,21 +20,13 @@ class TestInputModelMessage(unittest.TestCase):
     """
 
     def test_(self):
+        test_message = "test input model message"
 
-        # Load the model from the assets folder.
-        input_model = ModelShipper.load_stl_model("assets/models/plane.stl")
-        output_model = LDrawModel(
-            "plane",  # Model name
-            "Rando",  # Author
-            "!LICENSE Redistributable under CCAL version 2.0 : see CAreadme.txt",  # License info
-            input_model  # Mesh
-        )
+        input_model = ModelShipper.load_stl_model(Util.path_conversion("/assets/models/plane.stl"))
 
-        test_message = "test output model message"
-        log_type = LogType.ERROR
-        model_message = InputModelMessage(log_type, test_message, output_model)
+        model_message = InputModelMessage(LogType.INFORMATION, test_message, input_model)
 
         self.assertEqual(model_message.get_message(), test_message)
-        self.assertEqual(model_message.get_message_type(), log_type)
+        self.assertEqual(model_message.get_message_type(), LogType.INFORMATION)
         self.assertIsNotNone(model_message.get_timestamp())
-        self.assertEqual(model_message.get_model(), output_model)
+        self.assertIsNotNone(model_message.get_model())
