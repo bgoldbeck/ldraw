@@ -49,7 +49,10 @@ class ModelShipper:
 
         # Write out the model name.
         if model.get_name() != "":
-            ModelShipper._line_type0_to_file(file, "Name: " + model.get_name())
+            ModelShipper._line_type0_to_file(file, "LScan auto generated part " + model.get_name())
+
+        if model.get_name() != "":
+            ModelShipper._line_type0_to_file(file, "Name: " + model.get_name() + ".dat")
 
         # Write out the author name.
         if model.get_author() != "":

@@ -42,7 +42,7 @@ class ModelShipperTest(unittest.TestCase):
         # Import the model.
         mesh_data = ModelShipper.load_stl_model("assets/models/plane.stl")
         model = LDrawModel(
-            "plane.dat",  # Model name
+            "plane",  # Model name
             "Rando",  # Author
             "Redistributable under CCAL version 2.0 : see CAreadme.txt",  # License info
             mesh_data  # Mesh
@@ -62,4 +62,4 @@ class ModelShipperTest(unittest.TestCase):
         # The final file data should look like this.
         self.assertEqual(
             file_data,
-            "0 Name: plane.dat\n0 Author: Rando\n0 !LICENSE Redistributable under CCAL version 2.0 : see CAreadme.txt\n3 4 -0.5 0.0 0.5 -0.5 0.0 -0.5 0.5 0.0 -0.5\n3 4 0.5 0.0 -0.5 0.5 0.0 0.5 -0.5 0.0 0.5\n")
+            "0 LScan auto generated part plane\n0 Name: plane.dat\n0 Author: Rando\n0 !LICENSE Redistributable under CCAL version 2.0 : see CAreadme.txt\n3 4 -0.5 0.0 0.5 -0.5 0.0 -0.5 0.5 0.0 -0.5\n3 4 0.5 0.0 -0.5 0.5 0.0 0.5 -0.5 0.0 0.5\n")
