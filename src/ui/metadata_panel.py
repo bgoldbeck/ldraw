@@ -245,14 +245,15 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             filename = dialog.GetPath()
             # Check for file existing
             # If valid, pass to worker thread who will check data
-
-            self.stl_dir = str(Path(filename).parent) # Only the dir
-            self.stl_path_text = filename # The whole path to file
-            self.stl_path_isvalid = True
-            self.save_settings()
+            if self.stl_path_text != filename:
+                # Only update stuff if selection changed
+                self.stl_dir = str(Path(filename).parent) # Only the dir
+                self.stl_path_text = filename # The whole path to file
+                self.stl_path_isvalid = True
+                self.save_settings()
+                self.stl_path_input.SetValue(self.stl_path_text)
         dialog.Destroy()
 
-        self.stl_path_input.SetValue(self.stl_path_text)
 
     def text_ctrl_input(self, event):
         """Get the path for STL input file from user typing into TextCtrl element.
@@ -284,20 +285,19 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         if dialog.ShowModal() == wx.ID_OK:
             pathname = dialog.GetPath()
 
-            # Check if part name ends with .dat, if not append that
-            if not pathname.endswith('.dat'):
-                pathname = pathname + '.dat'
+            if self.ldraw_name_text != pathname:
+                # Check if part name ends with .dat, if not append that
+                if not pathname.endswith('.dat'):
+                    pathname = pathname + '.dat'
 
-            self.ldraw_name_text = pathname # Full path
-            self.part_dir = str(Path(pathname).parent) # Only the dir
-            self.part_name = str(Path(pathname).parts[-1]) # Only filename
-            print(self.part_dir)
-            print(self.part_name)
-            self.ldraw_name_isvalid = True
-            self.save_settings()
+                self.ldraw_name_text = pathname # Full path
+                self.part_dir = str(Path(pathname).parent) # Only the dir
+                self.part_name = str(Path(pathname).parts[-1]) # Only filename
+                self.ldraw_name_isvalid = True
+                self.save_settings()
+                self.ldraw_name_input.SetValue(self.ldraw_name_text)
         dialog.Destroy()
 
-        self.ldraw_name_input.SetValue(self.ldraw_name_text)
 
     def text_ctrl_output(self, event):
         """Get file output path from user in TextCtrl element.
