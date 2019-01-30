@@ -176,6 +176,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         :param event:
         :return:
         """
+
         if self.ldraw_name_isvalid and self.stl_path_isvalid:
             if UIDriver.application_state != ApplicationState.WAITING_GO:
                 UIDriver.change_application_state(ApplicationState.WAITING_GO)
@@ -185,6 +186,16 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                 UIDriver.change_application_state(
                     ApplicationState.WAITING_INPUT)
                 # Log errors
+
+        # Set colors
+        if self.ldraw_name_isvalid:
+            self.ldraw_name_input.SetBackgroundColour(wx.Colour(wx.NullColour))
+        else:
+            self.ldraw_name_input.SetBackgroundColour(wx.Colour("pink"))
+        if self.stl_path_isvalid:
+            self.stl_path_input.SetBackgroundColour(wx.Colour(wx.NullColour))
+        else:
+            self.stl_path_input.SetBackgroundColour(wx.Colour("pink"))
 
     def help(self, event):
         """Presents program limitations, common troubleshooting steps,
