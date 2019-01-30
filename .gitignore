@@ -107,3 +107,8 @@ venv.bak/
 .idea/workspace.xml
 .idea/misc.xml
 .idea/lscan.iml
+.idea/codeStyles/codeStyleConfig.xml
+.idea/lscan.iml
+.idea/misc.xml
+assets/settings/default_user_settings.txt
+assets/settings/user_settings.txt

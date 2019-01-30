@@ -40,18 +40,17 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self.browse_stl_button = None
         self.author_input = None
         self.license_input = None
-        self.stl_path_input = None
-        self.stl_path_text = None
+        self.stl_path_input = None # The input element
+        self.stl_path_text = None # The text entered
         self.stl_path_isvalid = False
         self.ldraw_name_input = None
         self.ldraw_name_text = None
         self.ldraw_name_isvalid = False
 
 
-        self.stl_file = None
         self.out_file = None
         # Settings
-        self.stl_dir = None
+        self.stl_dir = None # Essentially stl_path_text minus file part
         self.part_name = None
         self.part_dir = None
         self.author_default = None # The one loaded from file at start
@@ -239,15 +238,21 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         :return:
         """
         stl_wildcard = "*.stl"
-        dialog = wx.FileDialog(self, "Choose a STL file", defaultDir="", wildcard=stl_wildcard, style=wx.FD_OPEN
+        dialog = wx.FileDialog(self, "Choose a STL file", defaultDir=self.stl_dir, wildcard=stl_wildcard, style=wx.FD_OPEN
                                | wx.FD_FILE_MUST_EXIST)
 
         if dialog.ShowModal() == wx.ID_OK:
             filename = dialog.GetPath()
             # Check for file existing
             # If valid, pass to worker thread who will check data
-            self.stl_file = filename
+
+            self.stl_dir = Path(filename).parent # Only the dir
+            self.stl_path_text = filename # The whole path to file
+            self.stl_path_isvalid = True
+            self.save_settings()
         dialog.Destroy()
+
+        self.stl_path_input.SetValue(self.stl_path_text)
 
     def text_ctrl_input(self, event):
         """Get the path for STL input file from user typing into TextCtrl element.
@@ -258,8 +263,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         # Check file path validity
 
         if filepath.is_file():
-            if filepath != self.stl_file and filepath is not None:
-                self.stl_file = str(filepath)
+            if filepath != self.stl_path_text and filepath is not None:
+                self.stl_path_text = str(filepath)
                 self.save_settings()
         
         self.display_settings()
@@ -412,7 +417,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         # default part name directory
         default_part_dir = Path.cwd() / "assets/parts/"
         # default author
-        default_author = "First Last "
+        default_author = "First Last"
         # default license
         default_license = "Redistributable under CCAL version 2.0 : see CAreadme.txt"
 
@@ -473,16 +478,16 @@ class MetadataPanel(wx.Panel, IUIBehavior):
     def display_settings(self):
         """Display all settings and stl file path to standard out."""
         print("\n\nDisplay settings\n")
-        all_settings = [self.stl_file, self.stl_dir, self.part_name,
+        all_settings = [self.stl_path_text, self.stl_dir, self.part_name,
                         self.part_dir, self.author_default, self.license_default]
         for setting in all_settings:
             print(setting)
 
     # Getters
 
-    def get_stl_file(self):
+    def get_stl_path_text(self):
         """Return the string of the path to the input stl file."""
-        return self.stl_file
+        return self.stl_path_text
 
     def get_stl_dir(self):
         """Return the string of the stl directory."""
