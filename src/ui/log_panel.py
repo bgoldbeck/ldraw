@@ -132,5 +132,8 @@ class LogPanel(wx.Panel, IUIBehavior):
         self.log_text_ctrl.WriteText(message + "\n")
 
         self.log_text_ctrl.EndFontSize()
+
+        # Scrolls down to show last line added
+        self.log_text_ctrl.ShowPosition(self.log_text_ctrl.GetLastPosition())
         self.save_log()
 
