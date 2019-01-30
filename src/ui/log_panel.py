@@ -84,7 +84,7 @@ class LogPanel(wx.Panel, IUIBehavior):
 
         :return:
         """
-        self.log_text_ctrl.SetValue("")
+        self.log_text_ctrl.Clear()
 
     def on_state_changed(self, new_state: ApplicationState):
         """A state change was passed to the LogPanel.
@@ -136,4 +136,3 @@ class LogPanel(wx.Panel, IUIBehavior):
         # Scrolls down to show last line added
         self.log_text_ctrl.ShowPosition(self.log_text_ctrl.GetLastPosition())
         self.save_log()
-
