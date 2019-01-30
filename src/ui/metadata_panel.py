@@ -157,58 +157,26 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self.Bind(wx.EVT_BUTTON, self.browse_input, self.browse_stl_button)
 
         # Bind input field change events
-        self.stl_path_input.Bind(wx.EVT_KILL_FOCUS, self.check_input)
-        self.ldraw_name_input.Bind(wx.EVT_KILL_FOCUS, self.check_input)
+        self.stl_path_input.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_input)
+        #self.ldraw_name_input.Bind(wx.EVT_KILL_FOCUS, self.check_input)
         self.author_input.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_author)
         self.license_input.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_license)
 
-    def check_input(self, event):
-        """Checks if stl input field has changed since last check. If it has
-        changed, input is checked for validity and program state may be changed.
+    def check_input(self):
+        """Checks if all input fields have valid flag, and changes program
+        state if needed. Should be called after an input field updates.
         :param event:
         :return:
         """
-        current_stl = self.stl_path_input.GetValue()
-        if current_stl != self.stl_path_text:
-            self.stl_path_text = current_stl
-            self.stl_path_isvalid = self.stl_input_is_valid(current_stl)
-
-        current_ldraw = self.ldraw_name_input.GetValue()
-        if current_ldraw != self.ldraw_name_text:
-            self.ldraw_name_text = current_ldraw
-            self.ldraw_name_isvalid = self.ldraw_input_is_valid(current_ldraw)
-
-
-
         if self.ldraw_name_isvalid and self.stl_path_isvalid:
             if UIDriver.application_state != ApplicationState.WAITING_GO:
                 UIDriver.change_application_state(ApplicationState.WAITING_GO)
-                # Save settings here
                 # Clear log
         else:
             if UIDriver.application_state != ApplicationState.WAITING_INPUT:
                 UIDriver.change_application_state(
                     ApplicationState.WAITING_INPUT)
                 # Log errors
-        event.Skip()
-
-    def stl_input_is_valid(self, input):
-        """Checks if input stl is a valid path.
-        :param input: The input path
-        :return: Boolean if valid or not
-        """
-
-        # ONLY CHECKS FOR LENGTH, put in actual validation check here
-        return len(input) > 0
-
-    def ldraw_input_is_valid(self, input):
-        """Checks if ldraw name is a valid path.
-        :param input: The input path
-        :return: Boolean if valid or not
-        """
-
-        # ONLY CHECKS FOR LENGTH, put in actual validation check here
-        return len(input) > 0
 
     def help(self, event):
         """Presents program limitations, common troubleshooting steps, and steps to update LDraw parts library.
@@ -252,6 +220,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                 self.stl_path_isvalid = True
                 self.save_settings()
                 self.stl_path_input.SetValue(self.stl_path_text)
+                self.check_input()
         dialog.Destroy()
 
 
@@ -260,15 +229,32 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         :param event:
         :return:
         """
-        filepath = Path(self.stl_path_input.GetValue())
-        # Check file path validity
 
-        if filepath.is_file():
-            if filepath != self.stl_path_text and filepath is not None:
-                self.stl_path_text = str(filepath)
-                self.save_settings()
+        prev_text = self.stl_path_text
+        self.stl_path_text = self.stl_path_input.GetValue()
+
+        if prev_text != self.stl_path_text:
+            filepath = Path(self.stl_path_text)
+            # Check file path validity
+
+            if filepath.is_file():
+                if str(filepath).endswith('.stl'):
+                    # If valid, pass to worker thread who will check data
+                    self.stl_dir = str(filepath.parent) # Only the dir
+                    self.save_settings()
+                    self.stl_path_isvalid = True
+
+                else:
+                    self.stl_path_isvalid = False
+                    print("Input file must end in .stl")
+                    # Show an error in the log here
+            else:
+                self.stl_path_isvalid = False
+                print("Enter valid input filepath")
+                # Show an error in the log here
+
+            self.check_input()
         
-        self.display_settings()
         event.Skip()
 
     def browse_output(self, event):
@@ -296,6 +282,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                 self.ldraw_name_isvalid = True
                 self.save_settings()
                 self.ldraw_name_input.SetValue(self.ldraw_name_text)
+                self.check_input()
         dialog.Destroy()
 
 
