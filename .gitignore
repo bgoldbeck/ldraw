@@ -112,3 +112,5 @@ venv.bak/
 .idea/misc.xml
 assets/settings/default_user_settings.txt
 assets/settings/user_settings.txt
+.idea/lscan.iml
+assets/settings/user_settings.txt

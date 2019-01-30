@@ -246,7 +246,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             # Check for file existing
             # If valid, pass to worker thread who will check data
 
-            self.stl_dir = Path(filename).parent # Only the dir
+            self.stl_dir = str(Path(filename).parent) # Only the dir
             self.stl_path_text = filename # The whole path to file
             self.stl_path_isvalid = True
             self.save_settings()
