@@ -465,7 +465,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self.default_settings = [default_stl_dir, default_part_name,
                                  default_part_dir, default_author,
                                  default_license]
-        name = "assets/settings/" + name + ".txt"
+        name = "assets/settings/" + name
         filepath = Path.cwd() / name
 
         try:
@@ -499,17 +499,20 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
     def load_settings(self):
         """Load settings values into memory on startup."""
-        default_filepath = Path.cwd() / "assets/settings/default_user_settings.txt"
-        filepath = Path.cwd() / "assets/settings/user_settings.txt"
+        settings_path = Path.cwd() / "assets/settings"
+        filename = "user_settings.txt"
 
-        # If there isn't a default user settings file, create one and
-        # create a user settings file. The default is
-        # is to remain the same. The user settings file will change.
-        if not default_filepath.is_file():
-            self.create_settings("default_user_settings")
-            self.create_settings("user_settings")
+        # If settings file doesnt exist
+        if not (settings_path / filename).is_file():
+            # If directory doesnt exist
+            if not settings_path.is_dir():
+                settings_path.mkdir(parents=True)
 
-        with open(str(filepath), "r") as file:
+            # Create user settings with default
+            self.create_settings(filename)
+
+
+        with open(str(settings_path / filename), "r") as file:
             file_settings = file.readlines()
 
             self.stl_dir = file_settings[0].rstrip()
