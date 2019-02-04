@@ -101,13 +101,13 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                                               size=self.big_button)
 
         # Author
-        author_static_text = wx.StaticText(self, label="Author",
+        author_static_text = wx.StaticText(self, label="Optional: Set Author",
                                            size=self.label_size, style=wx.ALIGN_RIGHT)
         self.author_input = wx.TextCtrl(self, size=self.text_ctrl_size)
         self.author_input.SetMaxLength(self.max_path_length)
 
         # License information.
-        license_static_text = wx.StaticText(self, label="License",
+        license_static_text = wx.StaticText(self, label="Optional: Set License",
                                             size=self.label_size, style=wx.ALIGN_RIGHT)
         self.license_input = wx.TextCtrl(self, size=self.text_ctrl_size)
         self.license_input.SetMaxLength(self.max_path_length)
