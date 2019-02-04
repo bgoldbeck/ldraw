@@ -16,6 +16,8 @@ from src.ui.ui_driver import UIDriver
 from pathlib import Path
 from src.model_conversion.model_shipper import ModelShipper
 from sys import platform
+from src.log_messages.log_message import LogMessage
+from src.log_messages.log_type import LogType
 import re
 
 class MetadataPanel(wx.Panel, IUIBehavior):
@@ -169,7 +171,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
         # Bind input field change events
         self.stl_path_input.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_input)
-        self.ldraw_name_input.Bind(wx.EVT_SET_FOCUS, self.text_ctrl_output)
+        self.ldraw_name_input.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_output)
+        self.ldraw_name_input.Bind(wx.EVT_SET_FOCUS, self.text_ctrl_placeholder)
         self.author_input.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_author)
         self.license_input.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_license)
 
@@ -241,6 +244,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             # Check for file existing
             # If valid, pass to worker thread who will check data
             if self.stl_path_text != filename:
+                self.stl_path_input.SetValue(filename)
+
                 # Only update stuff if selection changed
                 # Check if this .stl is valid
                 ModelShipper.load_stl_model(filename)
@@ -250,12 +255,20 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                     self.stl_path_text = filename  # The whole path to file
                     self.stl_path_isvalid = True
                     self.save_settings()
-                    self.stl_path_input.SetValue(self.stl_path_text)
-                    print("was ok")
+                    UIDriver.fire_event(
+                        UserEvent(UserEventType.INPUT_VALIDATION,
+                                  LogMessage(LogType.INFORMATION,
+                                             "Input file loaded from: '" +
+                                             self.stl_path_text + "'.")))
 
                 else:
                     self.stl_path_isvalid = False
-                    print("Could not open .STL")
+                    UIDriver.fire_event(
+                        UserEvent(UserEventType.INPUT_VALIDATION,
+                                  LogMessage(LogType.ERROR,
+                                             "The input file '" +
+                                             filename +
+                                             "' is not a valid STL file.")))
 
 
                 self.check_input()
@@ -285,19 +298,37 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                         self.stl_dir = str(filepath.parent) # Only the dir
                         self.save_settings()
                         self.stl_path_isvalid = True
-                        print("was ok")
+                        UIDriver.fire_event(
+                            UserEvent(UserEventType.INPUT_VALIDATION,
+                                      LogMessage(LogType.INFORMATION,
+                                                 "Input file loaded from: '" +
+                                                 self.stl_path_text + "'.")))
 
                     else:
                         self.stl_path_isvalid = False
-                        print("Could not open .STL")
+                        UIDriver.fire_event(
+                            UserEvent(UserEventType.INPUT_VALIDATION,
+                                      LogMessage(LogType.ERROR,
+                                                 "The input file " +
+                                                 self.stl_path_text +
+                                                 " is not a valid STL file.")))
 
                 else:
                     self.stl_path_isvalid = False
-                    print("Input file must end in .stl")
+                    UIDriver.fire_event(
+                        UserEvent(UserEventType.INPUT_VALIDATION,
+                                  LogMessage(LogType.ERROR,
+                                             "Input file must have .stl extension.")))
                     # Show an error in the log here
             else:
                 self.stl_path_isvalid = False
-                print("Enter valid input filepath")
+                if len(self.stl_path_text) <=0:
+                    log_msg = "Input filepath cannot be blank."
+                else:
+                    log_msg = "The path '" + self.stl_path_text + "' could not be found."
+                UIDriver.fire_event(
+                    UserEvent(UserEventType.INPUT_VALIDATION,
+                              LogMessage(LogType.ERROR, log_msg)))
                 # Show an error in the log here
 
             self.check_input()
@@ -330,9 +361,15 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                 self.save_settings()
                 self.ldraw_name_input.SetValue(self.out_file)
                 self.check_input()
+                UIDriver.fire_event(
+                    UserEvent(UserEventType.INPUT_VALIDATION,
+                              LogMessage(LogType.INFORMATION,
+                                         "Output file will be saved as: " +
+                                         self.out_file)))
+
         dialog.Destroy()
 
-    def text_ctrl_output(self, event):
+    def text_ctrl_placeholder(self, event):
         """Remove placeholder text and reset style if output has not been set
         :param event:
         :return:
@@ -343,6 +380,16 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
         event.Skip()
 
+    def text_ctrl_output(self, event):
+
+
+        output_text = self.ldraw_name_input.GetValue()
+        if len(output_text) <= 0:
+            UIDriver.fire_event(
+                UserEvent(UserEventType.INPUT_VALIDATION,
+                          LogMessage(LogType.ERROR, "Output filepath cannot be blank.")))
+        event.Skip()
+
     def text_ctrl_author(self, event):
         """Get the author value from the user and update the settings file
         as needed."""
@@ -351,6 +398,11 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         # Update settings file author info
         if author != self.author_text and author != "":
             self.author_text = author
+            UIDriver.fire_event(
+                UserEvent(UserEventType.INPUT_VALIDATION,
+                          LogMessage(LogType.INFORMATION,
+                                     "Author changed to: " +
+                                     self.author_text)))
             self.save_settings()
 
         elif len(author) == 0:
@@ -365,6 +417,11 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         # Update settings file license info
         if license != self.license_text and license != "":
             self.license_text = license
+            UIDriver.fire_event(
+                UserEvent(UserEventType.INPUT_VALIDATION,
+                          LogMessage(LogType.INFORMATION,
+                                     "License changed to: " +
+                                     self.license_text)))
             self.save_settings()
 
         elif len(license) == 0:
