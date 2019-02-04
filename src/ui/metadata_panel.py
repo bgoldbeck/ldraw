@@ -28,7 +28,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
     big_button = (120, 25)
     small_button_size = (30, 25)
     panel_size = (1024, 100)
-    label_size = (150, 25)
+    label_size = (200, 25)
 
     def __init__(self, parent):
         """Default constructor for MainPanel class.
@@ -71,7 +71,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         # Input
         path_name_static_text = wx.StaticText(
             self,
-            label="Path to Input STL File",
+            label="Step 1: Choose Input STL File",
             size=self.label_size,
             style=wx.ALIGN_RIGHT)
 
@@ -79,7 +79,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self.stl_path_input = wx.TextCtrl(self, size=self.text_ctrl_size)
         self.stl_path_input.SetMaxLength(self.max_path_length)
 
-        self.browse_stl_button = wx.Button(self, label="Browse STL",
+        self.browse_stl_button = wx.Button(self, label="Browse Input",
                                            size=self.big_button)
 
         # Help / About.
@@ -89,13 +89,15 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                                       size=self.small_button_size)
 
         # Output path selection.
-        path_part_static_text = wx.StaticText(self, label="Part Name",
+        path_part_static_text = wx.StaticText(self, label="Step 2: Choose Output Name",
                                               size=self.label_size,
                                               style=wx.ALIGN_RIGHT)
-        self.ldraw_name_input = wx.TextCtrl(self, size=self.text_ctrl_size)
+        self.ldraw_name_input = wx.TextCtrl(self, size=self.text_ctrl_size,
+                                            style= wx.TE_READONLY)
         self.ldraw_name_input.SetMaxLength(self.max_path_length)
+        self.ldraw_name_input.SetValue("Browse output -->")
 
-        self.browse_output_button = wx.Button(self, label="Output Location",
+        self.browse_output_button = wx.Button(self, label="Browse Output",
                                               size=self.big_button)
 
         # Author
@@ -149,7 +151,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         vertical_layout.Add(horizontal_license, 0, wx.ALIGN_LEFT)
 
         horizontal_split = wx.BoxSizer(wx.HORIZONTAL)
-        horizontal_split.AddSpacer(150)
+        horizontal_split.AddSpacer(100)
         horizontal_split.Add(vertical_layout, 0, wx.ALIGN_LEFT)
 
         self.SetSizer(horizontal_split)
@@ -166,7 +168,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
         # Bind input field change events
         self.stl_path_input.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_input)
-        self.ldraw_name_input.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_output)
+        self.ldraw_name_input.Bind(wx.EVT_SET_FOCUS, self.text_ctrl_output)
         self.author_input.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_author)
         self.license_input.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_license)
 
@@ -295,7 +297,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         if dialog.ShowModal() == wx.ID_OK:
             pathname = dialog.GetPath()
 
-            if str(Path(self.part_dir) / self.part_name) != pathname:
+            if self.out_file != pathname:
                 # Check if part name ends with .dat, if not append that
                 if not pathname.endswith('.dat'):
                     pathname = pathname + '.dat'
@@ -305,59 +307,18 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                 self.part_name = str(Path(pathname).parts[-1]) # Only filename
                 self.ldraw_name_isvalid = True
                 self.save_settings()
-                self.ldraw_name_input.SetValue(self.part_name)
+                self.ldraw_name_input.SetValue(self.out_file)
                 self.check_input()
         dialog.Destroy()
 
-
     def text_ctrl_output(self, event):
-        """Get file output path from user in TextCtrl element.
+        """Remove placeholder text and reset style if output has not been set
         :param event:
         :return:
         """
-        # Detect if you need to use:
-        # default directory and default part name
-        # current default directory and new part name
 
-        prev_text = self.part_name
-        self.part_name = self.ldraw_name_input.GetValue()
-        if prev_text != self.part_name or not self.ldraw_name_isvalid:
-
-            # Need to filter part name to check for valid chars...
-            if self.is_good_path(self.part_name):
-
-                if not self.part_name.endswith('.dat'):
-                    self.part_name = self.part_name + '.dat'
-
-                full_path = Path(self.part_dir) / self.part_name
-
-                # The file already exists
-                if full_path.is_file():
-                    confirm = wx.MessageDialog(None, "The file\n" +
-                                               str(full_path) +
-                                               "\nalready exists. Overwrite?",
-                                               "Overwrite Warning",
-                                               wx.YES_NO)
-                    confirm_choice = confirm.ShowModal()
-
-                    # The user wants to overwrite the existing file
-                    if confirm_choice == wx.ID_YES:
-                        self.out_file = full_path
-                        self.ldraw_name_isvalid = True
-                        self.ldraw_name_input.SetValue(self.part_name)
-                        self.save_settings()
-                    elif confirm_choice == wx.ID_NO:
-                        self.ldraw_name_isvalid = False
-
-                # File didn't already exist and is ok
-                else:
-                    self.out_file = full_path
-                    self.ldraw_name_isvalid = True
-                    self.ldraw_name_input.SetValue(self.part_name)
-                    self.save_settings()
-            else:
-                self.ldraw_name_isvalid = False
-            self.check_input()
+        if not self.ldraw_name_isvalid:
+            self.ldraw_name_input.SetValue("")
 
         event.Skip()
 
