@@ -14,6 +14,7 @@ from src.ui.user_event import UserEvent
 from src.ui.user_event_type import UserEventType
 from src.ui.ui_driver import UIDriver
 from pathlib import Path
+from src.model_conversion.model_shipper import ModelShipper
 from sys import platform
 import re
 
@@ -241,11 +242,22 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             # If valid, pass to worker thread who will check data
             if self.stl_path_text != filename:
                 # Only update stuff if selection changed
-                self.stl_dir = str(Path(filename).parent) # Only the dir
-                self.stl_path_text = filename # The whole path to file
-                self.stl_path_isvalid = True
-                self.save_settings()
-                self.stl_path_input.SetValue(self.stl_path_text)
+                # Check if this .stl is valid
+                ModelShipper.load_stl_model(filename)
+
+                if ModelShipper.input_model:
+                    self.stl_dir = str(Path(filename).parent)  # Only the dir
+                    self.stl_path_text = filename  # The whole path to file
+                    self.stl_path_isvalid = True
+                    self.save_settings()
+                    self.stl_path_input.SetValue(self.stl_path_text)
+                    print("was ok")
+
+                else:
+                    self.stl_path_isvalid = False
+                    print("Could not open .STL")
+
+
                 self.check_input()
         dialog.Destroy()
 
@@ -265,10 +277,19 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
             if filepath.is_file():
                 if str(filepath).endswith('.stl'):
-                    # If valid, pass to worker thread who will check data
-                    self.stl_dir = str(filepath.parent) # Only the dir
-                    self.save_settings()
-                    self.stl_path_isvalid = True
+
+                    # Check if this .stl is valid
+                    ModelShipper.load_stl_model(str(filepath))
+
+                    if ModelShipper.input_model:
+                        self.stl_dir = str(filepath.parent) # Only the dir
+                        self.save_settings()
+                        self.stl_path_isvalid = True
+                        print("was ok")
+
+                    else:
+                        self.stl_path_isvalid = False
+                        print("Could not open .STL")
 
                 else:
                     self.stl_path_isvalid = False
