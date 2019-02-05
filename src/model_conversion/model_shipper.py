@@ -35,7 +35,7 @@ class ModelShipper:
         try:
             ModelShipper.input_model = Mesh.from_file(file_path)
             return True
-        except (RuntimeError, AssertionError, AttributeError, ValueError, FileNotFoundError) as err:
+        except Exception as err:
             logging.error(f"Failed to open the STL file : {err}")
             return False
 
