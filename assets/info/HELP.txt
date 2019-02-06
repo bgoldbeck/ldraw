@@ -1,0 +1,9 @@
+Program Limitations
+TEXT!!!
+Troubleshooting
+TEXT!!!
+How to update LDraw Parts Library
+Manually: Download the update provided at
+    http://www.ldraw.org/library/update/lcad<year><release>.zip
+Additional/automatic instructions avialable at: http://www.ldraw.org/article/13.html
+Unofficial library instructions available at: http://www.melkert.net/LDCad/faq#faq_unoflib

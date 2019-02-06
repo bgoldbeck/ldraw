@@ -9,8 +9,11 @@
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License.
 # See LICENSE file for the full text.
+import logging
 from stl import Mesh
 from src.model_conversion.ldraw_model import LDrawModel
+from src.log_messages.log_type import LogType
+from src.log_messages.log_message import LogMessage
 
 
 class ModelShipper:
@@ -19,15 +22,22 @@ class ModelShipper:
     Will be mainly responsible for importing STL models and exporting
     LDraw (.dat) files.
     """
+    input_model = None
+    output_model = None
 
     @staticmethod
     def load_stl_model(file_path: str):
-        """Load an STL model and return its mesh data.
+        """Load an STL model into ModelShipper.input_model.
 
         :param file_path: The path to the stl file.
         :return: The BaseStl model (numpy-stl) loaded from the file_path or None.
         """
-        return Mesh.from_file(file_path)
+        try:
+            ModelShipper.input_model = Mesh.from_file(file_path)
+            return True
+        except Exception as err:
+            logging.error(f"Failed to open the STL file : {err}")
+            return False
 
     @staticmethod
     def save_ldraw_file_model(file_path, model: LDrawModel):
@@ -40,17 +50,20 @@ class ModelShipper:
         # Open file
         file = open(file_path, "w")
 
-        # Write out the license
-        if model.get_name() != "":
-            ModelShipper._line_type0_to_file(file, model.get_license_info())
-
         # Write out the model name.
         if model.get_name() != "":
-            ModelShipper._line_type0_to_file(file, model.get_name())
+            ModelShipper._line_type0_to_file(file, "LScan auto generated part " + model.get_name())
+
+        if model.get_name() != "":
+            ModelShipper._line_type0_to_file(file, "Name: " + model.get_name() + ".dat")
 
         # Write out the author name.
         if model.get_author() != "":
             ModelShipper._line_type0_to_file(file, "Author: " + model.get_author())
+
+        # Write out the license
+        if model.get_name() != "":
+            ModelShipper._line_type0_to_file(file, "!LICENSE " + model.get_license_info())
 
         # Loop through main model mesh facets
         ModelShipper._line_type3_to_file(file, model.get_mesh())
@@ -62,16 +75,16 @@ class ModelShipper:
         file.close()
 
     @staticmethod
-    def _line_type0_to_file(file, comment):
-        """Write a comment line to the file using LDraw File Format line type 0
-        A comment line is formatted:
-        0 // <comment>
+    def _line_type0_to_file(file, command):
+        """Write a meta-command line to the file using LDraw File Format line type 0
+        A meta-command line is formatted:
+        0 <meta-command> <additional parameters>
 
         :param file: The file reference.
-        :param comment: The comment to write
+        :param command: The command
         :return: None
         """
-        file.write("0 // " + comment + "\n")
+        file.write("0 " + command + "\n")
 
     @staticmethod
     def _line_type3_to_file(file, mesh):
@@ -96,3 +109,11 @@ class ModelShipper:
                        + " " + str(mesh.v0[i][1])
                        + " " + str(mesh.v0[i][2])
                        + "\n")
+
+    @staticmethod
+    def get_input_model():
+        """Gets input_model
+        :return: input_model contents (should be a Mesh, or None)
+        """
+
+        return ModelShipper.input_model

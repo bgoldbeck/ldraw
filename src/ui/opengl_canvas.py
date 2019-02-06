@@ -10,12 +10,16 @@
 import wx
 from wx import glcanvas
 from OpenGL.GL import *
+from src.ui.application_state import ApplicationState
+from src.ui.user_event import UserEvent
+from src.ui.user_event_type import UserEventType
+from src.ui.iui_behavior import IUIBehavior
 
 
-class OpenGLCanvas(glcanvas.GLCanvas):
+class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
     """This is the canvas for OpenGL to render objects to.
     """
-    size = (600, 400)
+    size = (600, 300)
 
     def __init__(self, parent):
         """Default constructor for MainPanel class.
@@ -26,8 +30,7 @@ class OpenGLCanvas(glcanvas.GLCanvas):
         self.aspect_ratio = self.size[0] / self.size[1]
 
         # Call the base constructor for the OpenGL canvas.
-        glcanvas.GLCanvas.__init__(self, parent, -1, size=self.size,
-                                   pos=wx.Point(125, 100))
+        glcanvas.GLCanvas.__init__(self, parent, -1, size=self.size)
 
         # Bind events to functions.
         self.Bind(wx.EVT_PAINT, self.on_paint)
@@ -67,3 +70,19 @@ class OpenGLCanvas(glcanvas.GLCanvas):
         """
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         self.SwapBuffers()
+
+    def on_state_changed(self, new_state: ApplicationState):
+        """A state change was passed to the OpenGLCanvas.
+
+        :param new_state: The recorded ApplicationState.
+        :return: None
+        """
+        pass
+
+    def on_event(self, event: UserEvent):
+        """A user event was passed to the OpenGLCanvas.
+
+        :param event: The recorded UserEvent.
+        :return: None
+        """
+        pass

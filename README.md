@@ -5,7 +5,7 @@ Travis CI [![Build Status](https://travis-ci.org/bgoldbeck/lscan.svg?branch=mast
 
 ## Copyright ##
 Copyright (C) 2018 
-"Brandon Goldbeck", "Anthony Namba", "Brandon Le", "Ann Peake", "Sohan Tamang", "Brandon Le"
+"Brandon Goldbeck", "Anthony Namba", "Brandon Le", "Ann Peake", "Sohan Tamang", "Brandon Le" "An Huynh"
   
 ## Contact Us ##
 Brandon Goldbeck: bpg@pdx.edu <br />
