@@ -9,8 +9,8 @@
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 import threading, time
 from src.threading.worker_state import WorkerState
-from src.threading.log_message import LogMessage
-from src.threading.log_type import LogType
+from src.log_messages.log_message import LogMessage
+from src.log_messages.log_type import LogType
 
 
 class WorkerThread(threading.Thread):
