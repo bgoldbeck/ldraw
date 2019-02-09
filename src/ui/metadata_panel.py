@@ -185,11 +185,11 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self.Bind(wx.EVT_BUTTON, self.browse_input, self.browse_stl_button)
 
         # Bind input field change events
-        self.stl_path_input.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_input)
-        self.ldraw_name_input.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_output)
-        self.ldraw_name_input.Bind(wx.EVT_SET_FOCUS, self.text_ctrl_placeholder)
-        self.author_input.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_author)
-        self.license_input.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_license)
+        self.stl_path_input.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_input_on_kill_focus)
+        self.ldraw_name_input.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_output_on_kill_focus)
+        self.ldraw_name_input.Bind(wx.EVT_SET_FOCUS, self.text_ctrl_placeholder_on_gain_focus)
+        self.author_input.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_author_on_kill_focus)
+        self.license_input.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_license_on_kill_focus)
 
     def check_input(self):
         """Checks if all input fields have valid flag, and changes program
@@ -197,16 +197,13 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         :param event:
         :return:
         """
-
         if self.ldraw_name_isvalid and self.stl_path_isvalid:
             if UIDriver.application_state != ApplicationState.WAITING_GO:
                 UIDriver.change_application_state(ApplicationState.WAITING_GO)
-                # Clear log
         else:
             if UIDriver.application_state != ApplicationState.WAITING_INPUT:
                 UIDriver.change_application_state(
                     ApplicationState.WAITING_INPUT)
-                # Log errors
 
         # Set colors
         if self.ldraw_name_isvalid:
@@ -263,19 +260,16 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
                 # Only update stuff if selection changed
                 # Check if this .stl is valid
-                ModelShipper.load_stl_model(filename)
-
-                if ModelShipper.input_model:
+                if ModelShipper.load_stl_model(filename):
                     self.stl_dir = str(Path(filename).parent)  # Only the dir
                     self.stl_path_text = filename  # The whole path to file
                     self.stl_path_isvalid = True
                     self.save_settings()
                     UIDriver.fire_event(
-                        UserEvent(UserEventType.INPUT_VALIDATION,
+                        UserEvent(UserEventType.INPUT_MODEL_READY,
                                   LogMessage(LogType.INFORMATION,
                                              "Input file loaded from: '" +
                                              self.stl_path_text + "'.")))
-
                 else:
                     self.stl_path_isvalid = False
                     UIDriver.fire_event(
@@ -284,41 +278,34 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                                              "The input file '" +
                                              filename +
                                              "' is not a valid STL file.")))
-
-
                 self.check_input()
         dialog.Destroy()
 
-
-    def text_ctrl_input(self, event):
+    def text_ctrl_input_on_kill_focus(self, event):
         """Get the path for STL input file from user typing into TextCtrl element.
         :param event:
         :return:
         """
-
         prev_text = self.stl_path_text
         self.stl_path_text = self.stl_path_input.GetValue()
 
         if prev_text != self.stl_path_text:
-            filepath = Path(self.stl_path_text)
-            # Check file path validity
+            file_path = Path(self.stl_path_text)
 
-            if filepath.is_file():
-                if str(filepath).endswith('.stl'):
+            # Check file path validity
+            if file_path.is_file():
+                if str(file_path).endswith('.stl'):
 
                     # Check if this .stl is valid
-                    ModelShipper.load_stl_model(str(filepath))
-
-                    if ModelShipper.input_model:
-                        self.stl_dir = str(filepath.parent) # Only the dir
+                    if ModelShipper.load_stl_model(str(file_path)):
+                        self.stl_dir = str(file_path.parent)  # Only the dir
                         self.save_settings()
                         self.stl_path_isvalid = True
                         UIDriver.fire_event(
-                            UserEvent(UserEventType.INPUT_VALIDATION,
+                            UserEvent(UserEventType.INPUT_MODEL_READY,
                                       LogMessage(LogType.INFORMATION,
                                                  "Input file loaded from: '" +
                                                  self.stl_path_text + "'.")))
-
                     else:
                         self.stl_path_isvalid = False
                         UIDriver.fire_event(
@@ -327,14 +314,12 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                                                  "The input file " +
                                                  self.stl_path_text +
                                                  " is not a valid STL file.")))
-
                 else:
                     self.stl_path_isvalid = False
                     UIDriver.fire_event(
                         UserEvent(UserEventType.INPUT_VALIDATION,
                                   LogMessage(LogType.ERROR,
                                              "Input file must have .stl extension.")))
-                    # Show an error in the log here
             else:
                 self.stl_path_isvalid = False
                 if len(self.stl_path_text) <=0:
@@ -344,10 +329,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                 UIDriver.fire_event(
                     UserEvent(UserEventType.INPUT_VALIDATION,
                               LogMessage(LogType.ERROR, log_msg)))
-                # Show an error in the log here
-
             self.check_input()
-        
         event.Skip()
 
     def browse_output(self, event):
@@ -369,9 +351,9 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                 if not pathname.endswith('.dat'):
                     pathname = pathname + '.dat'
 
-                self.out_file = pathname # Full path
-                self.part_dir = str(Path(pathname).parent) # Only the dir
-                self.part_name = str(Path(pathname).parts[-1]) # Only filename
+                self.out_file = pathname  # Full path
+                self.part_dir = str(Path(pathname).parent)  # Only the dir
+                self.part_name = str(Path(pathname).parts[-1])  # Only filename
                 self.ldraw_name_isvalid = True
                 self.save_settings()
                 self.ldraw_name_input.SetValue(self.out_file)
@@ -384,30 +366,37 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
         dialog.Destroy()
 
-    def text_ctrl_placeholder(self, event):
+    def text_ctrl_placeholder_on_gain_focus(self, event):
         """Remove placeholder text and reset style if output has not been set
         :param event:
         :return:
         """
-
         if not self.ldraw_name_isvalid:
             self.ldraw_name_input.SetValue("")
 
         event.Skip()
 
-    def text_ctrl_output(self, event):
+    def text_ctrl_output_on_kill_focus(self, event):
+        """Called when the output text control loses focus.
 
-
+        :param event: The event that occurred.
+        :return: None.
+        """
         output_text = self.ldraw_name_input.GetValue()
         if len(output_text) <= 0:
             UIDriver.fire_event(
                 UserEvent(UserEventType.INPUT_VALIDATION,
-                          LogMessage(LogType.ERROR, "Output filepath cannot be blank.")))
+                          LogMessage(LogType.ERROR,
+                                     "Output file path cannot be blank.")))
         event.Skip()
 
-    def text_ctrl_author(self, event):
+    def text_ctrl_author_on_kill_focus(self, event):
         """Get the author value from the user and update the settings file
-        as needed."""
+        as needed.
+
+        :param event: The event that occurred.
+        :return: None
+        """
         author = self.author_input.GetValue()
 
         # Update settings file author info
@@ -424,14 +413,14 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             self.reset_author()
         event.Skip()
 
-    def text_ctrl_license(self, event):
+    def text_ctrl_license_on_kill_focus(self, event):
         """Get the license value from the user and update the settings file
         as needed."""
-        license = self.license_input.GetValue()
+        license_input_text = self.license_input.GetValue()
 
         # Update settings file license info
-        if license != self.license_text and license != "":
-            self.license_text = license
+        if license_input_text != self.license_text and license_input_text != "":
+            self.license_text = license_input_text
             UIDriver.fire_event(
                 UserEvent(UserEventType.INPUT_VALIDATION,
                           LogMessage(LogType.INFORMATION,
@@ -439,7 +428,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                                      self.license_text)))
             self.save_settings()
 
-        elif len(license) == 0:
+        elif len(license_input_text) == 0:
             self.reset_license()
         event.Skip()
 
@@ -450,8 +439,6 @@ class MetadataPanel(wx.Panel, IUIBehavior):
     def reset_license(self):
         """Fill in license field with default"""
         self.license_input.SetValue(self.license_default)
-
-    # States and events
 
     def on_state_changed(self, new_state: ApplicationState):
         """A state change was passed to the MetadataPanel.
@@ -486,24 +473,11 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         """
         pass
 
-    # Checks
-
-    def is_good_path(self, str):
-        """Returns True if the string doesn't contain invalid values."""
-        # Windows
-        #if platform == "win32":
-
-        # Mac
-        #if platform == "darwin":
-
-        # Linux
-        #if platform == "linux":
-        return re.match("^[a-zA-Z0-9_,-/+ ]+$", str)
-
-    # Settings
-
     def create_settings(self, name):
         """Generate initial settings file based on current working directory.
+
+        :param name:
+        :return:
         """
         # default stl directory
         default_stl_dir = Path.cwd() / "assets/models/"
@@ -520,15 +494,14 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                                  default_part_dir, default_author,
                                  default_license]
         name = "assets/settings/" + name
-        filepath = Path.cwd() / name
+        file_path = Path.cwd() / name
 
         try:
-            with open(str(filepath), "w") as file:
+            with open(str(file_path), "w") as file:
                 for setting in self.default_settings:
                     print(setting, file=file)
         except FileNotFoundError as ferr:
             print(ferr)
-
 
     def save_settings(self):
         """Save changes to user settings file.
@@ -539,9 +512,9 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
         settings = [self.stl_dir, "untitled.dat", self.part_dir,
                     self.author_text, self.license_text]
-        filepath = Path.cwd() / "assets/settings/user_settings.txt"
+        file_path = Path.cwd() / "assets/settings/user_settings.txt"
         try:
-            with open(str(filepath), "w") as file:
+            with open(str(file_path), "w") as file:
                 for setting in settings:
                     if setting is not None:
                         print(setting, file=file)
@@ -549,10 +522,9 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         except FileNotFoundError as ferr:
             print(ferr)
 
-        # self.display_settings()
-
     def load_settings(self):
-        """Load settings values into memory on startup."""
+        """Load settings values into memory on startup.
+        """
         settings_path = Path.cwd() / "assets/settings"
         filename = "user_settings.txt"
 
@@ -565,7 +537,6 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             # Create user settings with default
             self.create_settings(filename)
 
-
         with open(str(settings_path / filename), "r") as file:
             file_settings = file.readlines()
 
@@ -574,8 +545,6 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             self.part_dir = file_settings[2].rstrip()
             self.author_default = file_settings[3].rstrip()
             self.license_default = file_settings[4].rstrip()
-
-        # self.display_settings()
 
     def display_settings(self):
         """Display all settings and stl file path to standard out."""
@@ -586,28 +555,32 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         for setting in all_settings:
             print(setting)
 
-    # Getters
-
     def get_stl_path_text(self):
-        """Return the string of the path to the input stl file."""
+        """Return the string of the path to the input stl file.
+        """
         return self.stl_path_text
 
     def get_stl_dir(self):
-        """Return the string of the stl directory."""
+        """Return the string of the stl directory.
+        """
         return self.stl_dir
 
     def get_out_file(self):
-        """Return the string of the path to the output dat file."""
+        """Return the string of the path to the output dat file.
+        """
         return self.out_file
 
     def get_part_dir(self):
-        """Return the string of to the parts directory."""
+        """Return the string of to the parts directory.
+        """
         return self.part_dir
 
     def get_author(self):
-        """Return the string of the author."""
+        """Return the string of the author.
+        """
         return self.author_text
 
     def get_license(self):
-        """Return the string of the license."""
+        """Return the string of the license.
+        """
         return self.license_text
