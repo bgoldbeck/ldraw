@@ -15,20 +15,20 @@ from src.ui.user_event_type import UserEventType
 from src.ui.ui_driver import UIDriver
 from src.log_messages.log_message import LogMessage
 from src.log_messages.log_type import LogType
+from src.ui.ui_style import *
 
 
 class ConversionPanel(wx.Panel, IUIBehavior):
     """Holds wx controls relevant to controlling the program behavior for starting, stopping,
     pausing, and canceling the conversion process.
     """
-    big_button_size = (120, 30)
 
     def __init__(self, parent):
         """Default constructor for ConversionPanel class.
 
         :param parent: The parent wx object for this panel.
         """
-        wx.Panel.__init__(self, parent, size=(1024, 30), style=wx.SIMPLE_BORDER)
+        wx.Panel.__init__(self, parent, size=(1024, 30), style=UI_style.conversion_border)
         self.parent = parent
         self.convert_button = None
         self.pause_button = None
@@ -42,13 +42,21 @@ class ConversionPanel(wx.Panel, IUIBehavior):
 
         :return: None
         """
-        self.SetBackgroundColour("#456eab")
+        self.SetBackgroundColour(UI_style.conversion_background_color)
 
         # Create the wx controls for this conversion panel.
-        self.convert_button = wx.Button(self, label="Convert to LDraw", size=self.big_button_size)
-        self.pause_button = wx.Button(self, label="Pause/Continue", size=self.big_button_size)
-        self.cancel_button = wx.Button(self, label="Cancel", size=self.big_button_size)
-        self.save_button = wx.Button(self, label="Save Conversion", size=self.big_button_size)
+        self.convert_button = wx.Button(self, label="Convert to LDraw", size=UI_style.conversion_big_button_size)
+        self.convert_button.SetBackgroundColour(UI_style.button_background)
+        self.convert_button.SetForegroundColour(UI_style.button_text)
+        self.pause_button = wx.Button(self, label="Pause/Continue", size=UI_style.conversion_big_button_size)
+        self.pause_button.SetBackgroundColour(UI_style.button_background)
+        self.pause_button.SetForegroundColour(UI_style.button_text)
+        self.cancel_button = wx.Button(self, label="Cancel", size=UI_style.conversion_big_button_size)
+        self.cancel_button.SetBackgroundColour(UI_style.button_background)
+        self.cancel_button.SetForegroundColour(UI_style.button_text)
+        self.save_button = wx.Button(self, label="Save Conversion", size=UI_style.conversion_big_button_size)
+        self.save_button.SetBackgroundColour(UI_style.button_background)
+        self.save_button.SetForegroundColour(UI_style.button_text)
 
         # Create the layout.
         horizontal_layout = wx.BoxSizer(wx.HORIZONTAL)
@@ -90,10 +98,12 @@ class ConversionPanel(wx.Panel, IUIBehavior):
         """
         self.is_paused = not self.is_paused
         if self.is_paused:
+            self.pause_button.SetLabelText('Resume')
             UIDriver.fire_event(
                 UserEvent(UserEventType.CONVERSION_PAUSED,
                           LogMessage(LogType.INFORMATION, "Conversion process paused.")))
         else:
+            self.pause_button.SetLabelText('Pause')
             UIDriver.fire_event(
                 UserEvent(UserEventType.CONVERSION_STARTED,
                           LogMessage(LogType.INFORMATION, "Conversion process resumed.")))
@@ -137,6 +147,10 @@ class ConversionPanel(wx.Panel, IUIBehavior):
             self.cancel_button.Disable()
             self.pause_button.Disable()
             self.convert_button.Enable()
+            if self.is_paused:
+                self.is_paused = False
+                self.pause_button.SetLabelText('Pause')
+
         elif new_state == ApplicationState.WORKING:
             self.save_button.Disable() # I assume this will be enabled after
             self.cancel_button.Enable()

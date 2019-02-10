@@ -9,21 +9,18 @@
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 import wx
 import sys
-from src.ui.main_panel import MainPanel
+from src.ui.main_panel import *
 
 
 class MainFrame(wx.Frame):
     """The root Wx Frame that will be the parent of all Wx controls.
     """
-    min_size = (1024, 640)
-    max_size = (1024, 900)
-    current_size = min_size
 
     def __init__(self):
         """Default constructor for MainFrame class.
         """
-        wx.Frame.__init__(self, None, title="LScan", size=self.current_size,
-                          style=wx.DEFAULT_FRAME_STYLE
+        wx.Frame.__init__(self, None, title="LScan", size=UI_style.main_frame_current_size,
+                          style=UI_style.main_frame_border
                           | wx.FULL_REPAINT_ON_RESIZE)
         self._build_gui()
 
@@ -32,8 +29,8 @@ class MainFrame(wx.Frame):
         :return: None
         """
         # Set the limitations on the frame.
-        self.SetMinSize(self.min_size)
-        self.SetMaxSize(self.max_size)
+        self.SetMinSize(UI_style.main_frame_min_size)
+        self.SetMaxSize(UI_style.main_frame_max_size)
 
         # Application needs to be able to close.
         self.Bind(wx.EVT_CLOSE, self._on_close)

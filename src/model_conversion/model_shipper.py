@@ -22,19 +22,22 @@ class ModelShipper:
     Will be mainly responsible for importing STL models and exporting
     LDraw (.dat) files.
     """
+    input_model = None
+    output_model = None
 
     @staticmethod
     def load_stl_model(file_path: str):
-        """Load an STL model and return its mesh data.
+        """Load an STL model into ModelShipper.input_model.
 
         :param file_path: The path to the stl file.
         :return: The BaseStl model (numpy-stl) loaded from the file_path or None.
         """
         try:
-            return Mesh.from_file(file_path)
-        except (RuntimeError, AssertionError, AttributeError, ValueError, FileNotFoundError) as err:
+            ModelShipper.input_model = Mesh.from_file(file_path)
+            return True
+        except Exception as err:
             logging.error(f"Failed to open the STL file : {err}")
-            return None
+            return False
 
     @staticmethod
     def save_ldraw_file_model(file_path, model: LDrawModel):
@@ -107,3 +110,10 @@ class ModelShipper:
                        + " " + str(mesh.v0[i][2])
                        + "\n")
 
+    @staticmethod
+    def get_input_model():
+        """Gets input_model
+        :return: input_model contents (should be a Mesh, or None)
+        """
+
+        return ModelShipper.input_model

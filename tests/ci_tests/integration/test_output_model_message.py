@@ -22,7 +22,7 @@ class TestInputModelMessage(unittest.TestCase):
     def test_(self):
 
         # Load the model from the assets folder.
-        input_model = ModelShipper.load_stl_model(Util.path_conversion("/assets/models/plane.stl"))
+        input_model = ModelShipper.load_stl_model(Util.path_conversion("assets/models/plane.stl"))
         output_model = LDrawModel(
             "plane",  # Model name
             "Rando",  # Author

@@ -1,5 +1,0 @@
-C:\Users\brandon\brandon_cs\capstone-lscan\lscan\assets\models
-untitled.dat
-C:\Users\brandon\brandon_cs\capstone-lscan\lscan\assets\parts
-First Last 
-Redistributable under CCAL version 2.0 : see CAreadme.txt

@@ -18,35 +18,37 @@ class ModelShipperTest(unittest.TestCase):
 
     def testImportPlane(self):
         # Load the model from the assets folder.
-        mesh_data = ModelShipper.load_stl_model(Util.path_conversion("/assets/models/plane.stl"))
-
+        model_is_valid = ModelShipper.load_stl_model(Util.path_conversion("assets/models/plane.stl"))
+        self.assertEqual(model_is_valid, True)
         # First triangle facet.
-        self.assertEqual(mesh_data.v0[0], Vector3([0.5, 0., -0.5]))
-        self.assertEqual(mesh_data.v1[0], Vector3([-0.5, 0., -0.5]))
-        self.assertEqual(mesh_data.v2[0], Vector3([-0.5, 0., 0.5]))
+        self.assertEqual(ModelShipper.input_model.v0[0], Vector3([0.5, 0., -0.5]))
+        self.assertEqual(ModelShipper.input_model.v1[0], Vector3([-0.5, 0., -0.5]))
+        self.assertEqual(ModelShipper.input_model.v2[0], Vector3([-0.5, 0., 0.5]))
 
         # Second triangle facet.
-        self.assertEqual(mesh_data.v0[1], Vector3([-0.5, 0., 0.5]))
-        self.assertEqual(mesh_data.v1[1], Vector3([0.5, 0., 0.5]))
-        self.assertEqual(mesh_data.v2[1], Vector3([0.5, 0., -0.5]))
+        self.assertEqual(ModelShipper.input_model.v0[1], Vector3([-0.5, 0., 0.5]))
+        self.assertEqual(ModelShipper.input_model.v1[1], Vector3([0.5, 0., 0.5]))
+        self.assertEqual(ModelShipper.input_model.v2[1], Vector3([0.5, 0., -0.5]))
 
     def testExportPlane(self):
         # Create an empty temp folder to use for temporary model files.
         try:
-            os.mkdir(Util.path_conversion("/tests/temp"))
+            os.mkdir(Util.path_conversion("tests/temp"))
         except OSError:
             pass
 
         # The file path we will use.
-        file_path = Util.path_conversion("/tests/temp/plane.dat")
+        file_path = Util.path_conversion("tests/temp/plane.dat")
 
         # Import the model.
-        mesh_data = ModelShipper.load_stl_model(Util.path_conversion("/assets/models/plane.stl"))
+        is_valid = ModelShipper.load_stl_model(Util.path_conversion("assets/models/plane.stl"))
+        self.assertEqual(is_valid, True)
+
         model = LDrawModel(
             "plane",  # Model name
             "Rando",  # Author
             "Redistributable under CCAL version 2.0 : see CAreadme.txt",  # License info
-            mesh_data  # Mesh
+            ModelShipper.input_model  # Mesh
         )
 
         # Export the model.

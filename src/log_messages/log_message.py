@@ -11,6 +11,7 @@
 # See LICENSE file for the full text.
 import datetime
 from src.log_messages.log_type import LogType
+from src.ui.ui_style import *
 
 
 class LogMessage:
@@ -53,13 +54,13 @@ class LogMessage:
         intensity of each color value.
         """
         if self.message_type == LogType.INFORMATION:
-            return [225, 225, 225]
+            return UI_style.log_info_text_color
         elif self.message_type == LogType.WARNING:
-            return [255, 255, 0]
+            return UI_style.log_warning_text_color
         elif self.message_type == LogType.ERROR:
-            return [255, 0, 0]
+            return UI_style.log_error_text_color
         elif self.message_type == LogType.DEBUG:
-            return [0, 0, 255]
+            return UI_style.log_debug_text_color
         else:
-            return [255, 255, 255]
+            return UI_style.log_default_text_color
 
