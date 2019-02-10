@@ -8,8 +8,6 @@
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 import wx, os
-from sys import platform
-from pathlib import Path
 from src.ui.application_state import ApplicationState
 from src.ui.user_event import UserEvent
 from src.ui.iui_behavior import IUIBehavior
@@ -100,7 +98,7 @@ class UIDriver:
         """
         enc = "utf-8"
 
-        file_path = Util.path_conversion("/assets/info/" + file_name)
+        file_path = Util.path_conversion("assets/info/" + file_name)
 
         print(file_path)
         text = None

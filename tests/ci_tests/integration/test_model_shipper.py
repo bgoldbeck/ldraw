@@ -18,7 +18,7 @@ class ModelShipperTest(unittest.TestCase):
 
     def testImportPlane(self):
         # Load the model from the assets folder.
-        model_is_valid = ModelShipper.load_stl_model(Util.path_conversion("/assets/models/plane.stl"))
+        model_is_valid = ModelShipper.load_stl_model(Util.path_conversion("assets/models/plane.stl"))
         self.assertEqual(model_is_valid, True)
         # First triangle facet.
         self.assertEqual(ModelShipper.input_model.v0[0], Vector3([0.5, 0., -0.5]))
@@ -33,15 +33,15 @@ class ModelShipperTest(unittest.TestCase):
     def testExportPlane(self):
         # Create an empty temp folder to use for temporary model files.
         try:
-            os.mkdir(Util.path_conversion("/tests/temp"))
+            os.mkdir(Util.path_conversion("tests/temp"))
         except OSError:
             pass
 
         # The file path we will use.
-        file_path = Util.path_conversion("/tests/temp/plane.dat")
+        file_path = Util.path_conversion("tests/temp/plane.dat")
 
         # Import the model.
-        is_valid = ModelShipper.load_stl_model(Util.path_conversion("/assets/models/plane.stl"))
+        is_valid = ModelShipper.load_stl_model(Util.path_conversion("assets/models/plane.stl"))
         self.assertEqual(is_valid, True)
 
         model = LDrawModel(
