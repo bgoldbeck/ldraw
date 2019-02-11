@@ -13,13 +13,12 @@ from src.ui.application_state import ApplicationState
 from src.ui.user_event import UserEvent
 from src.ui.user_event_type import UserEventType
 from src.ui.ui_driver import UIDriver
-from pathlib import Path
 from src.model_conversion.model_shipper import ModelShipper
-from sys import platform
 from src.log_messages.log_message import LogMessage
 from src.log_messages.log_type import LogType
 from src.ui.ui_style import *
-import re
+from util import Util
+
 
 class MetadataPanel(wx.Panel, IUIBehavior):
     """This class contains the wx widgets for control over
@@ -261,7 +260,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                 # Only update stuff if selection changed
                 # Check if this .stl is valid
                 if ModelShipper.load_stl_model(filename):
-                    self.stl_dir = str(Path(filename).parent)  # Only the dir
+                    self.stl_dir = Util.get_parent(filename)  # Only the dir
                     self.stl_path_text = filename  # The whole path to file
                     self.stl_path_isvalid = True
                     self.save_settings()
@@ -290,15 +289,14 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self.stl_path_text = self.stl_path_input.GetValue()
 
         if prev_text != self.stl_path_text:
-            file_path = Path(self.stl_path_text)
 
             # Check file path validity
-            if file_path.is_file():
-                if str(file_path).endswith('.stl'):
+            if Util.is_file(self.stl_path_text):
+                if self.stl_path_text.endswith('.stl'):
 
                     # Check if this .stl is valid
-                    if ModelShipper.load_stl_model(str(file_path)):
-                        self.stl_dir = str(file_path.parent)  # Only the dir
+                    if ModelShipper.load_stl_model(self.stl_path_text):
+                        self.stl_dir = Util.get_parent(self.stl_path_text)  # Only the dir
                         self.save_settings()
                         self.stl_path_isvalid = True
                         UIDriver.fire_event(
@@ -352,8 +350,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                     pathname = pathname + '.dat'
 
                 self.out_file = pathname  # Full path
-                self.part_dir = str(Path(pathname).parent)  # Only the dir
-                self.part_name = str(Path(pathname).parts[-1])  # Only filename
+                self.part_dir = Util.get_parent(pathname)  # Only the dir
+                self.part_name = Util.get_filename(pathname)  # Only filename
                 self.ldraw_name_isvalid = True
                 self.save_settings()
                 self.ldraw_name_input.SetValue(self.out_file)
@@ -480,11 +478,11 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         :return:
         """
         # default stl directory
-        default_stl_dir = Path.cwd() / "assets/models/"
+        default_stl_dir = Util.path_conversion("assets/models/")
         # default part name
         default_part_name = "untitled.dat"
         # default part name directory
-        default_part_dir = Path.cwd() / "assets/parts/"
+        default_part_dir = Util.path_conversion("assets/parts/")
         # default author
         default_author = "First Last"
         # default license
@@ -493,11 +491,10 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self.default_settings = [default_stl_dir, default_part_name,
                                  default_part_dir, default_author,
                                  default_license]
-        name = "assets/settings/" + name
-        file_path = Path.cwd() / name
+        file_path = Util.path_conversion(f"assets/settings/{name}")
 
         try:
-            with open(str(file_path), "w") as file:
+            with open(file_path, "w") as file:
                 for setting in self.default_settings:
                     print(setting, file=file)
         except FileNotFoundError as ferr:
@@ -512,9 +509,9 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
         settings = [self.stl_dir, "untitled.dat", self.part_dir,
                     self.author_text, self.license_text]
-        file_path = Path.cwd() / "assets/settings/user_settings.txt"
+        file_path = Util.path_conversion("assets/settings/user_settings.txt")
         try:
-            with open(str(file_path), "w") as file:
+            with open(file_path, "w") as file:
                 for setting in settings:
                     if setting is not None:
                         print(setting, file=file)
@@ -525,19 +522,19 @@ class MetadataPanel(wx.Panel, IUIBehavior):
     def load_settings(self):
         """Load settings values into memory on startup.
         """
-        settings_path = Path.cwd() / "assets/settings"
+        settings_path = Util.path_conversion("assets/settings")
         filename = "user_settings.txt"
+        file_path = settings_path + "/" + filename
 
         # If settings file doesnt exist
-        if not (settings_path / filename).is_file():
+        if not Util.is_file(file_path):
             # If directory doesnt exist
-            if not settings_path.is_dir():
-                settings_path.mkdir(parents=True)
-
+            if not Util.is_dir(settings_path):
+                Util.mkdir(settings_path)
             # Create user settings with default
             self.create_settings(filename)
 
-        with open(str(settings_path / filename), "r") as file:
+        with open(file_path, "r") as file:
             file_settings = file.readlines()
 
             self.stl_dir = file_settings[0].rstrip()
