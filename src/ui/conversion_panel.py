@@ -105,14 +105,13 @@ class ConversionPanel(wx.Panel, IUIBehavior):
                 UserEvent(UserEventType.CONVERSION_PAUSED,
                           LogMessage(LogType.INFORMATION, "Conversion process paused.")))
             UIDriver.thread_manager.pause_work()
-            UIDriver.timer.Stop()
+
         else:
             self.pause_button.SetLabelText('Pause')
             UIDriver.fire_event(
                 UserEvent(UserEventType.CONVERSION_STARTED,
                           LogMessage(LogType.INFORMATION, "Conversion process resumed.")))
             UIDriver.thread_manager.continue_work()
-            UIDriver.timer.Start(UIDriver.thread_manager.interval)
 
     def cancel(self, event):
         """Cancel the conversion operation.

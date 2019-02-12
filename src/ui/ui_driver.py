@@ -13,6 +13,7 @@ from src.ui.user_event import UserEvent
 from src.ui.iui_behavior import IUIBehavior
 from util import Util
 from src.threading.thread_manager import *
+from src.ui.user_event_type import UserEventType
 
 
 class UIDriver:
@@ -45,7 +46,7 @@ class UIDriver:
             UIDriver.change_application_state(ApplicationState.WAITING_INPUT)
 
             UIDriver.timer = wx.Timer(root)
-            root.Bind(wx.EVT_TIMER, UIDriver.thread_manager.check_message)
+            root.Bind(wx.EVT_TIMER, UIDriver.check_message_queue)
 
     @staticmethod
     def get_all_ui_behaviors(root, behaviors):
@@ -120,3 +121,15 @@ class UIDriver:
             pass
 
         return text
+
+    @staticmethod
+    def check_message_queue(event):
+        """Check threadmanager's message queue and log all messages
+
+        :param event:
+        """
+        while (UIDriver.thread_manager.has_message_available()):
+            msg = UIDriver.thread_manager.get_message()
+            UIDriver.fire_event(
+                UserEvent(UserEventType.WORKER_LOG_MESSAGE_AVAILABLE, msg))
+

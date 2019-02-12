@@ -36,13 +36,11 @@ class ThreadManager:
     def pause_work(self):
         if self.worker_thread is not None:
             self.worker_thread.change_state(WorkerState.PAUSE)
-            self.check_message()
 
     def kill_work(self):
         if self.worker_thread is not None:
             self.worker_thread.kill()
             self.worker_thread = None
-            self.check_message()
 
 
     def start_work(self):
@@ -54,14 +52,4 @@ class ThreadManager:
         if self.worker_thread is not None:
             self.worker_thread.change_state(WorkerState.RUNNING)
 
-    def check_message(self, event=None):
-        while (self.has_message_available()):
-            msg = self.get_message()
-            self.handle_message(msg)
 
-    def handle_message(self, msg):
-        from src.ui.ui_driver import UIDriver
-        from src.ui.user_event import UserEvent
-        from src.ui.user_event_type import UserEventType
-        UIDriver.fire_event(
-            UserEvent(UserEventType.WORKER_LOG_MESSAGE_AVAILABLE, msg))
