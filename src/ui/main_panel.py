@@ -126,7 +126,3 @@ class MainPanel(wx.Panel, IUIBehavior):
         UI_style.log_output_size = (920, 165)
         UI_style.log_panel_size = (1022, 500)
         UI_style.log_font_size = 10
-        self.parent.Layout()
-
-        wx.PaintDC(self)
-        self.Refresh()
