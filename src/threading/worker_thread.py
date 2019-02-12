@@ -18,26 +18,24 @@ class WorkerThread(threading.Thread):
     """
     def __init__(self, feedback_log):
         threading.Thread.__init__(self)
-        self.state = WorkerState.RUNNING
         self.feedback_log = feedback_log
+        self.state = WorkerState.RUNNING
 
     def run(self):
         """Process the thread and do work with its CPU time.
 
         :return: None
         """
-        print("Starting processing thread")
-
         i = 1 # just test variable for test messages
         while self.state == WorkerState.RUNNING or self.state == WorkerState.PAUSE:
             while self.state == WorkerState.RUNNING:
                 #do main stuff
 
                 # testing messages
-                self.put_feedback("test message " + str(i), LogType.INFORMATION)
+                self.put_feedback("Test message #" + str(i), LogType.INFORMATION)
                 #print("test message " + self.feedback_log.get())
                 i += 1
-                time.sleep(0.0)
+                time.sleep(0.5)
 
             while self.state == WorkerState.PAUSE:
                 a = 1 + 1 # just spins...
@@ -49,8 +47,7 @@ class WorkerThread(threading.Thread):
         :param log_type:
         :return:
         """
-        timestamp = 0
-        log_msg = LogMessage(log_type, timestamp, msg)
+        log_msg = LogMessage(log_type, msg)
         self.feedback_log.put(log_msg)
 
     def change_state(self, new_state):
@@ -60,6 +57,12 @@ class WorkerThread(threading.Thread):
         :return:
         """
         self.state = new_state
+        if new_state == WorkerState.RUNNING:
+            self.put_feedback("Beginning processing.", LogType.DEBUG)
+        elif new_state == WorkerState.PAUSE:
+            self.put_feedback("Processing paused.", LogType.DEBUG)
+        elif new_state == WorkerState.STOP:
+            self.put_feedback("Processing cancelled.", LogType.DEBUG)
 
     def start(self):
         self.change_state(WorkerState.RUNNING)
@@ -67,4 +70,3 @@ class WorkerThread(threading.Thread):
 
     def kill(self):
         self.change_state(WorkerState.STOP)
-        print("Exiting processing thread")

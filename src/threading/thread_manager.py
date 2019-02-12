@@ -7,9 +7,10 @@
 # “An Huynh” <an35@pdx.edu>
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
-import queue, threading
+import queue
 from src.threading.worker_thread import *
 from src.threading.worker_state import WorkerState
+
 
 class ThreadManager:
     """Has instance of work threads, manages communications between them
@@ -20,6 +21,7 @@ class ThreadManager:
         """Initialize class members
 
         """
+        self.interval = 50 # how many ms between queue checks
         self.feedback_log = queue.Queue()  # holds messages for log
         self.worker_thread = None
 
@@ -27,22 +29,24 @@ class ThreadManager:
         return not self.feedback_log.empty()
 
     def get_message(self):
-        message = self.feedback_log.get()
+        message = self.feedback_log.get(block=True)
         self.feedback_log.task_done()
         return message
 
     def pause_work(self):
         if self.worker_thread is not None:
-            self.worker_thread.change_state()
+            self.worker_thread.change_state(WorkerState.PAUSE)
+            self.check_message()
 
     def kill_work(self):
         if self.worker_thread is not None:
             self.worker_thread.kill()
             self.worker_thread = None
+            self.check_message()
+
 
     def start_work(self):
         self.worker_thread = WorkerThread(self.feedback_log)  # only created when processing begins. May be recreated
-        self.worker_thread.change_state(WorkerState.RUNNING)
         self.worker_thread.daemon = True
         self.worker_thread.start()
 
@@ -50,3 +54,14 @@ class ThreadManager:
         if self.worker_thread is not None:
             self.worker_thread.change_state(WorkerState.RUNNING)
 
+    def check_message(self, event=None):
+        while (self.has_message_available()):
+            msg = self.get_message()
+            self.handle_message(msg)
+
+    def handle_message(self, msg):
+        from src.ui.ui_driver import UIDriver
+        from src.ui.user_event import UserEvent
+        from src.ui.user_event_type import UserEventType
+        UIDriver.fire_event(
+            UserEvent(UserEventType.WORKER_LOG_MESSAGE_AVAILABLE, msg))

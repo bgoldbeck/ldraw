@@ -12,6 +12,7 @@ from src.ui.application_state import ApplicationState
 from src.ui.user_event import UserEvent
 from src.ui.iui_behavior import IUIBehavior
 from util import Util
+from src.threading.thread_manager import *
 
 
 class UIDriver:
@@ -23,6 +24,8 @@ class UIDriver:
     instance = None
     application_state = None
     root_frame = None
+    thread_manager = None
+    timer = None #for checking message queue
 
     def __init__(self, root):
         """Default constructor for the UIDriver object.
@@ -33,11 +36,16 @@ class UIDriver:
 
             UIDriver.root_frame = root
 
+            UIDriver.thread_manager = ThreadManager()
+
             # Set application to STARTUP state.
             UIDriver.change_application_state(ApplicationState.STARTUP)
 
             # Automatically go right into WAITING_INPUT state.
             UIDriver.change_application_state(ApplicationState.WAITING_INPUT)
+
+            UIDriver.timer = wx.Timer(root)
+            root.Bind(wx.EVT_TIMER, UIDriver.thread_manager.check_message)
 
     @staticmethod
     def get_all_ui_behaviors(root, behaviors):

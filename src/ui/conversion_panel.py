@@ -48,7 +48,7 @@ class ConversionPanel(wx.Panel, IUIBehavior):
         self.convert_button = wx.Button(self, label="Convert to LDraw", size=UI_style.conversion_big_button_size)
         self.convert_button.SetBackgroundColour(UI_style.button_background)
         self.convert_button.SetForegroundColour(UI_style.button_text)
-        self.pause_button = wx.Button(self, label="Pause/Continue", size=UI_style.conversion_big_button_size)
+        self.pause_button = wx.Button(self, label="Pause", size=UI_style.conversion_big_button_size)
         self.pause_button.SetBackgroundColour(UI_style.button_background)
         self.pause_button.SetForegroundColour(UI_style.button_text)
         self.cancel_button = wx.Button(self, label="Cancel", size=UI_style.conversion_big_button_size)
@@ -89,6 +89,8 @@ class ConversionPanel(wx.Panel, IUIBehavior):
             UserEvent(UserEventType.CONVERSION_STARTED,
                       LogMessage(LogType.INFORMATION, "Conversion process started..")))
         UIDriver.change_application_state(ApplicationState.WORKING)
+        UIDriver.thread_manager.start_work()
+        UIDriver.timer.Start(UIDriver.thread_manager.interval)
 
     def pause_resume(self, event):
         """Pause/resume the conversion process.
@@ -102,12 +104,15 @@ class ConversionPanel(wx.Panel, IUIBehavior):
             UIDriver.fire_event(
                 UserEvent(UserEventType.CONVERSION_PAUSED,
                           LogMessage(LogType.INFORMATION, "Conversion process paused.")))
+            UIDriver.thread_manager.pause_work()
+            UIDriver.timer.Stop()
         else:
             self.pause_button.SetLabelText('Pause')
             UIDriver.fire_event(
                 UserEvent(UserEventType.CONVERSION_STARTED,
                           LogMessage(LogType.INFORMATION, "Conversion process resumed.")))
-
+            UIDriver.thread_manager.continue_work()
+            UIDriver.timer.Start(UIDriver.thread_manager.interval)
 
     def cancel(self, event):
         """Cancel the conversion operation.
@@ -119,6 +124,8 @@ class ConversionPanel(wx.Panel, IUIBehavior):
             UserEvent(UserEventType.CONVERSION_PAUSED,
                       LogMessage(LogType.INFORMATION, "Conversion process canceled.")))
         UIDriver.change_application_state(ApplicationState.WAITING_GO)
+        UIDriver.thread_manager.kill_work()
+        UIDriver.timer.Stop()
 
     def save(self, event):
         """Save the finalized conversion of the input file. Hide main window options and replace them with metadata
