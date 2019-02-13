@@ -14,7 +14,7 @@ from src.log_messages.log_type import LogType
 
 
 class WorkerThread(threading.Thread):
-    """Thread for handling algorithms/processsing stuff
+    """Thread for handling algorithms/processing stuff
     """
     def __init__(self, feedback_log):
         threading.Thread.__init__(self)
@@ -41,19 +41,18 @@ class WorkerThread(threading.Thread):
                 a = 1 + 1 # just spins...
 
     def put_feedback(self, msg, log_type):
-        """
-
-        :param msg:
-        :param log_type:
-        :return:
+        """Puts a LogMessage into the feedback queue
+        :param msg: message text
+        :param log_type: type of log
+        :return: None
         """
         log_msg = LogMessage(log_type, msg)
         self.feedback_log.put(log_msg)
 
     def change_state(self, new_state):
-        """Should stop/continue/pause this thread; throw error when appropriate
+        """Changes worker thread state (run/pause/stop)
 
-        :param new_state:
+        :param new_state: WorkerState to set the worker to
         :return:
         """
         self.state = new_state
@@ -65,8 +64,16 @@ class WorkerThread(threading.Thread):
             self.put_feedback("Processing cancelled.", LogType.DEBUG)
 
     def start(self):
+        """Change worker state to RUNNING and start its main routine
+
+        :return: None
+        """
         self.change_state(WorkerState.RUNNING)
         threading.Thread.start(self)
 
     def kill(self):
+        """Change worker state to STOP
+
+        :return: None
+        """
         self.change_state(WorkerState.STOP)

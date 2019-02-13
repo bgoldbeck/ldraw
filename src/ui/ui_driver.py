@@ -126,7 +126,7 @@ class UIDriver:
     def check_message_queue(event):
         """Check threadmanager's message queue and log all messages
 
-        :param event:
+        :param event: the wx event that was logged (should be bound to timer)
         """
         while (UIDriver.thread_manager.has_message_available()):
             msg = UIDriver.thread_manager.get_message()

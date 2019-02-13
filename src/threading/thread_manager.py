@@ -26,29 +26,52 @@ class ThreadManager:
         self.worker_thread = None
 
     def has_message_available(self):
+        """Checks if message queue is not empty
+
+        :return: Boolean indicating if queue is not empty
+        """
         return not self.feedback_log.empty()
 
     def get_message(self):
+        """Get log message off feedback log queue
+
+        :return: LogMessage that was taken from queue
+        """
         message = self.feedback_log.get(block=True)
         self.feedback_log.task_done()
         return message
 
     def pause_work(self):
+        """Change worker state to PAUSE
+
+        :return: None
+        """
         if self.worker_thread is not None:
             self.worker_thread.change_state(WorkerState.PAUSE)
 
     def kill_work(self):
+        """Kill worker thread if it exists and set it to None
+
+        :return: None
+        """
         if self.worker_thread is not None:
             self.worker_thread.kill()
             self.worker_thread = None
 
-
     def start_work(self):
+        """Create new worker thread and begin running it
+
+        :return: None
+        """
         self.worker_thread = WorkerThread(self.feedback_log)  # only created when processing begins. May be recreated
         self.worker_thread.daemon = True
         self.worker_thread.start()
 
     def continue_work(self):
+        """Change worker state to RUNNING
+
+        :return: None
+        """
         if self.worker_thread is not None:
             self.worker_thread.change_state(WorkerState.RUNNING)
 
