@@ -13,6 +13,7 @@ from src.ui.user_event import UserEvent
 from src.ui.iui_behavior import IUIBehavior
 from util import Util
 from src.threading.thread_manager import *
+from src.log_messages.output_model_message import OutputModelMessage
 from src.ui.user_event_type import UserEventType
 
 
@@ -130,6 +131,11 @@ class UIDriver:
         """
         while (UIDriver.thread_manager.has_message_available()):
             msg = UIDriver.thread_manager.get_message()
-            UIDriver.fire_event(
-                UserEvent(UserEventType.WORKER_LOG_MESSAGE_AVAILABLE, msg))
+            if isinstance(msg, OutputModelMessage):
+                UIDriver.fire_event(
+                    UserEvent(UserEventType.CONVERSION_COMPLETE, msg))
+                UIDriver.change_application_state(ApplicationState.WAITING_GO)
+            else:
+                UIDriver.fire_event(
+                    UserEvent(UserEventType.WORKER_LOG_MESSAGE_AVAILABLE, msg))
 

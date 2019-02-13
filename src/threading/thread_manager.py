@@ -10,6 +10,9 @@
 import queue
 from src.threading.worker_thread import *
 from src.threading.worker_state import WorkerState
+from src.threading.test_job_A import TestJobA
+from src.threading.test_job_B import TestJobB
+
 
 
 class ThreadManager:
@@ -24,6 +27,10 @@ class ThreadManager:
         self.interval = 50 # how many ms between queue checks
         self.feedback_log = queue.Queue()  # holds messages for log
         self.worker_thread = None
+
+        # Fill this list with whatever jobs need doing, in order
+        self.job_list = [TestJobA(self.feedback_log).__class__,
+                         TestJobB(self.feedback_log).__class__,]
 
     def has_message_available(self):
         """Checks if message queue is not empty
@@ -56,6 +63,7 @@ class ThreadManager:
         """
         if self.worker_thread is not None:
             self.worker_thread.kill()
+            self.worker_thread.join()
             self.worker_thread = None
 
     def start_work(self):
@@ -63,7 +71,7 @@ class ThreadManager:
 
         :return: None
         """
-        self.worker_thread = WorkerThread(self.feedback_log)  # only created when processing begins. May be recreated
+        self.worker_thread = WorkerThread(self.feedback_log, self.job_list)  # only created when processing begins. May be recreated
         self.worker_thread.daemon = True
         self.worker_thread.start()
 

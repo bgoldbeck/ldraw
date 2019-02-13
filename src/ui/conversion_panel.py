@@ -90,7 +90,8 @@ class ConversionPanel(wx.Panel, IUIBehavior):
                       LogMessage(LogType.INFORMATION, "Conversion process started..")))
         UIDriver.change_application_state(ApplicationState.WORKING)
         UIDriver.thread_manager.start_work()
-        UIDriver.timer.Start(UIDriver.thread_manager.interval)
+        if not UIDriver.timer.IsRunning():
+            UIDriver.timer.Start(UIDriver.thread_manager.interval)
 
     def pause_resume(self, event):
         """Pause/resume the conversion process.
@@ -122,9 +123,9 @@ class ConversionPanel(wx.Panel, IUIBehavior):
         UIDriver.fire_event(
             UserEvent(UserEventType.CONVERSION_PAUSED,
                       LogMessage(LogType.INFORMATION, "Conversion process canceled.")))
-        UIDriver.change_application_state(ApplicationState.WAITING_GO)
         UIDriver.thread_manager.kill_work()
-        UIDriver.timer.Stop()
+        UIDriver.change_application_state(ApplicationState.WAITING_GO)
+
 
     def save(self, event):
         """Save the finalized conversion of the input file. Hide main window options and replace them with metadata

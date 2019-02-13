@@ -16,9 +16,13 @@ from src.log_messages.log_type import LogType
 class WorkerThread(threading.Thread):
     """Thread for handling algorithms/processing stuff
     """
-    def __init__(self, feedback_log):
+    def __init__(self, feedback_log, job_list):
         threading.Thread.__init__(self)
         self.feedback_log = feedback_log
+        self.job_list = []
+        for job in job_list: #fill up job list with new instances
+            self.job_list.append(job(feedback_log))
+        self.current_job = None
         self.state = WorkerState.RUNNING
 
     def run(self):
@@ -26,19 +30,19 @@ class WorkerThread(threading.Thread):
 
         :return: None
         """
-        i = 1 # just test variable for test messages
-        while self.state == WorkerState.RUNNING or self.state == WorkerState.PAUSE:
-            while self.state == WorkerState.RUNNING:
-                #do main stuff
+        for job in self.job_list:
+            if self.state == WorkerState.STOP:
+                break # Stop doing jobs if killed
+            # add a check for if paused here too... maybe use an event
+            self.current_job = job
+            if(self.current_job and not self.current_job.is_running.isSet()):
+                self.current_job.go()
 
-                # testing messages
-                self.put_feedback("Test message #" + str(i), LogType.INFORMATION)
-                #print("test message " + self.feedback_log.get())
-                i += 1
-                time.sleep(0.5)
+            self.current_job.do_job()
+            self.current_job.is_done.wait()
 
-            while self.state == WorkerState.PAUSE:
-                a = 1 + 1 # just spins...
+        if self.state != WorkerState.STOP:
+            self.put_feedback("All jobs complete", LogType.DEBUG)
 
     def put_feedback(self, msg, log_type):
         """Puts a LogMessage into the feedback queue
@@ -57,11 +61,17 @@ class WorkerThread(threading.Thread):
         """
         self.state = new_state
         if new_state == WorkerState.RUNNING:
+            if self.current_job:
+                self.current_job.go()
             self.put_feedback("Beginning processing.", LogType.DEBUG)
         elif new_state == WorkerState.PAUSE:
+            self.current_job.pause()
             self.put_feedback("Processing paused.", LogType.DEBUG)
         elif new_state == WorkerState.STOP:
+            self.current_job.is_killed = True
+            self.current_job.go()
             self.put_feedback("Processing cancelled.", LogType.DEBUG)
+
 
     def start(self):
         """Change worker state to RUNNING and start its main routine
@@ -77,3 +87,4 @@ class WorkerThread(threading.Thread):
         :return: None
         """
         self.change_state(WorkerState.STOP)
+
