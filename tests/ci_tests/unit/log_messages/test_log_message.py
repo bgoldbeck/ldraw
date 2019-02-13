@@ -26,7 +26,6 @@ class TestLogMessage(unittest.TestCase):
         self.assertEqual(self.log.get_message_type(), self.log_type)
 
     def test_get_timestamp(self):
-        print(type(self.log.get_timestamp()))
         self.assertIsInstance(self.log.get_timestamp(), str)
 
     def test_get_log_message_color(self):
