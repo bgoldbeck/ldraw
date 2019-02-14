@@ -16,6 +16,8 @@ class Util:
 
     """
 
+    ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+
     @staticmethod
     def path_conversion(file_path: str):
         """
@@ -24,8 +26,8 @@ class Util:
         :param file_path: file path to convert
         :return: converted file path
         """
-        root_dir = os.path.dirname(os.path.abspath(__file__))
-        return os.path.join(root_dir, Path(file_path))
+
+        return os.path.join(Util.ROOT_DIR, Path(file_path))
 
     @staticmethod
     def is_file(file_path: str):
@@ -76,3 +78,13 @@ class Util:
         :return:
         """
         Path(dir_path).mkdir(parents=True)
+
+    @staticmethod
+    def rmdir(dir_path: str):
+        """
+        Removes a directory with given path
+
+        :param dir_path: absolute directory path
+        :return:
+        """
+        Path(dir_path).rmdir()
