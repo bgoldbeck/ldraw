@@ -12,7 +12,7 @@ from src.log_messages.log_message import LogMessage
 from src.log_messages.output_model_message import OutputModelMessage
 import threading
 
-class IJob:
+class BaseJob:
     """The pseudo interface for processing jobs to
     inherit method properties from.
     """

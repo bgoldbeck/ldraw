@@ -8,12 +8,12 @@
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 
-from src.threading.ijob import IJob
+from src.threading.base_job import BaseJob
 from src.log_messages.log_type import LogType
 import time
 
 
-class TestJobA(IJob):
+class TestJobA(BaseJob):
     """This is a test job to show how a job should be written to work properly
     """
     def __init__(self, feedback_log):

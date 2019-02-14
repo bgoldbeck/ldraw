@@ -8,14 +8,14 @@
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 
-from src.threading.ijob import IJob
+from src.threading.base_job import BaseJob
 from src.log_messages.log_type import LogType
 from src.model_conversion.ldraw_model import LDrawModel
 import time
 from stl import mesh
 import numpy
 
-class TestJobB(IJob):
+class TestJobB(BaseJob):
     """This is a test job to show how a job should be written to work properly.
     It will send an output model message at the end (signalling end conversion)
     """
