@@ -28,7 +28,10 @@ class IJob:
 
 
     def do_job(self):
-        self.is_running.set()
+        """The main work of the job. (Essentially a virtual class here)
+        :return:
+        """
+        pass
 
     def get_work(self):
         """Gets the results of the job,
