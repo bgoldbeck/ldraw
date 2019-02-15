@@ -9,7 +9,7 @@
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 import unittest
 import os
-from util import Util
+from src.util import Util
 
 
 class UtilTest(unittest.TestCase):

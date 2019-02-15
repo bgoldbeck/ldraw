@@ -16,7 +16,7 @@ class Util:
 
     """
 
-    ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+    ROOT_DIR = os.path.dirname(os.path.abspath(__file__)).rstrip("/src")
 
     @staticmethod
     def path_conversion(file_path: str):

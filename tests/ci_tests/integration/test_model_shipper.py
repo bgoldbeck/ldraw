@@ -11,7 +11,7 @@ import unittest
 import os
 from src.model_conversion.model_shipper import *
 from pyrr import *
-from util import Util
+from src.util import Util
 
 
 class ModelShipperTest(unittest.TestCase):
