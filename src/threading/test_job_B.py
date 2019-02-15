@@ -10,6 +10,8 @@
 
 from src.threading.base_job import BaseJob
 from src.log_messages.log_type import LogType
+from src.log_messages.log_message import LogMessage
+from src.log_messages.output_model_message import OutputModelMessage
 from src.model_conversion.ldraw_model import LDrawModel
 import time
 from stl import mesh
@@ -24,13 +26,15 @@ class TestJobB(BaseJob):
         super().__init__(feedback_log)
 
     def do_job(self):
-        self.put_feedback("Starting Test Job B", LogType.DEBUG)
+        self.put_feedback(LogMessage(LogType.DEBUG, "Starting Test Job B"))
 
         for i in range(3, 0, -1):
             self.is_running.wait() # Blocks if running event is not set
             if self.is_killed: # Exit loop if job got kill signal
                 break
-            self.put_feedback("Test Job B: Message #" + str(i), LogType.DEBUG)
+            self.put_feedback(LogMessage(LogType.DEBUG,
+                                         "Test Job B: Message #" + str(i)))
+
             time.sleep(0.5)
 
         self.is_running.wait()
@@ -39,11 +43,16 @@ class TestJobB(BaseJob):
             fake_mesh = mesh.Mesh(numpy.zeros(3, dtype=mesh.Mesh.dtype),
                                   remove_empty_areas=False)
             fake_model = LDrawModel("", "", "", fake_mesh)
-            self.put_feedback("Finished Test Job B", LogType.DEBUG)
-            self.put_model_out(LogType.INFORMATION, "Conversion complete.", fake_model)
+            self.put_feedback(LogMessage(LogType.DEBUG, "Finished Test Job B"))
+
+            self.put_feedback(OutputModelMessage(LogType.DEBUG,
+                                                 "Starting Test Job A",
+                                                 fake_model))
+
 
         else: # Job was killed
             #do any cleanup before exiting
-            self.put_feedback("Cancelled during Test Job B", LogType.DEBUG)
+            self.put_feedback(LogMessage(LogType.DEBUG,
+                                         "Cancelled during Test Job B"))
 
         self.is_done.set()  # Set this so thread manager knows job is done

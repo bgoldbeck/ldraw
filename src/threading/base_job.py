@@ -8,8 +8,6 @@
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 
-from src.log_messages.log_message import LogMessage
-from src.log_messages.output_model_message import OutputModelMessage
 import threading
 
 class BaseJob:
@@ -53,21 +51,11 @@ class BaseJob:
         """
         self.is_running.set()
 
-    def put_feedback(self, msg, log_type):
+    def put_feedback(self, log_msg):
         """Puts a LogMessage into the feedback queue
         :param msg: message text
         :param log_type: type of log
         :return: None
         """
-        log_msg = LogMessage(log_type, msg)
         self.feedback_log.put(log_msg)
 
-    def put_model_out(self, log_type, msg, model):
-        """Puts a LogMessage into the feedback queue
-        :param msg: message text
-        :param log_type: type of log
-        :param model: ldraw model
-        :return: None
-        """
-        out_msg = OutputModelMessage(log_type, msg, model)
-        self.feedback_log.put(out_msg)
