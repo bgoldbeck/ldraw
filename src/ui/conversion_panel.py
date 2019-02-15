@@ -16,6 +16,8 @@ from src.ui.ui_driver import UIDriver
 from src.log_messages.log_message import LogMessage
 from src.log_messages.log_type import LogType
 from src.ui.ui_style import *
+from src.ui.user_event_type import UserEventType
+
 
 
 class ConversionPanel(wx.Panel, IUIBehavior):
@@ -150,7 +152,6 @@ class ConversionPanel(wx.Panel, IUIBehavior):
         elif new_state == ApplicationState.WAITING_INPUT:
             self.convert_button.Disable()
         elif new_state == ApplicationState.WAITING_GO:
-            self.save_button.Disable()
             self.cancel_button.Disable()
             self.pause_button.Disable()
             self.convert_button.Enable()
@@ -170,4 +171,6 @@ class ConversionPanel(wx.Panel, IUIBehavior):
         :param event: The recorded UserEvent.
         :return: None
         """
-        pass
+        if event.get_event_type() == UserEventType.CONVERSION_COMPLETE:
+            self.save_button.Enable()
+
