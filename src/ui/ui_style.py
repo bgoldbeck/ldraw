@@ -29,7 +29,6 @@ class UI_style():
     main_panel_background_color = "#ffffaa"
 
     # Metadata Panel
-    metadata_border = wx.BORDER_SUNKEN
     metadata_background_color = "#777fea"
     metadata_label_color = ""
     metadata_input_text_color = "black"
@@ -43,12 +42,10 @@ class UI_style():
     metadata_label_size = (200, 25)
 
     # Conversion Panel
-    conversion_border = wx.SIMPLE_BORDER
     conversion_background_color = "#456eab"
     conversion_big_button_size = (120, 30)
 
     # Log Panel
-    log_border = wx.BORDER_SUNKEN
     log_background_color = "#eee111"
     log_text_background_color = [25, 25, 25]
     log_default_text_color = [225, 225, 225]

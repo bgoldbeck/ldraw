@@ -24,13 +24,14 @@ class LogPanel(wx.Panel, IUIBehavior):
     various algorithms.
     """
     _log_file_path = "log.txt"
+    _log_border = wx.BORDER_SUNKEN
 
     def __init__(self, parent):
         """Default constructor for MainPanel class.
 
         :param parent: The parent wx object for this panel.
         """
-        wx.Panel.__init__(self, parent, size=UI_style.log_panel_size, style=UI_style.log_border)
+        wx.Panel.__init__(self, parent, size=UI_style.log_panel_size, style=self._log_border)
         self.parent = parent
         self.save_log_button = None
         self.log_text_ctrl = None
