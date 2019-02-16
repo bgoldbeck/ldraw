@@ -12,6 +12,9 @@ from src.ui.application_state import ApplicationState
 from src.ui.user_event import UserEvent
 from src.ui.iui_behavior import IUIBehavior
 from util import Util
+from src.threading.thread_manager import *
+from src.log_messages.output_model_message import OutputModelMessage
+from src.ui.user_event_type import UserEventType
 
 
 class UIDriver:
@@ -23,6 +26,8 @@ class UIDriver:
     instance = None
     application_state = None
     root_frame = None
+    thread_manager = None
+    timer = None #for checking message queue
 
     def __init__(self, root):
         """Default constructor for the UIDriver object.
@@ -33,11 +38,16 @@ class UIDriver:
 
             UIDriver.root_frame = root
 
+            UIDriver.thread_manager = ThreadManager()
+
             # Set application to STARTUP state.
             UIDriver.change_application_state(ApplicationState.STARTUP)
 
             # Automatically go right into WAITING_INPUT state.
             UIDriver.change_application_state(ApplicationState.WAITING_INPUT)
+
+            UIDriver.timer = wx.Timer(root)
+            root.Bind(wx.EVT_TIMER, UIDriver.check_message_queue)
 
     @staticmethod
     def get_all_ui_behaviors(root, behaviors):
@@ -112,3 +122,20 @@ class UIDriver:
             pass
 
         return text
+
+    @staticmethod
+    def check_message_queue(event):
+        """Check threadmanager's message queue and log all messages
+
+        :param event: the wx event that was logged (should be bound to timer)
+        """
+        while (UIDriver.thread_manager.has_message_available()):
+            msg = UIDriver.thread_manager.get_message()
+            if isinstance(msg, OutputModelMessage):
+                UIDriver.fire_event(
+                    UserEvent(UserEventType.CONVERSION_COMPLETE, msg))
+                UIDriver.change_application_state(ApplicationState.WAITING_GO)
+            else:
+                UIDriver.fire_event(
+                    UserEvent(UserEventType.WORKER_LOG_MESSAGE_AVAILABLE, msg))
+

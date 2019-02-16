@@ -309,9 +309,9 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                         UIDriver.fire_event(
                             UserEvent(UserEventType.INPUT_VALIDATION,
                                       LogMessage(LogType.ERROR,
-                                                 "The input file " +
+                                                 "The input file '" +
                                                  self.stl_path_text +
-                                                 " is not a valid STL file.")))
+                                                 "' is not a valid STL file.")))
                 else:
                     self.stl_path_isvalid = False
                     UIDriver.fire_event(
@@ -359,8 +359,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                 UIDriver.fire_event(
                     UserEvent(UserEventType.INPUT_VALIDATION,
                               LogMessage(LogType.INFORMATION,
-                                         "Output file will be saved as: " +
-                                         self.out_file)))
+                                         "Output file will be saved as: '" +
+                                         self.out_file + "'.")))
 
         dialog.Destroy()
 
