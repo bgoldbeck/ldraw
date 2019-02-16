@@ -25,12 +25,14 @@ class ConversionPanel(wx.Panel, IUIBehavior):
     pausing, and canceling the conversion process.
     """
 
+    _conversion_border = wx.SIMPLE_BORDER
+
     def __init__(self, parent):
         """Default constructor for ConversionPanel class.
 
         :param parent: The parent wx object for this panel.
         """
-        wx.Panel.__init__(self, parent, size=(1024, 30), style=UI_style.conversion_border)
+        wx.Panel.__init__(self, parent, size=(1024, 30), style=self._conversion_border)
         self.parent = parent
         self.convert_button = None
         self.pause_button = None

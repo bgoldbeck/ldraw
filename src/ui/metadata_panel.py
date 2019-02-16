@@ -27,12 +27,13 @@ class MetadataPanel(wx.Panel, IUIBehavior):
     and ldraw file output.
     """
     max_path_length = 256
+    _metadata_border = wx.BORDER_SUNKEN
 
     def __init__(self, parent):
         """Default constructor for MainPanel class.
         """
         wx.Panel.__init__(self, parent, size=UI_style.metadata_panel_size,
-                          style=UI_style.metadata_border)
+                          style=self._metadata_border)
         self.parent = parent
         self.browse_stl_button = None
         self.help_button = None
