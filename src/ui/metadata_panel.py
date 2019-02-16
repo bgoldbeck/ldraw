@@ -17,7 +17,10 @@ from src.model_conversion.model_shipper import ModelShipper
 from src.log_messages.log_message import LogMessage
 from src.log_messages.log_type import LogType
 from src.ui.ui_style import *
+from src.ui.popup import Popup
+import re
 from util import Util
+
 
 
 class MetadataPanel(wx.Panel, IUIBehavior):
@@ -32,12 +35,13 @@ class MetadataPanel(wx.Panel, IUIBehavior):
     def __init__(self, parent):
         """Default constructor for MainPanel class.
         """
-        wx.Panel.__init__(self, parent, size=UI_style.metadata_panel_size,
-                          style=self._metadata_border)
+        wx.Panel.__init__(self, parent, size=UIStyle.metadata_panel_size,
+                          style=UIStyle.metadata_border)
         self.parent = parent
         self.browse_stl_button = None
         self.help_button = None
         self.about_button = None
+        self.popup = None
         self.browse_stl_button = None
         self.author_input = None
         self.license_input = None
@@ -65,69 +69,69 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         """Initializing input, output, process control, and log panel elements
         :return:
         """
-        self.SetBackgroundColour(UI_style.metadata_background_color)
+        self.SetBackgroundColour(UIStyle.metadata_background_color)
 
         # Input
         path_name_static_text = wx.StaticText(
             self,
             label="Step 1: Choose Input STL File",
-            size=UI_style.metadata_label_size,
+            size=UIStyle.metadata_label_size,
             style=wx.ALIGN_RIGHT)
-        path_name_static_text.SetForegroundColour(UI_style.metadata_label_color)
+        path_name_static_text.SetForegroundColour(UIStyle.metadata_label_color)
         # Stl input.
-        self.stl_path_input = wx.TextCtrl(self, size=UI_style.metadata_text_ctrl_size)
+        self.stl_path_input = wx.TextCtrl(self, size=UIStyle.metadata_text_ctrl_size)
         self.stl_path_input.SetMaxLength(self.max_path_length)
-        self.stl_path_input.SetBackgroundColour(UI_style.metadata_input_valid_background)
-        self.stl_path_input.SetForegroundColour(UI_style.metadata_input_text_color)
+        self.stl_path_input.SetBackgroundColour(UIStyle.metadata_input_valid_background)
+        self.stl_path_input.SetForegroundColour(UIStyle.metadata_input_text_color)
 
         self.browse_stl_button = wx.Button(self, label="Browse Input",
-                                           size=UI_style.metadata_big_button)
-        self.browse_stl_button.SetForegroundColour(UI_style.button_text)
-        self.browse_stl_button.SetBackgroundColour(UI_style.button_background)
+                                           size=UIStyle.metadata_big_button)
+        self.browse_stl_button.SetForegroundColour(UIStyle.button_text)
+        self.browse_stl_button.SetBackgroundColour(UIStyle.button_background)
 
         # Help / About.
         self.help_button = wx.Button(self, label="?",
-                                     size=UI_style.metadata_small_button_size)
-        self.help_button.SetForegroundColour(UI_style.button_text)
-        self.help_button.SetBackgroundColour(UI_style.button_background)
+                                     size=UIStyle.metadata_small_button_size)
+        self.help_button.SetForegroundColour(UIStyle.button_text)
+        self.help_button.SetBackgroundColour(UIStyle.button_background)
         self.about_button = wx.Button(self, label="i",
-                                      size=UI_style.metadata_small_button_size)
-        self.about_button.SetForegroundColour(UI_style.button_text)
-        self.about_button.SetBackgroundColour(UI_style.button_background)
+                                      size=UIStyle.metadata_small_button_size)
+        self.about_button.SetForegroundColour(UIStyle.button_text)
+        self.about_button.SetBackgroundColour(UIStyle.button_background)
 
         # Output path selection.
         path_part_static_text = wx.StaticText(self, label="Step 2: Choose Output Name",
-                                              size=UI_style.metadata_label_size,
+                                              size=UIStyle.metadata_label_size,
                                               style=wx.ALIGN_RIGHT)
-        path_part_static_text.SetForegroundColour(UI_style.metadata_label_color)
-        self.ldraw_name_input = wx.TextCtrl(self, size=UI_style.metadata_text_ctrl_size,
+        path_part_static_text.SetForegroundColour(UIStyle.metadata_label_color)
+        self.ldraw_name_input = wx.TextCtrl(self, size=UIStyle.metadata_text_ctrl_size,
                                             style= wx.TE_READONLY)
         self.ldraw_name_input.SetMaxLength(self.max_path_length)
         self.ldraw_name_input.SetValue("Browse output -->")
-        self.ldraw_name_input.SetForegroundColour(UI_style.metadata_input_text_color)
-        self.ldraw_name_input.SetBackgroundColour(UI_style.metadata_input_valid_background)
+        self.ldraw_name_input.SetForegroundColour(UIStyle.metadata_input_text_color)
+        self.ldraw_name_input.SetBackgroundColour(UIStyle.metadata_input_valid_background)
 
         self.browse_output_button = wx.Button(self, label="Browse Output",
-                                              size=UI_style.metadata_big_button)
-        self.browse_output_button.SetForegroundColour(UI_style.button_text)
-        self.browse_output_button.SetBackgroundColour(UI_style.button_background)
+                                              size=UIStyle.metadata_big_button)
+        self.browse_output_button.SetForegroundColour(UIStyle.button_text)
+        self.browse_output_button.SetBackgroundColour(UIStyle.button_background)
 
         # Author
         author_static_text = wx.StaticText(self, label="Optional: Set Author",
-                                           size=UI_style.metadata_label_size, style=wx.ALIGN_RIGHT)
-        author_static_text.SetForegroundColour(UI_style.metadata_label_color)
-        self.author_input = wx.TextCtrl(self, size=UI_style.metadata_text_ctrl_size)
-        self.author_input.SetForegroundColour(UI_style.metadata_input_text_color)
-        self.author_input.SetBackgroundColour(UI_style.metadata_input_valid_background)
+                                           size=UIStyle.metadata_label_size, style=wx.ALIGN_RIGHT)
+        author_static_text.SetForegroundColour(UIStyle.metadata_label_color)
+        self.author_input = wx.TextCtrl(self, size=UIStyle.metadata_text_ctrl_size)
+        self.author_input.SetForegroundColour(UIStyle.metadata_input_text_color)
+        self.author_input.SetBackgroundColour(UIStyle.metadata_input_valid_background)
         self.author_input.SetMaxLength(self.max_path_length)
 
         # License information.
         license_static_text = wx.StaticText(self, label="Optional: Set License",
-                                            size=UI_style.metadata_label_size, style=wx.ALIGN_RIGHT)
-        license_static_text.SetForegroundColour(UI_style.metadata_label_color)
-        self.license_input = wx.TextCtrl(self, size=UI_style.metadata_text_ctrl_size)
-        self.license_input.SetForegroundColour(UI_style.metadata_input_text_color)
-        self.license_input.SetBackgroundColour(UI_style.metadata_input_valid_background)
+                                            size=UIStyle.metadata_label_size, style=wx.ALIGN_RIGHT)
+        license_static_text.SetForegroundColour(UIStyle.metadata_label_color)
+        self.license_input = wx.TextCtrl(self, size=UIStyle.metadata_text_ctrl_size)
+        self.license_input.SetForegroundColour(UIStyle.metadata_input_text_color)
+        self.license_input.SetBackgroundColour(UIStyle.metadata_input_valid_background)
         self.license_input.SetMaxLength(self.max_path_length)
 
         # Create the layout.
@@ -207,13 +211,13 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
         # Set colors
         if self.ldraw_name_isvalid:
-            self.ldraw_name_input.SetBackgroundColour(UI_style.metadata_input_valid_background)
+            self.ldraw_name_input.SetBackgroundColour(UIStyle.metadata_input_valid_background)
         else:
-            self.ldraw_name_input.SetBackgroundColour(UI_style.metadata_input_invalid_background)
+            self.ldraw_name_input.SetBackgroundColour(UIStyle.metadata_input_invalid_background)
         if self.stl_path_isvalid:
-            self.stl_path_input.SetBackgroundColour(UI_style.metadata_input_valid_background)
+            self.stl_path_input.SetBackgroundColour(UIStyle.metadata_input_valid_background)
         else:
-            self.stl_path_input.SetBackgroundColour(wx.Colour(UI_style.metadata_input_invalid_background))
+            self.stl_path_input.SetBackgroundColour(wx.Colour(UIStyle.metadata_input_invalid_background))
 
     def help(self, event):
         """Presents program limitations, common troubleshooting steps,
@@ -223,10 +227,14 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         """
         help_text = UIDriver.get_assets_file_text("HELP.txt")
         if help_text is not None:
-            wx.MessageBox(help_text, "Help", wx.OK | wx.ICON_QUESTION)
+            self.popup = Popup(self.GetTopLevelParent(), "Help", help_text)
         else:
-            wx.MessageBox("Could not read help text file, sorry.", "Error",
-                          wx.OK | wx.ICON_INFORMATION)
+            self.popup = Popup(self.GetTopLevelParent(), "Error",
+                          "Could not read help text file, sorry.")
+        self.help_button.Disable()
+        self.about_button.Disable()
+        self.popup.Show(True)
+        self.popup.Bind(wx.EVT_CLOSE, self.popup_on_close)
 
     def about(self, event):
         """Presents program name, program version, copyright information, licensing information, and authors to user.
@@ -235,10 +243,21 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         """
         about_text = UIDriver.get_assets_file_text("ABOUT.txt")
         if about_text is not None:
-            wx.MessageBox(about_text, "About LScan", wx.OK | wx.ICON_INFORMATION)
+            self.popup = Popup(self.GetTopLevelParent(), "About", about_text)
         else:
-            wx.MessageBox("Could not read about text file, sorry.", "Error",
-                          wx.OK | wx.ICON_INFORMATION)
+            self.popup = Popup(self.GetTopLevelParent(), "Error",
+                          "Could not read about text file, sorry.")
+        self.help_button.Disable()
+        self.about_button.Disable()
+        self.popup.Show(True)
+        self.popup.Bind(wx.EVT_CLOSE, self.popup_on_close)
+
+    def popup_on_close(self, event):
+        print("window closed")
+        self.popup.Destroy()
+        self.popup = None
+        self.help_button.Enable()
+        self.about_button.Enable()
 
     def browse_input(self, event):
         """Browse for a valid STL input file.
@@ -455,6 +474,9 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             self.help_button.Enable()
             self.browse_stl_button.Enable()
         elif new_state == ApplicationState.WORKING:
+            if self.popup is not None:
+                self.popup.Destroy()
+                self.popup = None
             self.stl_path_input.Disable()
             self.ldraw_name_input.Disable()
             self.author_input.Disable()
@@ -582,3 +604,11 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         """Return the string of the license.
         """
         return self.license_text
+
+    def update(self, dt: float):
+        """Called every loop by the GUIEventLoop
+
+        :param dt: The delta time between the last call.
+        :return: None
+        """
+        pass

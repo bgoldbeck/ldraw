@@ -9,15 +9,12 @@
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License.
 # See LICENSE file for the full text.
-from enum import Enum
+from pyrr import *
+from src.rendering.camera import Camera
 
 
-class LogType(Enum):
-    """The enumerated class the stores the possible Log Types.
+class RenderingEngine:
+    """Contains static rendering context information for OpenGL
     """
-    INFORMATION = 0
-    WARNING = 1
-    ERROR = 2
-    DEBUG = 3
-    IGNORE = 4
-
+    projection = matrix44.create_perspective_projection_matrix(75.0, 4/3, 0.1, 100.0)
+    camera = Camera("default")

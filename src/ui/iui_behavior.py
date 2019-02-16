@@ -17,7 +17,6 @@ class IUIBehavior:
 
     def on_state_changed(self, new_state: ApplicationState):
         """
-
         :param new_state:
         :return:
         """
@@ -25,13 +24,17 @@ class IUIBehavior:
 
     def on_event(self, event: UserEvent):
         """
-
         :param event:
         :return:
         """
         raise NotImplementedError("This method is not implemented")
 
-
+    def update(self, dt: float):
+        """
+        :param event:
+        :return:
+        """
+        raise NotImplementedError("This method is not implemented")
 
 
 

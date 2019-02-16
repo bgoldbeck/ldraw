@@ -21,6 +21,9 @@ class LogMessage:
 
     def __init__(self, message_type: LogType, message: str):
         """Constructor for the LogMessage class.
+
+        :param message_type: The LogType for the message.
+        :param message: The str message contained in the LogMessage.
         """
         self.timestamp = datetime.datetime.now().strftime("%m-%d-%Y %I:%M:%S %p")
         self.message = message
@@ -54,13 +57,13 @@ class LogMessage:
         intensity of each color value.
         """
         if self.message_type == LogType.INFORMATION:
-            return UI_style.log_info_text_color
+            return UIStyle.log_info_text_color
         elif self.message_type == LogType.WARNING:
-            return UI_style.log_warning_text_color
+            return UIStyle.log_warning_text_color
         elif self.message_type == LogType.ERROR:
-            return UI_style.log_error_text_color
+            return UIStyle.log_error_text_color
         elif self.message_type == LogType.DEBUG:
-            return UI_style.log_debug_text_color
+            return UIStyle.log_debug_text_color
         else:
-            return UI_style.log_default_text_color
+            return UIStyle.log_default_text_color
 
