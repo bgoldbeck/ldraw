@@ -17,7 +17,7 @@ from src.log_messages.log_message import LogMessage
 from src.log_messages.log_type import LogType
 from src.ui.ui_style import *
 from src.ui.user_event_type import UserEventType
-
+from src.model_conversion.model_shipper import ModelShipper
 
 
 class ConversionPanel(wx.Panel, IUIBehavior):
@@ -136,7 +136,7 @@ class ConversionPanel(wx.Panel, IUIBehavior):
         :param event: The wx event that was recorded.
         :return: None
         """
-        pass
+        print(ModelShipper.output_file)
 
     def on_state_changed(self, new_state: ApplicationState):
         """A state change was passed to the ConversionPanel.
