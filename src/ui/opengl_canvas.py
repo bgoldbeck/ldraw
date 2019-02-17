@@ -44,6 +44,7 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         self.canvas_color = Vector3([0.0, 0.0, 0.3])
         self.init = False
         self.aspect_ratio = self.canvas_size[0] / self.canvas_size[1]
+        self.is_painting = True
 
         self.Bind(wx.EVT_PAINT, self.on_paint)
         self.Bind(wx.EVT_MOUSEWHEEL, self.on_mouse_wheel)
@@ -80,10 +81,8 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         :param event: The wxpython Event.
         :return: None
         """
+        #if self.is_painting is True:
         wx.PaintDC(self)
-        if not self.init:
-            self.init_gl()
-            self.init = True
         self.draw()
 
     def init_gl(self):
@@ -140,6 +139,12 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
             if event.get_event_type() == UserEventType.RENDERING_WIRE_FRAME_PRESSED:
                 # A log message of this type is a BoolMessage.
                 self.wire_frame = event.get_log_message().get_bool()
+            if event.get_event_type() == UserEventType.RENDERING_CANVAS_DISABLE:
+                self.Unbind(wx.EVT_PAINT)
+                self.Refresh()
+            if event.get_event_type() == UserEventType.RENDERING_CANVAS_ENABLE:
+                self.Bind(wx.EVT_PAINT, self.on_paint)
+                self.Refresh()
 
     def update(self, dt: float):
         """Called every loop by the GUIEventLoop
@@ -147,5 +152,9 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         :param dt: The delta time between the last call.
         :return: None
         """
+        if not self.init:
+            self.init_gl()
+            self.init = True
+
         if self.scene is not None:
             self.scene.update(dt)

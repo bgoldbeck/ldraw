@@ -20,6 +20,7 @@ from src.log_messages.float_message import FloatMessage
 from src.log_messages.bool_message import BoolMessage
 from src.log_messages.log_type import LogType
 from src.ui.ui_style import *
+from src.ui.button import Button
 
 
 class OpenGLPanel(wx.Panel, IUIBehavior):
@@ -65,8 +66,8 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
         self.scale_static_text = wx.StaticText(self, label="Scale:", size=(50, 20))
         self.scale_static_text.SetForegroundColour(UIStyle.metadata_label_color)
 
-        self.scale_up_button = wx.Button(self, label="+", size=(23, 23))
-        self.scale_down_button = wx.Button(self, label="-", size=(23, 23))
+        self.scale_up_button = Button(self, label="+", size=(23, 23))
+        self.scale_down_button = Button(self, label="-", size=(23, 23))
 
         self.scale_input = wx.lib.masked.NumCtrl(
             self,
@@ -79,7 +80,7 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
         self.scale_input.SetBackgroundColour(UIStyle.opengl_input_background)
         self.scale_input.SetForegroundColour(UIStyle.opengl_input_foreground)
 
-        self.cycle_preview_button = wx.Button(self, label="Preview LDraw Model", size=(150, 30))
+        self.cycle_preview_button = Button(self, label="Preview LDraw Model", size=(150, 30))
 
         self.camera_rotation_static_text_ctrl = wx.StaticText(self, size=(270, 20))
         self.camera_rotation_static_text_ctrl.SetLabelText("Model Rotation: ")

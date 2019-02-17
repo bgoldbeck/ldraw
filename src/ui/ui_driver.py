@@ -138,7 +138,12 @@ class UIDriver:
             if isinstance(msg, OutputModelMessage):
                 UIDriver.fire_event(
                     UserEvent(UserEventType.CONVERSION_COMPLETE, msg))
+                
                 UIDriver.change_application_state(ApplicationState.WAITING_GO)
+
+                UIDriver.fire_event(
+                    UserEvent(UserEventType.RENDERING_CANVAS_ENABLE,
+                              LogMessage(LogType.IGNORE, "")))
             else:
                 UIDriver.fire_event(
                     UserEvent(UserEventType.WORKER_LOG_MESSAGE_AVAILABLE, msg))

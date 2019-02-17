@@ -16,6 +16,7 @@ from src.ui.iui_behavior import IUIBehavior
 from src.log_messages.log_message import LogMessage
 from src.log_messages.log_type import LogType
 from src.ui.ui_style import *
+from src.ui.button import Button
 
 
 class LogPanel(wx.Panel, IUIBehavior):
@@ -46,7 +47,7 @@ class LogPanel(wx.Panel, IUIBehavior):
         self.SetBackgroundColour(UIStyle.log_background_color)
         style = wx.TE_MULTILINE | wx.TE_READONLY | wx.HSCROLL | wx.TE_RICH
 
-        self.save_log_button = wx.Button(self, label="Save Log", size=UIStyle.log_big_button)
+        self.save_log_button = Button(self, label="Save Log", size=UIStyle.log_big_button)
         self.save_log_button.SetBackgroundColour(UIStyle.button_background)
         self.save_log_button.SetForegroundColour(UIStyle.button_text)
         self.log_text_ctrl = rt.RichTextCtrl(self, size=UIStyle.log_output_size, style=style)

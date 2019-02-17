@@ -18,9 +18,9 @@ from src.log_messages.log_message import LogMessage
 from src.log_messages.log_type import LogType
 from src.ui.ui_style import *
 from src.ui.popup import Popup
+from src.ui.button import Button
 import re
 from util import Util
-
 
 
 class MetadataPanel(wx.Panel, IUIBehavior):
@@ -84,17 +84,17 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self.stl_path_input.SetBackgroundColour(UIStyle.metadata_input_valid_background)
         self.stl_path_input.SetForegroundColour(UIStyle.metadata_input_text_color)
 
-        self.browse_stl_button = wx.Button(self, label="Browse Input",
+        self.browse_stl_button = Button(self, label="Browse Input",
                                            size=UIStyle.metadata_big_button)
         self.browse_stl_button.SetForegroundColour(UIStyle.button_text)
         self.browse_stl_button.SetBackgroundColour(UIStyle.button_background)
 
         # Help / About.
-        self.help_button = wx.Button(self, label="?",
+        self.help_button = Button(self, label="?",
                                      size=UIStyle.metadata_small_button_size)
         self.help_button.SetForegroundColour(UIStyle.button_text)
         self.help_button.SetBackgroundColour(UIStyle.button_background)
-        self.about_button = wx.Button(self, label="i",
+        self.about_button = Button(self, label="i",
                                       size=UIStyle.metadata_small_button_size)
         self.about_button.SetForegroundColour(UIStyle.button_text)
         self.about_button.SetBackgroundColour(UIStyle.button_background)
@@ -111,7 +111,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self.ldraw_name_input.SetForegroundColour(UIStyle.metadata_input_text_color)
         self.ldraw_name_input.SetBackgroundColour(UIStyle.metadata_input_valid_background)
 
-        self.browse_output_button = wx.Button(self, label="Browse Output",
+        self.browse_output_button = Button(self, label="Browse Output",
                                               size=UIStyle.metadata_big_button)
         self.browse_output_button.SetForegroundColour(UIStyle.button_text)
         self.browse_output_button.SetBackgroundColour(UIStyle.button_background)
@@ -198,8 +198,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
     def check_input(self):
         """Checks if all input fields have valid flag, and changes program
         state if needed. Should be called after an input field updates.
-        :param event:
-        :return:
+
+        :return: None
         """
         if self.ldraw_name_isvalid and self.stl_path_isvalid:
             if UIDriver.application_state != ApplicationState.WAITING_GO:
@@ -264,6 +264,9 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         :param event:
         :return:
         """
+        UIDriver.fire_event(UserEvent(
+            UserEventType.RENDERING_CANVAS_DISABLE,
+            LogMessage(LogType.IGNORE, "")))
         stl_wildcard = "*.stl"
         dialog = wx.FileDialog(self, "Choose a STL file",
                                defaultDir=self.stl_dir, wildcard=stl_wildcard,
@@ -298,6 +301,11 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                                              filename +
                                              "' is not a valid STL file.")))
                 self.check_input()
+
+            UIDriver.fire_event(UserEvent(
+                UserEventType.RENDERING_CANVAS_ENABLE,
+                LogMessage(LogType.IGNORE, "")))
+
         dialog.Destroy()
 
     def text_ctrl_input_on_kill_focus(self, event):
@@ -355,12 +363,18 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         :param event:
         :return:
         """
+        UIDriver.fire_event(UserEvent(
+            UserEventType.RENDERING_CANVAS_DISABLE,
+            LogMessage(LogType.IGNORE, "")))
+
         dat_wildcard = "*.dat"
         dialog = wx.FileDialog(self, "Choose a location for the LDraw file",
                                defaultDir=self.part_dir,
                                style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT,
                                wildcard=dat_wildcard)
+
         dialog.SetFilename(self.part_name)
+
         if dialog.ShowModal() == wx.ID_OK:
             pathname = dialog.GetPath()
 
@@ -382,6 +396,9 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                                          "Output file will be saved as: '" +
                                          self.out_file + "'.")))
 
+        UIDriver.fire_event(UserEvent(
+            UserEventType.RENDERING_CANVAS_ENABLE,
+            LogMessage(LogType.IGNORE, "")))
         dialog.Destroy()
 
     def text_ctrl_placeholder_on_gain_focus(self, event):
