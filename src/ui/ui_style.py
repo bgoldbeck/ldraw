@@ -29,6 +29,7 @@ class UIStyle:
     main_panel_background_color = "#ffffaa"
 
     # Metadata Panel
+    metadata_border = wx.BORDER_SUNKEN
     metadata_background_color = "#777fea"
     metadata_label_color = ""
     metadata_input_text_color = "black"
@@ -42,10 +43,12 @@ class UIStyle:
     metadata_label_size = (200, 25)
 
     # Conversion Panel
+    conversion_border = wx.SIMPLE_BORDER
     conversion_background_color = "#456eab"
     conversion_big_button_size = (120, 30)
 
     # Log Panel
+    log_border = wx.BORDER_SUNKEN
     log_background_color = "#eee111"
     log_text_background_color = [25, 25, 25]
     log_default_text_color = [225, 225, 225]
@@ -84,7 +87,7 @@ class UIStyle:
         UIStyle.main_panel_background_color = "#2B2B2B"
 
         # Metadata Panel
-        UIStyle.metadata_border = wx.BORDER_NONE
+        UIStyle.metadata_border = wx.BORDER_SUNKEN
         UIStyle.metadata_background_color = "#2B2B2B"
         UIStyle.metadata_label_color = "#808080"
         UIStyle.metadata_input_text_color = "#A5C25C"
@@ -98,12 +101,12 @@ class UIStyle:
         UIStyle.metadata_label_size = (200, 25)
 
         # Conversion Panel
-        UIStyle.conversion_border = wx.BORDER_NONE
+        UIStyle.conversion_border = wx.SIMPLE_BORDER
         UIStyle.conversion_background_color = "#2B2B2B"
         UIStyle.conversion_big_button_size = (120, 30)
 
         # Log Panel
-        UIStyle.log_border = wx.BORDER_NONE
+        UIStyle.log_border = wx.BORDER_SUNKEN
         UIStyle.log_background_color = "#2B2B2B"
         UIStyle.log_text_background_color = "#323232"
         UIStyle.log_default_text_color = "#A9B7C6"
