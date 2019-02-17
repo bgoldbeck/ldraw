@@ -14,6 +14,7 @@ from src.ui.user_event import UserEvent
 from src.ui.user_event_type import UserEventType
 from src.ui.ui_driver import UIDriver
 from src.model_conversion.model_shipper import ModelShipper
+from src.model_conversion.ldraw_model import LDrawModel
 from src.log_messages.log_message import LogMessage
 from src.log_messages.log_type import LogType
 from src.ui.ui_style import *
@@ -259,7 +260,13 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
                 # Only update stuff if selection changed
                 # Check if this .stl is valid
-                if ModelShipper.load_stl_model(filename):
+                mesh = ModelShipper.load_stl_model(filename)
+                if mesh:
+                    # Load in LDraw object to input model
+                    ModelShipper.input_model = LDrawModel(self.part_name,
+                                                          self.get_author(),
+                                                          self.get_license(),
+                                                          mesh)
                     self.stl_dir = Util.get_parent(filename)  # Only the dir
                     self.stl_path_text = filename  # The whole path to file
                     self.stl_path_isvalid = True
@@ -295,7 +302,15 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                 if self.stl_path_text.endswith('.stl'):
 
                     # Check if this .stl is valid
-                    if ModelShipper.load_stl_model(self.stl_path_text):
+
+                    mesh = ModelShipper.load_stl_model(self.stl_path_text)
+
+                    if mesh:
+                        # Load in LDraw object to input model
+                        ModelShipper.input_model = LDrawModel(self.part_name,
+                                                              self.get_author(),
+                                                              self.get_license(),
+                                                              mesh)
                         self.stl_dir = Util.get_parent(self.stl_path_text)  # Only the dir
                         self.save_settings()
                         self.stl_path_isvalid = True
