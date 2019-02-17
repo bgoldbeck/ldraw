@@ -365,6 +365,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                     pathname = pathname + '.dat'
 
                 self.out_file = pathname  # Full path
+                ModelShipper.output_path = pathname
                 self.part_dir = Util.get_parent(pathname)  # Only the dir
                 self.part_name = Util.get_filename(pathname)  # Only filename
                 self.ldraw_name_isvalid = True

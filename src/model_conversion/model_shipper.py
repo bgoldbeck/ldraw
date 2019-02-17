@@ -25,6 +25,7 @@ class ModelShipper:
     input_model = None # Mesh loaded in from input file
     output_model = None # LDraw file
     output_file = None # The text to write out to output path when save pressed
+    output_path = None
 
     @staticmethod
     def load_stl_model(file_path: str):

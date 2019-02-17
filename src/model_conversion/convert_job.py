@@ -29,12 +29,16 @@ class ConvertJob(BaseJob):
     def do_job(self):
         self.put_feedback(LogMessage(LogType.DEBUG, "Starting conversion job"))
 
-        # Setting output model as input LDraw object
         self.is_running.wait()
-        model = None
+        # Setting output model as input LDraw object
+        model = None # LDraw model
+        mesh = None # mesh in LDraw model
+        children = None
         if not self.is_killed:
             ModelShipper.output_model = copy.deepcopy(ModelShipper.input_model)
             model = ModelShipper.output_model
+            mesh = model.get_mesh()
+            children = model.get_children()
 
         self.is_running.wait()
         if not self.is_killed:
@@ -55,6 +59,45 @@ class ConvertJob(BaseJob):
             if model.get_name() != "":
                 ModelShipper.output_file += ("0 " + "!LICENSE " + model.get_license_info() + "\n")
 
+        for i in range(len(mesh.normals)):
+            # Write out line 3 types for main mesh
+            self.is_running.wait()
+            if self.is_killed:
+                break
+            # Export vertices information in ldraw format
+            ModelShipper.output_file += ("3 4 " + str(mesh.v2[i][0])
+                                         + " " + str(mesh.v2[i][1])
+                                         + " " + str(mesh.v2[i][2])
+                                         + " " + str(mesh.v1[i][0])
+                                         + " " + str(mesh.v1[i][1])
+                                         + " " + str(mesh.v1[i][2])
+                                         + " " + str(mesh.v0[i][0])
+                                         + " " + str(mesh.v0[i][1])
+                                         + " " + str(mesh.v0[i][2])
+                                         + "\n")
+
+        for i in range(len(model.get_children())):
+            # For each child mesh
+            self.is_running.wait()
+            if self.is_killed:
+                break
+
+            for j in range(len(children[i].normals)):
+                # For each normal in this child mesh
+                self.is_running.wait()
+                if self.is_killed:
+                    break
+                # Export vertices information in ldraw format
+                ModelShipper.output_file += ("3 4 " + str(mesh.v2[j][0])
+                                             + " " + str(mesh.v2[j][1])
+                                             + " " + str(mesh.v2[j][2])
+                                             + " " + str(mesh.v1[j][0])
+                                             + " " + str(mesh.v1[j][1])
+                                             + " " + str(mesh.v1[j][2])
+                                             + " " + str(mesh.v0[j][0])
+                                             + " " + str(mesh.v0[j][1])
+                                             + " " + str(mesh.v0[j][2])
+                                             + "\n")
 
         self.is_running.wait()
         if not self.is_killed: # Job completed (not killed)
@@ -63,7 +106,7 @@ class ConvertJob(BaseJob):
             fake_model = LDrawModel("", "", "", fake_mesh)
             self.put_feedback(LogMessage(LogType.DEBUG, "Finished conversion job"))
 
-            self.put_feedback(OutputModelMessage(LogType.INFO,
+            self.put_feedback(OutputModelMessage(LogType.INFORMATION,
                                                  "Conversion Complete. Ready to Save.",
                                                  fake_model))
         else: # Job was killed
