@@ -7,10 +7,14 @@
 # “An Huynh” <an35@pdx.edu>
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
+import wx, os
 from src.ui.application_state import ApplicationState
 from src.ui.user_event import UserEvent
 from src.ui.iui_behavior import IUIBehavior
 from src.util import Util
+from src.threading.thread_manager import *
+from src.log_messages.output_model_message import OutputModelMessage
+from src.ui.user_event_type import UserEventType
 
 
 class UIDriver:
@@ -22,6 +26,7 @@ class UIDriver:
     instance = None
     application_state = None
     root_frame = None
+    thread_manager = None
 
     def __init__(self, root):
         """Default constructor for the UIDriver object.
@@ -31,6 +36,8 @@ class UIDriver:
             UIDriver.instance = self
 
             UIDriver.root_frame = root
+
+            UIDriver.thread_manager = ThreadManager()
 
             # Set application to STARTUP state.
             UIDriver.change_application_state(ApplicationState.STARTUP)
@@ -111,3 +118,32 @@ class UIDriver:
             pass
 
         return text
+
+    @staticmethod
+    def update(dt: float):
+        """Called every loop by the GUIEventLoop
+
+        :param dt: The delta time between the last call.
+        :return: None
+        """
+        # We need to notify all the ui behaviors of the event.
+        ui_behaviors = []
+        UIDriver.get_all_ui_behaviors(UIDriver.root_frame, ui_behaviors)
+
+        for ui_behavior in ui_behaviors:
+            ui_behavior.update(dt)
+
+        if UIDriver.thread_manager.has_message_available():
+            msg = UIDriver.thread_manager.get_message()
+            if isinstance(msg, OutputModelMessage):
+                UIDriver.fire_event(
+                    UserEvent(UserEventType.CONVERSION_COMPLETE, msg))
+
+                UIDriver.change_application_state(ApplicationState.WAITING_GO)
+
+                UIDriver.fire_event(
+                    UserEvent(UserEventType.RENDERING_CANVAS_ENABLE,
+                              LogMessage(LogType.IGNORE, "")))
+            else:
+                UIDriver.fire_event(
+                    UserEvent(UserEventType.WORKER_LOG_MESSAGE_AVAILABLE, msg))

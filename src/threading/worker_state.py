@@ -7,11 +7,11 @@
 # “An Huynh” <an35@pdx.edu>
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
-import unittest
+from enum import Enum
 
 
-class TestMetadataPanel(unittest.TestCase):
-    def test_about(self):
-        # Test when there is no about file
-        # self.assertEqual()
-        pass
+class WorkerState(Enum):
+    RUNNING = 0
+    PAUSE = 1
+    STOP = 2
+

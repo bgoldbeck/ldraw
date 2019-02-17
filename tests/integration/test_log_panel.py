@@ -8,10 +8,19 @@
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 import unittest
+from src.ui.user_event import UserEvent
+from src.ui.user_event_type import UserEventType
+from src.log_messages.log_message import LogMessage
+from src.log_messages.log_type import LogType
 
 
-class TestMetadataPanel(unittest.TestCase):
-    def test_about(self):
-        # Test when there is no about file
-        # self.assertEqual()
-        pass
+class TestLogPanel(unittest.TestCase):
+    """Test cases for the user event.
+    """
+
+    def test_handle_log_message(self):
+        """
+
+        :return: 
+        """
+

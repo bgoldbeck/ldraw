@@ -3,3 +3,5 @@ WxPython
 numpy
 pyrr
 numpy-stl
+pyquaternion
+pillow
