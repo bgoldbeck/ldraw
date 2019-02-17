@@ -19,7 +19,7 @@ class ModelShipperTest(unittest.TestCase):
     def testImportPlane(self):
         # Load the model from the assets folder.
         mesh = ModelShipper.load_stl_model(Util.path_conversion("assets/models/plane.stl"))
-        self.assertEqual(mesh, True)
+        self.assertNotEqual(mesh, False)
         # First triangle facet.
         self.assertEqual(mesh.v0[0], Vector3([0.5, 0., -0.5]))
         self.assertEqual(mesh.v1[0], Vector3([-0.5, 0., -0.5]))
@@ -42,7 +42,7 @@ class ModelShipperTest(unittest.TestCase):
 
         # Import the model.
         mesh = ModelShipper.load_stl_model(Util.path_conversion("assets/models/plane.stl"))
-        self.assertEqual(mesh, True)
+        self.assertNotEqual(mesh, False)
 
         model = LDrawModel(
             "plane",  # Model name
