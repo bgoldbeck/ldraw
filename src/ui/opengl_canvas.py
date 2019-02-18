@@ -155,7 +155,7 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
                 self.Bind(wx.EVT_PAINT, self.on_paint)
                 self.Refresh()
         else:
-            wx.StaticText(self, label="OpenGL is unavailable.")
+            wx.StaticText(self, label="OpenGL is unavailable. Version 3.3 or higher is required.")
 
     def update(self, dt: float):
         """Called every loop by the GUIEventLoop
