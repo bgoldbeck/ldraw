@@ -21,6 +21,7 @@ from src.log_messages.log_message import LogMessage
 from src.log_messages.float_message import FloatMessage
 from src.log_messages.log_type import LogType
 from src.ui.ui_style import UIStyle
+from src.rendering.rendering_engine import RenderingEngine
 from pyrr import Vector3
 
 
@@ -102,6 +103,11 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         glViewport(0, 0, self.canvas_size[0], self.canvas_size[1])
         self.scene = Scene()
 
+        print("OpenGL Major: " + str(RenderingEngine.gl_version_major_minor()[0]))
+        print("OpenGL Minor: " + str(RenderingEngine.gl_version_major_minor()[1]))
+        print("GLSL Major: " + str(RenderingEngine.glsl_version_major_minor()[0]))
+        print("GLSL Minor: " + str(RenderingEngine.glsl_version_major_minor()[1]))
+
     def draw(self):
         """Draw the previous OpenGL buffer with all the 3D data.
         :return: None
@@ -133,7 +139,7 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         """
         if event is not None:
             if event.get_event_type() == UserEventType.INPUT_MODEL_READY:
-                self.scene.replace_input_model_mesh(ModelShipper.input_model)
+                self.scene.replace_input_model_mesh(ModelShipper.input_model.mesh)
                 self.scene.replace_output_model_mesh(None)
                 self.scene.set_input_model_active(True)
             if event.get_event_type() == UserEventType.RENDERING_WIRE_FRAME_PRESSED:
