@@ -64,6 +64,7 @@ class UIStyle:
     log_font_size = 9
 
     # OpenGL
+    render_text_color = "white"
     opengl_panel_border = wx.BORDER_SUNKEN
     opengl_canvas_background_color = [0, 0, 0, 255]
     opengl_label_color = "#666666"
@@ -122,3 +123,4 @@ class UIStyle:
         UIStyle.log_font_size = 10
 
         # OpenGL Panel
+        UIStyle.render_text_color = "white"
