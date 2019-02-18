@@ -4,7 +4,7 @@ Copyright (C) 2018 - This notice is to be included in all relevant source files.
 
 This software is licensed under the MIT License. See LICENSE file for the full text.
 
-Authors
+Authors:
 "Brandon Goldbeck" <bpg@pdx.edu>
 “Anthony Namba” <anamba@pdx.edu>
 “Brandon Le” <lebran@pdx.edu>
