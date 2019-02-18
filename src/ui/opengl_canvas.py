@@ -29,6 +29,7 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
     """This is the canvas for OpenGL to render objects to.
     """
     canvas_size = (400, 300)
+    render_text = None
 
     def __init__(self, parent):
         """Default constructor for OpenGLCanvas class.
@@ -155,7 +156,9 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
                 self.Bind(wx.EVT_PAINT, self.on_paint)
                 self.Refresh()
         else:
-            wx.StaticText(self, label="OpenGL is unavailable. Version 3.3 or higher is required.")
+            self.render_text = wx.StaticText(self, label="OpenGL is unavailable. Version 3.3 or higher is required.")
+            self.render_text.SetForegroundColour("white")
+
 
     def update(self, dt: float):
         """Called every loop by the GUIEventLoop
