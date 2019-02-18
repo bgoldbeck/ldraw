@@ -189,6 +189,9 @@ class ConversionPanel(wx.Panel, IUIBehavior):
         """
         if event.get_event_type() == UserEventType.CONVERSION_COMPLETE:
             self.save_button.Enable()
+
+        if event.get_event_type() == UserEventType.INPUT_MODEL_READY:
+            self.save_button.Disable()
             
     def update(self, dt: float):
         """Called every loop by the GUIEventLoop
