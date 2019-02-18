@@ -501,21 +501,14 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             self.ldraw_name_input.Enable()
             self.author_input.Enable()
             self.license_input.Enable()
-            self.about_button.Enable()
             self.browse_output_button.Enable()
-            self.help_button.Enable()
             self.browse_stl_button.Enable()
         elif new_state == ApplicationState.WORKING:
-            if self.popup is not None:
-                self.popup.Destroy()
-                self.popup = None
             self.stl_path_input.Disable()
             self.ldraw_name_input.Disable()
             self.author_input.Disable()
             self.license_input.Disable()
-            self.about_button.Disable()
             self.browse_output_button.Disable()
-            self.help_button.Disable()
             self.browse_stl_button.Disable()
 
     def on_event(self, event: UserEvent):
