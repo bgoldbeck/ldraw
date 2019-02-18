@@ -11,8 +11,7 @@ import unittest
 from src.log_messages.input_model_message import InputModelMessage
 from src.log_messages.log_type import LogType
 from src.model_conversion.model_shipper import ModelShipper
-from stl import Mesh
-from util import Util
+from src.util import Util
 
 
 class TestInputModelMessage(unittest.TestCase):

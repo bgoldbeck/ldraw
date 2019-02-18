@@ -16,6 +16,7 @@ from src.rendering.rendering_engine import RenderingEngine
 from src.rendering.material import Material
 from PIL import Image
 import numpy
+from src.util import Util
 
 
 class BasicMaterial(Material):
@@ -187,7 +188,7 @@ void main() {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
 
         # load image
-        image = Image.open("assets/images/default_brick_diffuse.jpg")
+        image = Image.open(Util.path_conversion("assets/images/default_brick_diffuse.jpg"))
         img_data = numpy.array(list(image.getdata()), numpy.uint8)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.width, image.height, 0, GL_RGB, GL_UNSIGNED_BYTE, img_data)
         glEnable(GL_TEXTURE_2D)

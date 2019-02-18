@@ -17,10 +17,10 @@ from src.model_conversion.model_shipper import ModelShipper
 from src.log_messages.log_message import LogMessage
 from src.log_messages.log_type import LogType
 from src.ui.ui_style import *
+from src.util import Util
 from src.ui.popup import Popup
 from src.ui.button import Button
 import re
-from util import Util
 
 
 class MetadataPanel(wx.Panel, IUIBehavior):
@@ -30,7 +30,6 @@ class MetadataPanel(wx.Panel, IUIBehavior):
     and ldraw file output.
     """
     max_path_length = 256
-    _metadata_border = wx.BORDER_SUNKEN
 
     def __init__(self, parent):
         """Default constructor for MainPanel class.

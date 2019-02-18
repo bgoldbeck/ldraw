@@ -11,7 +11,7 @@ import wx, os
 from src.ui.application_state import ApplicationState
 from src.ui.user_event import UserEvent
 from src.ui.iui_behavior import IUIBehavior
-from util import Util
+from src.util import Util
 from src.threading.thread_manager import *
 from src.log_messages.output_model_message import OutputModelMessage
 from src.ui.user_event_type import UserEventType
@@ -138,7 +138,7 @@ class UIDriver:
             if isinstance(msg, OutputModelMessage):
                 UIDriver.fire_event(
                     UserEvent(UserEventType.CONVERSION_COMPLETE, msg))
-                
+
                 UIDriver.change_application_state(ApplicationState.WAITING_GO)
 
                 UIDriver.fire_event(
