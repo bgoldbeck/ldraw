@@ -15,6 +15,7 @@ class UIStyle:
     border and text color.
     The color scheme in this class is the default color (for debug).
     """
+    render_info = 9
     # Utility
     button_background = ""
     button_text = ""

@@ -107,6 +107,8 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         print("OpenGL Minor: " + str(RenderingEngine.gl_version_major_minor()[1]))
         print("GLSL Major: " + str(RenderingEngine.glsl_version_major_minor()[0]))
         print("GLSL Minor: " + str(RenderingEngine.glsl_version_major_minor()[1]))
+        UIStyle.render_info = RenderingEngine.gl_version_major_minor()[0]
+        print(UIStyle)
 
     def draw(self):
         """Draw the previous OpenGL buffer with all the 3D data.
@@ -120,8 +122,9 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
         self.Refresh()
-        self.scene.draw()
-        self.SwapBuffers()
+        if self.scene is not None:
+            self.scene.draw()
+            self.SwapBuffers()
 
     def on_state_changed(self, new_state: ApplicationState):
         """A state change was passed to the OpenGLCanvas.
@@ -137,7 +140,7 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         :param event: The recorded UserEvent.
         :return: None
         """
-        if event is not None:
+        if event is not None and UIStyle.render_info >= 3:
             if event.get_event_type() == UserEventType.INPUT_MODEL_READY:
                 self.scene.replace_input_model_mesh(ModelShipper.input_model.mesh)
                 self.scene.replace_output_model_mesh(None)
