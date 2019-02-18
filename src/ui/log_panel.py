@@ -64,11 +64,12 @@ class LogPanel(wx.Panel, IUIBehavior):
         self.SetSizer(horizontal_layout)
         self.Show()
 
-    def save_log(self):
+    def save_log(self, event):
         """Save the feedback log to a file.
 
         :return: None
         """
+
         try:
             log_file = open(self._log_file_path, mode="w")
             log_file.write(self.log_text_ctrl.GetValue())
@@ -92,7 +93,7 @@ class LogPanel(wx.Panel, IUIBehavior):
         :return: None
         """
         if new_state == ApplicationState.STARTUP:
-            self.save_log_button.Disable()
+            self.save_log_button.Enable()
 
         self.handle_log_message_event(UserEvent(
             UserEventType.APPLICATION_STATE_CHANGE,
