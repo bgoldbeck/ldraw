@@ -46,7 +46,7 @@ class TestJobB(BaseJob):
             self.put_feedback(LogMessage(LogType.DEBUG, "Finished Test Job B"))
 
             self.put_feedback(OutputModelMessage(LogType.DEBUG,
-                                                 "Starting Test Job A",
+                                                 "Conversion Complete",
                                                  fake_model))
 
 

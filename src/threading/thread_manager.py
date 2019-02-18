@@ -12,6 +12,7 @@ from src.threading.worker_thread import *
 from src.threading.worker_state import WorkerState
 from src.threading.test_job_A import TestJobA
 from src.threading.test_job_B import TestJobB
+from src.model_conversion.convert_job import ConvertJob
 
 
 
@@ -29,8 +30,7 @@ class ThreadManager:
         self.worker_thread = None
 
         # Fill this list with whatever jobs need doing, in order
-        self.job_list = [TestJobA(self.feedback_log).__class__,
-                         TestJobB(self.feedback_log).__class__,]
+        self.job_list = [ConvertJob(self.feedback_log).__class__,]
 
     def has_message_available(self):
         """Checks if message queue is not empty

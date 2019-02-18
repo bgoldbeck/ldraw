@@ -17,6 +17,7 @@ from src.log_messages.log_message import LogMessage
 from src.log_messages.log_type import LogType
 from src.ui.ui_style import *
 from src.ui.user_event_type import UserEventType
+from src.model_conversion.model_shipper import ModelShipper
 from src.ui.button import Button
 
 class ConversionPanel(wx.Panel, IUIBehavior):
@@ -132,8 +133,15 @@ class ConversionPanel(wx.Panel, IUIBehavior):
         :param event: The wx event that was recorded.
         :return: None
         """
-        pass
-
+        self.save_button.Disable()
+        with open(ModelShipper.output_path, "w") as text_file:
+            text_file.write(ModelShipper.output_file)
+        self.save_button.Enable()
+        UIDriver.fire_event(
+            UserEvent(UserEventType.CONVERSION_PAUSED,
+                      LogMessage(LogType.INFORMATION,
+                                 "File was saved to '"+ ModelShipper.output_path
+                                 + "'.")))
     def on_state_changed(self, new_state: ApplicationState):
         """A state change was passed to the ConversionPanel.
 
