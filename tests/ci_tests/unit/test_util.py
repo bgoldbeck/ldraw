@@ -9,7 +9,7 @@
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 import unittest
 import os
-from util import Util
+from src.util import Util
 
 
 class UtilTest(unittest.TestCase):
@@ -46,6 +46,7 @@ class UtilTest(unittest.TestCase):
         Util.mkdir(temp_test_dir)
         self.assertTrue(Util.is_dir(temp_test_dir))
         Util.rmdir(temp_test_dir)
+        Util.rmdir(Util.path_conversion("tests/temp"))
 
     def test_rmdir(self):
         temp_test_dir = Util.path_conversion("tests/temp/temp_test")
@@ -53,6 +54,7 @@ class UtilTest(unittest.TestCase):
         self.assertTrue(Util.is_dir(temp_test_dir))
         Util.rmdir(temp_test_dir)
         self.assertFalse(Util.is_dir(temp_test_dir))
+        Util.rmdir(Util.path_conversion("tests/temp"))
 
 
 

@@ -11,7 +11,7 @@ import unittest
 import os
 from src.model_conversion.model_shipper import *
 from pyrr import *
-from util import Util
+from src.util import Util
 
 
 class ModelShipperTest(unittest.TestCase):
@@ -58,11 +58,12 @@ class ModelShipperTest(unittest.TestCase):
         with open(file_path, 'r') as file:
             file_data = file.read()
 
-        # Cleanup.
-        if os.path.exists(file_path):
-            os.remove(file_path)
-
         # The final file data should look like this.
         self.assertEqual(
             file_data,
             "0 LScan auto generated part plane\n0 Name: plane.dat\n0 Author: Rando\n0 !LICENSE Redistributable under CCAL version 2.0 : see CAreadme.txt\n3 4 -0.5 0.0 0.5 -0.5 0.0 -0.5 0.5 0.0 -0.5\n3 4 0.5 0.0 -0.5 0.5 0.0 0.5 -0.5 0.0 0.5\n")
+
+        # Cleanup.
+        if os.path.exists(file_path):
+            os.remove(file_path)
+        os.rmdir(Util.path_conversion("tests/temp/"))
