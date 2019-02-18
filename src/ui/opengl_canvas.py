@@ -108,7 +108,7 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         print("GLSL Major: " + str(RenderingEngine.glsl_version_major_minor()[0]))
         print("GLSL Minor: " + str(RenderingEngine.glsl_version_major_minor()[1]))
         UIStyle.render_info = RenderingEngine.gl_version_major_minor()[0]
-        print(UIStyle)
+        print(UIStyle.render_info)
 
     def draw(self):
         """Draw the previous OpenGL buffer with all the 3D data.
@@ -154,6 +154,8 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
             if event.get_event_type() == UserEventType.RENDERING_CANVAS_ENABLE:
                 self.Bind(wx.EVT_PAINT, self.on_paint)
                 self.Refresh()
+        else:
+            wx.StaticText(self, label="OpenGL is unavailable.")
 
     def update(self, dt: float):
         """Called every loop by the GUIEventLoop
