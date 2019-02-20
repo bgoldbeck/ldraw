@@ -21,7 +21,7 @@ import copy
 
 class ConvertJob(BaseJob):
     """This job converts the input mesh into LDraw text and stores it in
-    ModelShipper.output_file so it can be saved later.
+    ModelShipper.output_data_text and ModelShipper.output_metadata_text so it can be saved later.
     """
     def __init__(self, feedback_log):
         super().__init__(feedback_log)
@@ -40,41 +40,44 @@ class ConvertJob(BaseJob):
             mesh = model.get_mesh()
             children = model.get_children()
 
+        # Write out the metadata information
         self.is_running.wait()
         if not self.is_killed:
             # Write out the model name.
             if model.get_name() != "":
-                ModelShipper.output_file = ("0 " + "LScan auto generated part " + model.get_name() + "\n")
-                ModelShipper.output_file += ("0 " + "Name: " + model.get_name() + "\n")
+                ModelShipper.output_metadata_text = ("0 " + "LScan auto generated part " + model.get_name() + "\n")
+                ModelShipper.output_metadata_text += ("0 " + "Name: " + model.get_name() + "\n")
 
         self.is_running.wait()
         if not self.is_killed:
             # Write out the author name.
             if model.get_author() != "":
-                ModelShipper.output_file += ("0 " + "Author: " + model.get_author() + "\n")
+                ModelShipper.output_metadata_text += ("0 " + "Author: " + model.get_author() + "\n")
 
         self.is_running.wait()
         if not self.is_killed:
             # Write out the license
             if model.get_name() != "":
-                ModelShipper.output_file += ("0 " + "!LICENSE " + model.get_license_info() + "\n")
+                ModelShipper.output_metadata_text += ("0 " + "!LICENSE " + model.get_license_info() + "\n")
 
+        # Write out output file data section
+        ModelShipper.output_data_text = ""
         for i in range(len(mesh.normals)):
             # Write out line 3 types for main mesh
             self.is_running.wait()
             if self.is_killed:
                 break
             # Export vertices information in ldraw format
-            ModelShipper.output_file += ("3 4 " + str(mesh.v2[i][0])
-                                         + " " + str(mesh.v2[i][1])
-                                         + " " + str(mesh.v2[i][2])
-                                         + " " + str(mesh.v1[i][0])
-                                         + " " + str(mesh.v1[i][1])
-                                         + " " + str(mesh.v1[i][2])
-                                         + " " + str(mesh.v0[i][0])
-                                         + " " + str(mesh.v0[i][1])
-                                         + " " + str(mesh.v0[i][2])
-                                         + "\n")
+            ModelShipper.output_data_text += ("3 4 " + str(mesh.v2[i][0])
+                                              + " " + str(mesh.v2[i][1])
+                                              + " " + str(mesh.v2[i][2])
+                                              + " " + str(mesh.v1[i][0])
+                                              + " " + str(mesh.v1[i][1])
+                                              + " " + str(mesh.v1[i][2])
+                                              + " " + str(mesh.v0[i][0])
+                                              + " " + str(mesh.v0[i][1])
+                                              + " " + str(mesh.v0[i][2])
+                                              + "\n")
 
         for i in range(len(model.get_children())):
             # For each child mesh
@@ -88,16 +91,16 @@ class ConvertJob(BaseJob):
                 if self.is_killed:
                     break
                 # Export vertices information in ldraw format
-                ModelShipper.output_file += ("3 4 " + str(mesh.v2[j][0])
-                                             + " " + str(mesh.v2[j][1])
-                                             + " " + str(mesh.v2[j][2])
-                                             + " " + str(mesh.v1[j][0])
-                                             + " " + str(mesh.v1[j][1])
-                                             + " " + str(mesh.v1[j][2])
-                                             + " " + str(mesh.v0[j][0])
-                                             + " " + str(mesh.v0[j][1])
-                                             + " " + str(mesh.v0[j][2])
-                                             + "\n")
+                ModelShipper.output_data_text += ("3 4 " + str(mesh.v2[j][0])
+                                                  + " " + str(mesh.v2[j][1])
+                                                  + " " + str(mesh.v2[j][2])
+                                                  + " " + str(mesh.v1[j][0])
+                                                  + " " + str(mesh.v1[j][1])
+                                                  + " " + str(mesh.v1[j][2])
+                                                  + " " + str(mesh.v0[j][0])
+                                                  + " " + str(mesh.v0[j][1])
+                                                  + " " + str(mesh.v0[j][2])
+                                                  + "\n")
 
         self.is_running.wait()
         if not self.is_killed: # Job completed (not killed)

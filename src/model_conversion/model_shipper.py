@@ -24,8 +24,9 @@ class ModelShipper:
     """
     input_model = None # Mesh loaded in from input file
     output_model = None # LDraw file
-    output_file = None # The text to write out to output path when save pressed
+    output_data_text = None # The text to write out to output path when save pressed
     output_path = None
+    output_metadata_text = None # Metadata text of converted file
 
     @staticmethod
     def load_stl_model(file_path: str):
@@ -118,3 +119,16 @@ class ModelShipper:
         """
 
         return ModelShipper.input_model
+
+    @staticmethod
+    def update_metadata(author, file_name, license_info):
+        """Update the metadata text to be written to output file
+        :param author: Author Name Str
+        :param file_name: File Name (eg: brick.dat)
+        :param license_info: License Str
+        :return:
+        """
+
+        ModelShipper.output_metadata_text = "0 " + "LScan auto generated part " + file_name + "\n"
+        ModelShipper.output_metadata_text += "0 " + "Name: " + author + "\n"
+        ModelShipper.output_metadata_text += "0 " + "!LICENSE " + license_info + "\n"

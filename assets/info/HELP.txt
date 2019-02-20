@@ -1,9 +1,24 @@
-Program Limitations
-TEXT!!!
-Troubleshooting
-TEXT!!!
-How to update LDraw Parts Library
-Manually: Download the update provided at
-    http://www.ldraw.org/library/update/lcad<year><release>.zip
-Additional/automatic instructions available at: http://www.ldraw.org/article/13.html
-Unofficial library instructions available at: http://www.melkert.net/LDCad/faq#faq_unoflib
+Program Use:
+    • This program allows the user to convert STL model files to LDraw format.
+    • Select an input STL file, and an output file location.
+    • Imported STL models may be viewed and inspected in 3D space.
+    • Click 'Convert to LDraw' when ready to begin conversion.
+    • The log will display progress and indicate when conversion is complete.
+    • Click 'Save Conversion' to save LDraw file to the specified output directory.
+
+Limitations:
+    • 3D model viewer requires OpenGL 4.2 or above.
+    • Imported STL models should be pre-centered for best results.
+
+Troubleshooting:
+    • Visit https://github.com/bgoldbeck/lscan/issues
+
+How to update LDraw Parts Library:
+    • Manually: Download the update provided at:
+        http://www.ldraw.org/library/update/lcad<year><release>.zip
+
+    • Additional/automatic instructions available at:
+        http://www.ldraw.org/article/13.html
+
+    • Unofficial library instructions available at:
+        http://www.melkert.net/LDCad/faq#faq_unoflib
