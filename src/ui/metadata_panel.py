@@ -22,7 +22,7 @@ from src.util import Util
 from src.ui.popup import Popup
 from src.ui.button import Button
 import re
-
+import json
 
 class MetadataPanel(wx.Panel, IUIBehavior):
     """This class contains the wx widgets for control over
@@ -58,6 +58,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self.part_name = None # "untitled.dat" or whatever user entered
         self.author_default = None # The one loaded from file at start
         self.license_default = None
+        self.log_dir = None
         self.default_settings = None
         self.load_settings()
         self.license_text = self.license_default
@@ -535,16 +536,19 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         default_author = "First Last"
         # default license
         default_license = "Redistributable under CCAL version 2.0 : see CAreadme.txt"
+        # default Log directory
+        default_log_dir = Util.path_conversion("~/Documents")
 
         self.default_settings = [default_stl_dir, default_part_name,
                                  default_part_dir, default_author,
-                                 default_license]
+                                 default_license, default_log_dir]
         file_path = Util.path_conversion(f"assets/settings/{name}")
 
         try:
             with open(file_path, "w") as file:
-                for setting in self.default_settings:
-                    print(setting, file=file)
+                #for setting in self.default_settings:
+                #   print(setting, file=file)
+                json.dump(self.default_settings, file_path)
         except FileNotFoundError as ferr:
             print(ferr)
 
@@ -571,7 +575,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         """Load settings values into memory on startup.
         """
         settings_path = Util.path_conversion("assets/settings")
-        filename = "user_settings.txt"
+        filename = "user_settings.json"
         file_path = settings_path + "/" + filename
 
         # If settings file doesnt exist
