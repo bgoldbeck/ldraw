@@ -83,4 +83,21 @@ class ThreadManager:
         if self.worker_thread is not None:
             self.worker_thread.change_state(WorkerState.RUNNING)
 
+    def get_worker_state(self):
+        """Gets worker state
 
+        :return: WorkerState
+        """
+        if self.worker_thread == None:
+            return None
+        else:
+            return self.worker_thread.get_state()
+
+    def get_job_status(self):
+        """Gets status of current job as string
+        :return: None
+        """
+        if self.worker_thread == None:
+            return None
+        else:
+            return self.worker_thread.get_status()
