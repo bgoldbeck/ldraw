@@ -2,7 +2,8 @@ LScan
 Version 1.0
 Copyright (C) 2018 - This notice is to be included in all relevant source files.
 
-This software is licensed under the MIT License. See LICENSE file for the full text.
+This software is licensed under the MIT License. See LICENSE file for the full
+text.
 
 Authors:
 "Brandon Goldbeck" <bpg@pdx.edu>
@@ -12,3 +13,7 @@ Authors:
 “Sohan Tamang” <sohan@pdx.edu>
 “An Huynh” <an35@pdx.edu>
 “Theron Anderson” <atheron@pdx.edu>
+
+** LEGO® is a registered trademark of the LEGO Group, which does not sponsor,
+endorse, or authorize this software. Visit the official Lego website at
+http://www.lego.com. **
