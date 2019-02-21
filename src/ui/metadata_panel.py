@@ -24,6 +24,9 @@ from src.ui.button import Button
 import re
 import json
 
+
+from pathlib import Path
+
 class MetadataPanel(wx.Panel, IUIBehavior):
     """This class contains the wx widgets for control over
     metadata information in the program. These widgets may include,
@@ -537,18 +540,21 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         # default license
         default_license = "Redistributable under CCAL version 2.0 : see CAreadme.txt"
         # default Log directory
-        default_log_dir = Util.path_conversion("~/Documents")
+        default_log_dir = Util.path_conversion(str(Path.home()) + "/Documents")
 
-        self.default_settings = [default_stl_dir, default_part_name,
-                                 default_part_dir, default_author,
-                                 default_license, default_log_dir]
+        self.default_settings = {"stl_dir": default_stl_dir,
+                                 "part_name": default_part_name,
+                                 "part_dir": default_part_dir,
+                                 "author": default_author,
+                                 "license": default_license,
+                                 "log_dir": default_log_dir}
         file_path = Util.path_conversion(f"assets/settings/{name}")
 
         try:
             with open(file_path, "w") as file:
                 #for setting in self.default_settings:
                 #   print(setting, file=file)
-                json.dump(self.default_settings, file_path)
+                json.dump(self.default_settings, file)
         except FileNotFoundError as ferr:
             print(ferr)
 
@@ -559,14 +565,19 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         # Write out changes to stl_dir, part_dir, author, license
         # default_part_name is always "untitled.dat"
 
-        settings = [self.stl_dir, "untitled.dat", self.part_dir,
-                    self.author_text, self.license_text]
-        file_path = Util.path_conversion("assets/settings/user_settings.txt")
+        settings = {"stl_dir": self.stl_dir,
+                    "part_name": "untitled.dat",
+                    "part_dir": self.part_dir,
+                    "author": self.author_text,
+                    "license": self.license_text,
+                    "log_dir":self.log_dir}
+        file_path = Util.path_conversion("assets/settings/user_settings.json")
         try:
             with open(file_path, "w") as file:
-                for setting in settings:
-                    if setting is not None:
-                        print(setting, file=file)
+                #for setting in settings:
+                #    if setting is not None:
+                 #       print(setting, file=file)
+                json.dump(settings, file)
 
         except FileNotFoundError as ferr:
             print(ferr)
@@ -587,13 +598,13 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             self.create_settings(filename)
 
         with open(file_path, "r") as file:
-            file_settings = file.readlines()
-
-            self.stl_dir = file_settings[0].rstrip()
-            self.part_name = file_settings[1].rstrip()
-            self.part_dir = file_settings[2].rstrip()
-            self.author_default = file_settings[3].rstrip()
-            self.license_default = file_settings[4].rstrip()
+            file_settings = json.load(file)
+            self.stl_dir = file_settings["stl_dir"]
+            self.part_name = file_settings["part_name"]
+            self.part_dir = file_settings["part_dir"]
+            self.author_default = file_settings["author"]
+            self.license_default = file_settings["license"]
+            self.log_dir = file_settings["log_dir"]
 
     def display_settings(self):
         """Display all settings and stl file path to standard out."""
