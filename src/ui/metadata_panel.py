@@ -562,7 +562,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
         file_path = Util.path_conversion("assets/settings/user_settings.json")
         try:
-            with open(file_path, "r+") as file:
+            with open(file_path, "r") as file:
                 file_settings = json.load(file)
                 print(file_settings)
                 file_settings["stl_dir"] = self.stl_dir
@@ -571,6 +571,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                 file_settings["author"] = self.author_text
                 file_settings["license"] = self.license_text
                 print(file_settings)
+
+            with open(file_path, "w") as file:
                 json.dump(file_settings, file)
 
         except FileNotFoundError as ferr:
