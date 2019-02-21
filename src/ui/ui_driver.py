@@ -78,6 +78,22 @@ class UIDriver:
         for ui_behavior in ui_behaviors:
             ui_behavior.on_event(event)
 
+        # Also notify thread_manager
+        UIDriver.thread_manager.on_event(event)
+
+        # Make state changes based on event
+        if event.get_event_type() == UserEventType.CONVERSION_STARTED:
+            UIDriver.change_application_state(ApplicationState.WORKING)
+
+        elif event.get_event_type() == UserEventType.CONVERSION_CANCELED:
+            UIDriver.change_application_state(ApplicationState.WAITING_GO)
+
+        elif event.get_event_type() == UserEventType.INPUT_VALID:
+            UIDriver.change_application_state(ApplicationState.WAITING_GO)
+
+        elif event.get_event_type() == UserEventType.INPUT_INVALID:
+            UIDriver.change_application_state(ApplicationState.WAITING_INPUT)
+
     @staticmethod
     def change_application_state(new_state: ApplicationState):
         """Send a state change down the wx widget tree to all IUIBehavior objects.

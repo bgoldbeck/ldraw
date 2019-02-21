@@ -203,11 +203,15 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         """
         if self.ldraw_name_isvalid and self.stl_path_isvalid:
             if UIDriver.application_state != ApplicationState.WAITING_GO:
-                UIDriver.change_application_state(ApplicationState.WAITING_GO)
+                UIDriver.fire_event(UserEvent(
+                    UserEventType.INPUT_VALID,
+                    LogMessage(LogType.IGNORE, "")))
         else:
             if UIDriver.application_state != ApplicationState.WAITING_INPUT:
-                UIDriver.change_application_state(
-                    ApplicationState.WAITING_INPUT)
+                UIDriver.fire_event(UserEvent(
+                    UserEventType.INPUT_INVALID,
+                    LogMessage(LogType.IGNORE, "")))
+
 
         # Set colors
         if self.ldraw_name_isvalid:
@@ -301,7 +305,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                 else:
                     self.stl_path_isvalid = False
                     UIDriver.fire_event(
-                        UserEvent(UserEventType.INPUT_VALIDATION,
+                        UserEvent(UserEventType.LOG_INFO,
                                   LogMessage(LogType.ERROR,
                                              "The input file '" +
                                              filename +
@@ -349,7 +353,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                     else:
                         self.stl_path_isvalid = False
                         UIDriver.fire_event(
-                            UserEvent(UserEventType.INPUT_VALIDATION,
+                            UserEvent(UserEventType.LOG_INFO,
                                       LogMessage(LogType.ERROR,
                                                  "The input file '" +
                                                  self.stl_path_text +
@@ -357,7 +361,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                 else:
                     self.stl_path_isvalid = False
                     UIDriver.fire_event(
-                        UserEvent(UserEventType.INPUT_VALIDATION,
+                        UserEvent(UserEventType.LOG_INFO,
                                   LogMessage(LogType.ERROR,
                                              "Input file must have .stl extension.")))
             else:
@@ -367,7 +371,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                 else:
                     log_msg = "The path '" + self.stl_path_text + "' could not be found."
                 UIDriver.fire_event(
-                    UserEvent(UserEventType.INPUT_VALIDATION,
+                    UserEvent(UserEventType.LOG_INFO,
                               LogMessage(LogType.ERROR, log_msg)))
             self.check_input()
         event.Skip()
@@ -406,7 +410,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                 self.ldraw_name_input.SetValue(self.out_file)
                 self.check_input()
                 UIDriver.fire_event(
-                    UserEvent(UserEventType.INPUT_VALIDATION,
+                    UserEvent(UserEventType.LOG_INFO,
                               LogMessage(LogType.INFORMATION,
                                          "Output file will be saved as: '" +
                                          self.out_file + "'.")))
@@ -435,7 +439,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         output_text = self.ldraw_name_input.GetValue()
         if len(output_text) <= 0:
             UIDriver.fire_event(
-                UserEvent(UserEventType.INPUT_VALIDATION,
+                UserEvent(UserEventType.LOG_INFO,
                           LogMessage(LogType.ERROR,
                                      "Output file path cannot be blank.")))
         event.Skip()
@@ -453,7 +457,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         if author != self.author_text and author != "":
             self.author_text = author
             UIDriver.fire_event(
-                UserEvent(UserEventType.INPUT_VALIDATION,
+                UserEvent(UserEventType.LOG_INFO,
                           LogMessage(LogType.INFORMATION,
                                      "Author changed to: " +
                                      self.author_text)))
@@ -472,7 +476,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         if license_input_text != self.license_text and license_input_text != "":
             self.license_text = license_input_text
             UIDriver.fire_event(
-                UserEvent(UserEventType.INPUT_VALIDATION,
+                UserEvent(UserEventType.LOG_INFO,
                           LogMessage(LogType.INFORMATION,
                                      "License changed to: " +
                                      self.license_text)))
