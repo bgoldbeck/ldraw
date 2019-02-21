@@ -24,7 +24,7 @@ class LogPanel(wx.Panel, IUIBehavior):
     running information to the user about the programs progress while running
     various algorithms.
     """
-    _log_file_path = "log.txt"
+    #_log_file_path = "log.txt"
 
     def __init__(self, parent):
         """Default constructor for MainPanel class.
@@ -69,6 +69,10 @@ class LogPanel(wx.Panel, IUIBehavior):
 
         :return: None
         """
+        dialog = wx.FileDialog(self, "Choose a STL file",
+                               defaultDir=self.parent.get_log_dir(),
+                               style=wx.FD_OPEN
+                                     | wx.FD_FILE_MUST_EXIST)
 
         try:
             log_file = open(self._log_file_path, mode="w")

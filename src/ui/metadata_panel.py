@@ -552,8 +552,6 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
         try:
             with open(file_path, "w") as file:
-                #for setting in self.default_settings:
-                #   print(setting, file=file)
                 json.dump(self.default_settings, file)
         except FileNotFoundError as ferr:
             print(ferr)
@@ -574,9 +572,6 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         file_path = Util.path_conversion("assets/settings/user_settings.json")
         try:
             with open(file_path, "w") as file:
-                #for setting in settings:
-                #    if setting is not None:
-                 #       print(setting, file=file)
                 json.dump(settings, file)
 
         except FileNotFoundError as ferr:
@@ -644,6 +639,11 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         """Return the string of the license.
         """
         return self.license_text
+
+    def get_log_dir(self):
+        """Return the string of the log direcotry
+        """
+        return self.log_dir
 
     def update(self, dt: float):
         """Called every loop by the GUIEventLoop
