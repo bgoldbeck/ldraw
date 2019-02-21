@@ -626,9 +626,13 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         return self.out_file
 
     def get_part_dir(self):
-        """Return the string of to the parts directory.
+        """Return the string of the parts directory.
         """
         return self.part_dir
+
+    def get_part_name(self):
+        """Return string of the part name."""
+        return self.part_name
 
     def get_author(self):
         """Return the string of the author.
@@ -644,6 +648,10 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         """Return the string of the log direcotry
         """
         return self.log_dir
+
+    def set_log_dir(self, new_dir: str):
+        """Set the log directory to a new directory."""
+        self.log_dir = new_dir
 
     def update(self, dt: float):
         """Called every loop by the GUIEventLoop

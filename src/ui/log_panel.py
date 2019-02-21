@@ -17,6 +17,7 @@ from src.log_messages.log_message import LogMessage
 from src.log_messages.log_type import LogType
 from src.ui.ui_style import *
 from src.ui.button import Button
+from src.util import Util
 
 
 class LogPanel(wx.Panel, IUIBehavior):
@@ -69,19 +70,33 @@ class LogPanel(wx.Panel, IUIBehavior):
 
         :return: None
         """
-        dialog = wx.FileDialog(self, "Choose a STL file",
-                               defaultDir=self.parent.get_log_dir(),
-                               style=wx.FD_OPEN
-                                     | wx.FD_FILE_MUST_EXIST)
+        print(self.parent.metadata_panel.get_part_name())
+        print(self.parent.metadata_panel.get_log_dir())
+        dialog = wx.FileDialog(self, "Choose a log save location",
+                               defaultFile=self.parent.metadata_panel.get_part_name(),
+                               defaultDir=self.parent.metadata_panel.get_log_dir(),
+                               style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT,
+                               wildcard="*.txt")
 
-        try:
-            log_file = open(self._log_file_path, mode="w")
-            log_file.write(self.log_text_ctrl.GetValue())
-            log_file.close()
-        except IOError:
-            pass
-        finally:
-            pass
+        if dialog.ShowModal() == wx.ID_OK:
+            pathname = dialog.GetPath()
+            directory = dialog.GetDirectory()
+            print("pathname: " + pathname + "\ndirectory: " + directory)
+            # Check if the new directory is different the old one. If so update the settings file.
+            if self.parent.metadata_panel.get_log_dir() != directory:
+                self.parent.metadata_panel.set_log_dir(directory)
+                self.parent.metadata_panel.save_settings()
+
+                try:
+                    log_file = open(pathname, mode="w")
+                    log_file.write(self.log_text_ctrl.GetValue())
+                    log_file.close()
+                except IOError:
+                    pass
+                finally:
+                    pass
+
+        dialog.Destroy()
 
     def clear_log(self):
         """Clears the log.
