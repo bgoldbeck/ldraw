@@ -18,16 +18,13 @@ from src.log_messages.log_type import LogType
 from src.ui.ui_style import *
 from src.ui.button import Button
 from src.util import Util
-
-
-from pathlib import Path
+import json
 
 class LogPanel(wx.Panel, IUIBehavior):
     """This panel controls the behavior for the output log panel that will display
     running information to the user about the programs progress while running
     various algorithms.
     """
-    #_log_file_path = "log.txt"
 
     def __init__(self, parent):
         """Default constructor for MainPanel class.
@@ -72,23 +69,29 @@ class LogPanel(wx.Panel, IUIBehavior):
 
         :return: None
         """
-        print(self.parent.metadata_panel.get_part_name())
-        print(self.parent.metadata_panel.get_log_dir())
-        log_name = self.parent.metadata_panel.get_part_name().split(".")[0] + ".txt"
+        settings_path = Util.path_conversion("assets/settings")
+        filename = "user_settings.json"
+        file_path = settings_path + "/" + filename
 
-        print(log_name)
+        with open(file_path, "r") as file:
+            file_settings = json.load(file)
+            part_name = file_settings["part_name"]
+            log_dir = file_settings["log_dir"]
+
+        log_name = part_name.split(".")[0] + ".txt"
+
         dialog = wx.FileDialog(self, "Choose a log save location",
                                defaultFile=log_name,
-                               defaultDir=self.parent.metadata_panel.get_log_dir(),
+                               defaultDir=log_dir,
                                style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT,
                                wildcard="*.txt")
 
         if dialog.ShowModal() == wx.ID_OK:
             pathname = dialog.GetPath()
             directory = dialog.GetDirectory()
-            print("pathname: " + pathname + "\ndirectory: " + directory)
+
             # Check if the new directory is different the old one. If so update the settings file.
-            if self.parent.metadata_panel.get_log_dir() != directory:
+            if log_dir != directory:
                 self.parent.metadata_panel.set_log_dir(directory)
                 self.parent.metadata_panel.save_settings()
 
