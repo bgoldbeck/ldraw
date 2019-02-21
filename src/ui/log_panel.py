@@ -20,6 +20,8 @@ from src.ui.button import Button
 from src.util import Util
 
 
+from pathlib import Path
+
 class LogPanel(wx.Panel, IUIBehavior):
     """This panel controls the behavior for the output log panel that will display
     running information to the user about the programs progress while running
@@ -72,8 +74,11 @@ class LogPanel(wx.Panel, IUIBehavior):
         """
         print(self.parent.metadata_panel.get_part_name())
         print(self.parent.metadata_panel.get_log_dir())
+        log_name = self.parent.metadata_panel.get_part_name().split(".")[0] + ".txt"
+
+        print(log_name)
         dialog = wx.FileDialog(self, "Choose a log save location",
-                               defaultFile=self.parent.metadata_panel.get_part_name(),
+                               defaultFile=log_name,
                                defaultDir=self.parent.metadata_panel.get_log_dir(),
                                style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT,
                                wildcard="*.txt")
