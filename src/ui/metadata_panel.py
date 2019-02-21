@@ -21,11 +21,9 @@ from src.ui.ui_style import *
 from src.util import Util
 from src.ui.popup import Popup
 from src.ui.button import Button
-import re
 import json
-
-
 from pathlib import Path
+
 
 class MetadataPanel(wx.Panel, IUIBehavior):
     """This class contains the wx widgets for control over
@@ -61,7 +59,6 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self.part_name = None # "untitled.dat" or whatever user entered
         self.author_default = None # The one loaded from file at start
         self.license_default = None
-        self.log_dir = None
         self.default_settings = None
         self.load_settings()
         self.license_text = self.license_default
@@ -563,16 +560,18 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         # Write out changes to stl_dir, part_dir, author, license
         # default_part_name is always "untitled.dat"
 
-        settings = {"stl_dir": self.stl_dir,
-                    "part_name": "untitled.dat",
-                    "part_dir": self.part_dir,
-                    "author": self.author_text,
-                    "license": self.license_text,
-                    "log_dir":self.log_dir}
         file_path = Util.path_conversion("assets/settings/user_settings.json")
         try:
-            with open(file_path, "w") as file:
-                json.dump(settings, file)
+            with open(file_path, "r+") as file:
+                file_settings = json.load(file)
+                print(file_settings)
+                file_settings["stl_dir"] = self.stl_dir
+                file_settings["part_name"] = "untitled.dat"
+                file_settings["part_dir"] = self.part_dir
+                file_settings["author"] = self.author_text
+                file_settings["license"] = self.license_text
+                print(file_settings)
+                json.dump(file_settings, file)
 
         except FileNotFoundError as ferr:
             print(ferr)
@@ -599,7 +598,6 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             self.part_dir = file_settings["part_dir"]
             self.author_default = file_settings["author"]
             self.license_default = file_settings["license"]
-            self.log_dir = file_settings["log_dir"]
 
     def display_settings(self):
         """Display all settings and stl file path to standard out."""
@@ -643,15 +641,6 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         """Return the string of the license.
         """
         return self.license_text
-
-    def get_log_dir(self):
-        """Return the string of the log direcotry
-        """
-        return self.log_dir
-
-    def set_log_dir(self, new_dir: str):
-        """Set the log directory to a new directory."""
-        self.log_dir = new_dir
 
     def update(self, dt: float):
         """Called every loop by the GUIEventLoop

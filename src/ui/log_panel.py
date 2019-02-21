@@ -19,6 +19,7 @@ from src.ui.ui_style import *
 from src.ui.button import Button
 from src.util import Util
 import json
+from src.ui.ui_driver import UIDriver
 
 class LogPanel(wx.Panel, IUIBehavior):
     """This panel controls the behavior for the output log panel that will display
@@ -69,31 +70,36 @@ class LogPanel(wx.Panel, IUIBehavior):
 
         :return: None
         """
-        settings_path = Util.path_conversion("assets/settings")
-        filename = "user_settings.json"
-        file_path = settings_path + "/" + filename
+        settings_path = Util.path_conversion("assets/settings/user_settings.json")
+        try:
+            UIDriver.fire_event(UserEvent(
+                UserEventType.RENDERING_CANVAS_DISABLE,
+                LogMessage(LogType.IGNORE, "")))
 
-        with open(file_path, "r") as file:
-            file_settings = json.load(file)
-            part_name = file_settings["part_name"]
-            log_dir = file_settings["log_dir"]
+            with open(settings_path, "r") as file:
+                file_settings = json.load(file)
+                part_name = file_settings["part_name"]
+                log_dir = file_settings["log_dir"]
 
-        log_name = part_name.split(".")[0] + ".txt"
+            log_name = part_name.split(".")[0] + ".txt"
+            dialog = wx.FileDialog(self, "Choose a log save location",
+                                   defaultFile=log_name,
+                                   defaultDir=log_dir,
+                                   style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT,
+                                   wildcard="*.txt")
 
-        dialog = wx.FileDialog(self, "Choose a log save location",
-                               defaultFile=log_name,
-                               defaultDir=log_dir,
-                               style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT,
-                               wildcard="*.txt")
+            if dialog.ShowModal() == wx.ID_OK:
+                pathname = dialog.GetPath()
+                directory = dialog.GetDirectory()
 
-        if dialog.ShowModal() == wx.ID_OK:
-            pathname = dialog.GetPath()
-            directory = dialog.GetDirectory()
-
-            # Check if the new directory is different the old one. If so update the settings file.
-            if log_dir != directory:
-                self.parent.metadata_panel.set_log_dir(directory)
-                self.parent.metadata_panel.save_settings()
+                # Check if the new directory is different the old one. If so update the settings file.
+                if log_dir != directory:
+                    try:
+                        with open(settings_path, "w") as file:
+                            file_settings["log_dir"] = directory
+                            json.dump(file_settings, file)
+                    except IOError:
+                        pass
 
                 try:
                     log_file = open(pathname, mode="w")
@@ -103,8 +109,12 @@ class LogPanel(wx.Panel, IUIBehavior):
                     pass
                 finally:
                     pass
-
-        dialog.Destroy()
+            UIDriver.fire_event(UserEvent(
+                UserEventType.RENDERING_CANVAS_ENABLE,
+                LogMessage(LogType.IGNORE, "")))
+            dialog.Destroy()
+        except IOError:
+            pass
 
     def clear_log(self):
         """Clears the log.
