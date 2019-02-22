@@ -128,6 +128,7 @@ class LogPanel(wx.Panel, IUIBehavior):
                     color = log_message.get_log_message_color()
 
                     if log_type == LogType.DEBUG and __debug__ or log_type != LogType.DEBUG:
+                        self.log_text_ctrl.SetInsertionPointEnd()
                         self.log_text_ctrl.BeginFontSize(UIStyle.log_font_size)
                         self.log_text_ctrl.BeginTextColour(UIStyle.log_default_text_color)
                         self.log_text_ctrl.WriteText(timestamp + ": ")

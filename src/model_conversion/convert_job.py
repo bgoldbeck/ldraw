@@ -27,12 +27,9 @@ class ConvertJob(BaseJob):
         super().__init__(feedback_log)
         self.name = "mesh to LDraw conversion"
         self.status = "Starting " + self.name + "."
-        self.is_initialized.set()
 
 
     def do_job(self):
-        self.is_initialized.wait()
-
         self.put_feedback(LogMessage(LogType.INFORMATION, "Starting " + self.name
                                      + "."))
 
