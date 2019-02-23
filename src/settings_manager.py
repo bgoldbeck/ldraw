@@ -47,7 +47,7 @@ class SettingsManager:
 
         try:
             with open(file_path, "w") as file:
-                json.dump(default_settings, file)
+                json.dump(default_settings, file, indent=4)
         except FileNotFoundError as ferr:
             print(ferr)
 
@@ -69,7 +69,7 @@ class SettingsManager:
                 print(file_settings)
 
             with open(SettingsManager.file_path, "w") as file:
-                json.dump(file_settings, file)
+                json.dump(file_settings, file, indent=4)
 
         except FileNotFoundError as ferr:
             print(ferr)

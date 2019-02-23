@@ -71,13 +71,12 @@ class LogPanel(wx.Panel, IUIBehavior):
 
         :return: None
         """
-        settings_path = Util.path_conversion("assets/settings/user_settings.json")
         try:
             UIDriver.fire_event(UserEvent(
                 UserEventType.RENDERING_CANVAS_DISABLE,
                 LogMessage(LogType.IGNORE, "")))
 
-            with open(settings_path, "r") as file:
+            with open(SettingsManager.file_path, "r") as file:
                 file_settings = json.load(file)
                 part_name = file_settings["part_name"]
                 log_dir = file_settings["log_dir"]

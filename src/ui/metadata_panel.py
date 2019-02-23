@@ -293,13 +293,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                     self.stl_dir = Util.get_parent(filename)  # Only the dir
                     self.stl_path_text = filename  # The whole path to file
                     self.stl_path_isvalid = True
-
-
-
-                    #self.save_settings()
                     SettingsManager.save_settings("stl_dir", self.stl_dir)
-
-
 
                     UIDriver.fire_event(
                         UserEvent(UserEventType.INPUT_MODEL_READY,
@@ -347,10 +341,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                                                               self.get_license(),
                                                               mesh)
                         self.stl_dir = Util.get_parent(self.stl_path_text)  # Only the dir
-                        #self.save_settings()
-
                         SettingsManager.save_settings("stl_dir", self.stl_dir)
-
                         self.stl_path_isvalid = True
                         UIDriver.fire_event(
                             UserEvent(UserEventType.INPUT_MODEL_READY,
@@ -413,11 +404,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                 self.part_dir = Util.get_parent(pathname)  # Only the dir
                 self.part_name = Util.get_filename(pathname)  # Only filename
                 self.ldraw_name_isvalid = True
-                #self.save_settings()
-
                 SettingsManager.save_settings("part_dir", self.part_dir)
-
-
                 self.ldraw_name_input.SetValue(self.out_file)
                 self.check_input()
                 UIDriver.fire_event(
@@ -472,9 +459,6 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                           LogMessage(LogType.INFORMATION,
                                      "Author changed to: " +
                                      self.author_text)))
-
-
-            #self.save_settings()
             SettingsManager.save_settings("author", self.author_text)
 
         elif len(author) == 0:
@@ -494,7 +478,6 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                           LogMessage(LogType.INFORMATION,
                                      "License changed to: " +
                                      self.license_text)))
-            #self.save_settings()
             SettingsManager.save_settings("license", self.license_text)
 
         elif len(license_input_text) == 0:
@@ -535,34 +518,6 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
         :param event: The recorded UserEvent.
         :return: None
-        """
-        pass
-
-    def save_settings(self):
-        """Save changes to user settings file.
-        """
-        # Determine changes to settings file
-        # Write out changes to stl_dir, part_dir, author, license
-        # default_part_name is always "untitled.dat"
-
-        """
-        file_path = Util.path_conversion("assets/settings/user_settings.json")
-        try:
-            with open(file_path, "r") as file:
-                file_settings = json.load(file)
-                print(file_settings)
-                file_settings["stl_dir"] = self.stl_dir
-                file_settings["part_name"] = "untitled.dat"
-                file_settings["part_dir"] = self.part_dir
-                file_settings["author"] = self.author_text
-                file_settings["license"] = self.license_text
-                print(file_settings)
-
-            with open(file_path, "w") as file:
-                json.dump(file_settings, file)
-
-        except FileNotFoundError as ferr:
-            print(ferr)
         """
         pass
 
