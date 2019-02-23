@@ -22,6 +22,7 @@ import json
 from src.ui.ui_driver import UIDriver
 from src.settings_manager import SettingsManager
 
+
 class LogPanel(wx.Panel, IUIBehavior):
     """This panel controls the behavior for the output log panel that will display
     running information to the user about the programs progress while running

@@ -64,12 +64,44 @@ class SettingsManager:
         try:
             with open(SettingsManager.file_path, "r") as file:
                 file_settings = json.load(file)
-                print(file_settings)
                 file_settings[setting] = val
-                print(file_settings)
 
             with open(SettingsManager.file_path, "w") as file:
                 json.dump(file_settings, file, indent=4)
 
         except FileNotFoundError as ferr:
             print(ferr)
+
+    @staticmethod
+    def display_settings():
+        """Display all settings and stl file path to standard out."""
+        print("\n\nDisplay settings\n")
+        try:
+            with open(SettingsManager.file_path, "r") as file:
+                all_settings = json.load(file)
+                print(all_settings)
+        except FileNotFoundError as ferr:
+            print(ferr)
+
+    @staticmethod
+    def get_settings(settings: [str]):
+        """
+        Return a dictionary of settings and their values
+        :param settings:
+        :return requested settings:
+        """
+
+        if settings:
+            try:
+                with open(SettingsManager.file_path, "r") as file:
+                    all_settings = json.load(file)
+                    requested = []
+                    for setting in settings:
+                        if all_settings[setting]:
+                            requested[setting] = all_settings[setting]
+                    return requested
+            except FileNotFoundError as ferr:
+                print(ferr)
+
+
+

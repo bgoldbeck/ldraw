@@ -540,15 +540,6 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             self.author_default = file_settings["author"]
             self.license_default = file_settings["license"]
 
-    def display_settings(self):
-        """Display all settings and stl file path to standard out."""
-        print("\n\nDisplay settings\n")
-        all_settings = [self.stl_path_text, self.stl_dir, self.part_name,
-                        self.part_dir, self.author_default,
-                        self.license_default]
-        for setting in all_settings:
-            print(setting)
-
     def get_stl_path_text(self):
         """Return the string of the path to the input stl file.
         """
