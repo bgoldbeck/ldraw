@@ -20,6 +20,7 @@ from src.ui.button import Button
 from src.util import Util
 import json
 from src.ui.ui_driver import UIDriver
+from src.settings_manager import SettingsManager
 
 class LogPanel(wx.Panel, IUIBehavior):
     """This panel controls the behavior for the output log panel that will display
@@ -94,12 +95,7 @@ class LogPanel(wx.Panel, IUIBehavior):
 
                 # Check if the new directory is different the old one. If so update the settings file.
                 if log_dir != directory:
-                    try:
-                        with open(settings_path, "w") as file:
-                            file_settings["log_dir"] = directory
-                            json.dump(file_settings, file)
-                    except IOError:
-                        pass
+                    SettingsManager.save_settings("log_dir", directory)
 
                 try:
                     log_file = open(pathname, mode="w")

@@ -13,14 +13,17 @@ from pathlib import Path
 
 
 class SettingsManager:
+    settings_path = Util.path_conversion("assets/settings")
+    filename = "user_settings.json"
+    file_path = settings_path + "/" + filename
 
     @staticmethod
     def create_settings(filename: str):
         """Generate initial settings file based on current working directory.
 
-                :param name:
-                :return:
-                """
+        :param filename:
+        :return:
+        """
         # default stl directory
         default_stl_dir = Util.path_conversion("assets/models/")
         # default part name
@@ -35,11 +38,11 @@ class SettingsManager:
         default_log_dir = Util.path_conversion(str(Path.home()) + "/Documents")
 
         default_settings = {"stl_dir": default_stl_dir,
-                                 "part_name": default_part_name,
-                                 "part_dir": default_part_dir,
-                                 "author": default_author,
-                                 "license": default_license,
-                                 "log_dir": default_log_dir}
+                            "part_name": default_part_name,
+                            "part_dir": default_part_dir,
+                            "author": default_author,
+                            "license": default_license,
+                            "log_dir": default_log_dir}
         file_path = Util.path_conversion(f"assets/settings/{filename}")
 
         try:
@@ -48,3 +51,25 @@ class SettingsManager:
         except FileNotFoundError as ferr:
             print(ferr)
 
+    @staticmethod
+    def save_settings(setting: str, val: str):
+        """Save changes to user settings file.
+        :param setting:
+        :param val:
+        :return:
+        """
+        # Write out settings changes
+        # default_part_name is always "untitled.dat"
+
+        try:
+            with open(SettingsManager.file_path, "r") as file:
+                file_settings = json.load(file)
+                print(file_settings)
+                file_settings[setting] = val
+                print(file_settings)
+
+            with open(SettingsManager.file_path, "w") as file:
+                json.dump(file_settings, file)
+
+        except FileNotFoundError as ferr:
+            print(ferr)
