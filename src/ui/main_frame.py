@@ -19,9 +19,9 @@ class MainFrame(wx.Frame):
     def __init__(self):
         """Default constructor for MainFrame class.
         """
-        wx.Frame.__init__(self, None, title="LScan", size=UIStyle.main_frame_current_size,
-                          style=UIStyle.main_frame_border
-                          | wx.FULL_REPAINT_ON_RESIZE)
+        wx.Frame.__init__(self, None, title="LScan", size=UIStyle.main_frame_size,
+                          style=UIStyle.main_frame_border |
+                                wx.FULL_REPAINT_ON_RESIZE | wx.MINIMIZE_BOX)
 
         UIStyle.setup_dark_theme()  # Overwrite the default color
         self._build_gui()
@@ -31,8 +31,8 @@ class MainFrame(wx.Frame):
         :return: None
         """
         # Set the limitations on the frame.
-        self.SetMinSize(UIStyle.main_frame_min_size)
-        self.SetMaxSize(UIStyle.main_frame_max_size)
+        self.SetMinSize(UIStyle.main_frame_size)
+        self.SetMaxSize(UIStyle.main_frame_size)
 
         # Application needs to be able to close.
         self.Bind(wx.EVT_CLOSE, self._on_close)
