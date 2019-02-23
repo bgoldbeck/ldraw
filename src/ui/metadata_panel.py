@@ -21,6 +21,7 @@ from src.ui.ui_style import *
 from src.util import Util
 from src.ui.popup import Popup
 from src.ui.button import Button
+from src.settings_manager import SettingsManager
 import json
 from pathlib import Path
 
@@ -59,7 +60,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self.part_name = None # "untitled.dat" or whatever user entered
         self.author_default = None # The one loaded from file at start
         self.license_default = None
-        self.default_settings = None
+        #self.default_settings = None
         self.load_settings()
         self.license_text = self.license_default
         self.author_text = self.author_default # The text entered by user
@@ -520,39 +521,6 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         """
         pass
 
-    def create_settings(self, name):
-        """Generate initial settings file based on current working directory.
-
-        :param name:
-        :return:
-        """
-        # default stl directory
-        default_stl_dir = Util.path_conversion("assets/models/")
-        # default part name
-        default_part_name = "untitled.dat"
-        # default part name directory
-        default_part_dir = Util.path_conversion("assets/parts/")
-        # default author
-        default_author = "First Last"
-        # default license
-        default_license = "Redistributable under CCAL version 2.0 : see CAreadme.txt"
-        # default Log directory
-        default_log_dir = Util.path_conversion(str(Path.home()) + "/Documents")
-
-        self.default_settings = {"stl_dir": default_stl_dir,
-                                 "part_name": default_part_name,
-                                 "part_dir": default_part_dir,
-                                 "author": default_author,
-                                 "license": default_license,
-                                 "log_dir": default_log_dir}
-        file_path = Util.path_conversion(f"assets/settings/{name}")
-
-        try:
-            with open(file_path, "w") as file:
-                json.dump(self.default_settings, file)
-        except FileNotFoundError as ferr:
-            print(ferr)
-
     def save_settings(self):
         """Save changes to user settings file.
         """
@@ -591,7 +559,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             if not Util.is_dir(settings_path):
                 Util.mkdir(settings_path)
             # Create user settings with default
-            self.create_settings(filename)
+            SettingsManager.create_settings(filename)
 
         with open(file_path, "r") as file:
             file_settings = json.load(file)
