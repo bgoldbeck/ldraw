@@ -62,6 +62,7 @@ class UIStyle:
 
     # OpenGL
     opengl_panel_border = wx.BORDER_SUNKEN
+    opengl_panel_size = (1024, 300)
     opengl_canvas_background_color = [0, 0, 0, 255]
     opengl_label_color = "#666666"
     opengl_input_background = "#ffffff"

@@ -11,7 +11,6 @@ import wx
 from src.ui.iui_behavior import IUIBehavior
 from src.ui.application_state import ApplicationState
 from src.ui.user_event import UserEvent
-from src.ui.user_event_type import UserEventType
 from src.ui.ui_driver import UIDriver
 from src.log_messages.log_message import LogMessage
 from src.log_messages.log_type import LogType
@@ -92,8 +91,6 @@ class ConversionPanel(wx.Panel, IUIBehavior):
         UIDriver.fire_event(
             UserEvent(UserEventType.CONVERSION_STARTED,
                       LogMessage(LogType.INFORMATION, "Conversion process started..")))
-        UIDriver.change_application_state(ApplicationState.WORKING)
-        UIDriver.thread_manager.start_work()
 
     def pause_resume(self, event):
         """Pause/resume the conversion process.
@@ -107,14 +104,11 @@ class ConversionPanel(wx.Panel, IUIBehavior):
             UIDriver.fire_event(
                 UserEvent(UserEventType.CONVERSION_PAUSED,
                           LogMessage(LogType.INFORMATION, "Conversion process paused.")))
-            UIDriver.thread_manager.pause_work()
-
         else:
             self.pause_button.SetLabelText('Pause')
             UIDriver.fire_event(
-                UserEvent(UserEventType.CONVERSION_STARTED,
+                UserEvent(UserEventType.CONVERSION_RESUMED,
                           LogMessage(LogType.INFORMATION, "Conversion process resumed.")))
-            UIDriver.thread_manager.continue_work()
 
     def cancel(self, event):
         """Cancel the conversion operation.
@@ -123,10 +117,8 @@ class ConversionPanel(wx.Panel, IUIBehavior):
         :return: None
         """
         UIDriver.fire_event(
-            UserEvent(UserEventType.CONVERSION_PAUSED,
+            UserEvent(UserEventType.CONVERSION_CANCELED,
                       LogMessage(LogType.INFORMATION, "Conversion process canceled.")))
-        UIDriver.thread_manager.kill_work()
-        UIDriver.change_application_state(ApplicationState.WAITING_GO)
 
     def save(self, event):
         """Save the finalized conversion of the input file. Hide main window options and replace them with metadata
@@ -147,7 +139,7 @@ class ConversionPanel(wx.Panel, IUIBehavior):
             text_file.write(ModelShipper.output_metadata_text + '\n' + ModelShipper.output_data_text)
         self.save_button.Enable()
         UIDriver.fire_event(
-            UserEvent(UserEventType.CONVERSION_PAUSED,
+            UserEvent(UserEventType.LOG_INFO,
                       LogMessage(LogType.INFORMATION,
                                  "File was saved to '" + ModelShipper.output_path
                                  + "'.")))

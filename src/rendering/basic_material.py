@@ -137,12 +137,15 @@ void main() {
         specular_color * light_color * light_power * pow(cos_alpha,5) / (distance*distance);
 }
 """
-
-        self.shader = OpenGL.GL.shaders.compileProgram(
-            OpenGL.GL.shaders.compileShader(self.vertex_shader,
-                                            GL_VERTEX_SHADER),
-            OpenGL.GL.shaders.compileShader(self.fragment_shader,
-                                            GL_FRAGMENT_SHADER))
+        try:
+            self.shader = OpenGL.GL.shaders.compileProgram(
+                OpenGL.GL.shaders.compileShader(self.vertex_shader,
+                                                GL_VERTEX_SHADER),
+                OpenGL.GL.shaders.compileShader(self.fragment_shader,
+                                                GL_FRAGMENT_SHADER))
+        except Error:
+            print("Failed to compile glsl shader.")
+            return
 
         glUseProgram(self.shader)
 
@@ -212,7 +215,8 @@ void main() {
         :param view_matrix: The new view Matrix44.
         :return: None
         """
-        self.set_uniform_matrix4fv("view", view_matrix)
+        if RenderingEngine.opengl_success:
+            self.set_uniform_matrix4fv("view", view_matrix)
 
     def set_model_matrix(self, model_matrix):
         """Update the model matrix.
@@ -220,4 +224,5 @@ void main() {
         :param model_matrix: The new model Matrix44.
         :return: None
         """
-        self.set_uniform_matrix4fv("model", model_matrix)
+        if RenderingEngine.opengl_success:
+            self.set_uniform_matrix4fv("model", model_matrix)

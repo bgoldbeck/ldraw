@@ -25,11 +25,17 @@ class ConvertJob(BaseJob):
     """
     def __init__(self, feedback_log):
         super().__init__(feedback_log)
+        self.name = "mesh to LDraw conversion"
+        self.status = "Starting " + self.name + "."
+
 
     def do_job(self):
-        self.put_feedback(LogMessage(LogType.DEBUG, "Starting conversion job"))
+        self.put_feedback(LogMessage(LogType.INFORMATION, "Starting " + self.name
+                                     + "."))
 
         self.is_running.wait()
+        self.status = "Writing out metadata."
+        print(self.status)
         # Setting output model as input LDraw object
         model = None # LDraw model
         mesh = None # mesh in LDraw model
@@ -62,6 +68,7 @@ class ConvertJob(BaseJob):
 
         # Write out output file data section
         ModelShipper.output_data_text = ""
+        self.status = "Writing out main mesh..."
         for i in range(len(mesh.normals)):
             # Write out line 3 types for main mesh
             self.is_running.wait()
@@ -79,6 +86,7 @@ class ConvertJob(BaseJob):
                                               + " " + str(mesh.v0[i][2])
                                               + "\n")
 
+        self.status = "Writing out child meshes..."
         for i in range(len(model.get_children())):
             # For each child mesh
             self.is_running.wait()
@@ -101,13 +109,14 @@ class ConvertJob(BaseJob):
                                                   + " " + str(mesh.v0[j][1])
                                                   + " " + str(mesh.v0[j][2])
                                                   + "\n")
-
+        self.status = "Finishing up..."
         self.is_running.wait()
         if not self.is_killed: # Job completed (not killed)
             fake_mesh = Mesh(numpy.zeros(3, dtype=Mesh.dtype),
                                   remove_empty_areas=False)
             fake_model = LDrawModel("", "", "", fake_mesh)
-            self.put_feedback(LogMessage(LogType.DEBUG, "Finished conversion job"))
+            self.put_feedback(LogMessage(LogType.INFORMATION, "Finished " +
+                                         self.name + "."))
 
             self.put_feedback(OutputModelMessage(LogType.INFORMATION,
                                                  "Conversion Complete. Ready to Save.",
@@ -115,6 +124,6 @@ class ConvertJob(BaseJob):
         else: # Job was killed
             #do any cleanup before exiting
             self.put_feedback(LogMessage(LogType.DEBUG,
-                                         "Cancelled during conversion job"))
+                                         "Cancelled during " + self.name + "."))
 
         self.is_done.set()  # Set this so thread manager knows job is done

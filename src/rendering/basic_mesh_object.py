@@ -60,43 +60,50 @@ class BasicMeshObject(SceneObject):
                 triangle_data.append(self.mesh_data.normals[i][0])
                 triangle_data.append(self.mesh_data.normals[i][1])
                 triangle_data.append(self.mesh_data.normals[i][2])
+        if glInitGl42VERSION():
+            RenderingEngine.opengl_success = True
+            self.vao = glGenVertexArrays(1)
 
-        self.vao = glGenVertexArrays(1)
-
-        self.bind()
-        self.material = BasicMaterial(numpy.array(triangle_data, dtype=numpy.float32))
-        self.unbind()
+            self.bind()
+            self.material = BasicMaterial(numpy.array(triangle_data, dtype=numpy.float32))
+            self.unbind()
+        else:
+            RenderingEngine.opengl_success = False
 
     def bind(self):
         """Bind the vertex array object.
 
         :return: None
         """
-        glBindVertexArray(self.vao)
+        if RenderingEngine.opengl_success:
+            glBindVertexArray(self.vao)
 
     def unbind(self):
         """Unbind the vertex array object.
 
         :return:
         """
-        glBindVertexArray(0)
+        if RenderingEngine.opengl_success:
+            glBindVertexArray(0)
 
     def draw(self):
         """Draw the vertex buffer.
 
         :return: None
         """
-        self.bind()
-        glDrawArrays(GL_TRIANGLES, 0, len(self.mesh_data.normals) * 3)
-        self.unbind()
+        if RenderingEngine.opengl_success:
+            self.bind()
+            glDrawArrays(GL_TRIANGLES, 0, len(self.mesh_data.normals) * 3)
+            self.unbind()
 
     def update(self):
         """Update the material values for the vertex buffers.
 
         :return: None
         """
-        self.material.set_view_matrix(RenderingEngine.camera.get_view_matrix())
-        self.material.set_model_matrix(self.transform.get_trs_matrix())
+        if RenderingEngine.opengl_success:
+            self.material.set_view_matrix(RenderingEngine.camera.get_view_matrix())
+            self.material.set_model_matrix(self.transform.get_trs_matrix())
 
     def get_mesh_data(self):
         """Retrieve the stored mesh data.

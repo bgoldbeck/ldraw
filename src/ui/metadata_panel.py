@@ -21,7 +21,8 @@ from src.ui.ui_style import *
 from src.util import Util
 from src.ui.popup import Popup
 from src.ui.button import Button
-import re
+from src.settings_manager import SettingsManager
+import json
 
 
 class MetadataPanel(wx.Panel, IUIBehavior):
@@ -58,7 +59,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self.part_name = None # "untitled.dat" or whatever user entered
         self.author_default = None # The one loaded from file at start
         self.license_default = None
-        self.default_settings = None
+        #self.default_settings = None
         self.load_settings()
         self.license_text = self.license_default
         self.author_text = self.author_default # The text entered by user
@@ -203,11 +204,15 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         """
         if self.ldraw_name_isvalid and self.stl_path_isvalid:
             if UIDriver.application_state != ApplicationState.WAITING_GO:
-                UIDriver.change_application_state(ApplicationState.WAITING_GO)
+                UIDriver.fire_event(UserEvent(
+                    UserEventType.INPUT_VALID,
+                    LogMessage(LogType.IGNORE, "")))
         else:
             if UIDriver.application_state != ApplicationState.WAITING_INPUT:
-                UIDriver.change_application_state(
-                    ApplicationState.WAITING_INPUT)
+                UIDriver.fire_event(UserEvent(
+                    UserEventType.INPUT_INVALID,
+                    LogMessage(LogType.IGNORE, "")))
+
 
         # Set colors
         if self.ldraw_name_isvalid:
@@ -292,7 +297,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                     self.stl_dir = Util.get_parent(filename)  # Only the dir
                     self.stl_path_text = filename  # The whole path to file
                     self.stl_path_isvalid = True
-                    self.save_settings()
+                    SettingsManager.save_settings("stl_dir", self.stl_dir)
+
                     UIDriver.fire_event(
                         UserEvent(UserEventType.INPUT_MODEL_READY,
                                   LogMessage(LogType.INFORMATION,
@@ -301,7 +307,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                 else:
                     self.stl_path_isvalid = False
                     UIDriver.fire_event(
-                        UserEvent(UserEventType.INPUT_VALIDATION,
+                        UserEvent(UserEventType.LOG_INFO,
                                   LogMessage(LogType.ERROR,
                                              "The input file '" +
                                              filename +
@@ -339,7 +345,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                                                               self.get_license(),
                                                               mesh)
                         self.stl_dir = Util.get_parent(self.stl_path_text)  # Only the dir
-                        self.save_settings()
+                        SettingsManager.save_settings("stl_dir", self.stl_dir)
                         self.stl_path_isvalid = True
                         UIDriver.fire_event(
                             UserEvent(UserEventType.INPUT_MODEL_READY,
@@ -349,7 +355,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                     else:
                         self.stl_path_isvalid = False
                         UIDriver.fire_event(
-                            UserEvent(UserEventType.INPUT_VALIDATION,
+                            UserEvent(UserEventType.LOG_INFO,
                                       LogMessage(LogType.ERROR,
                                                  "The input file '" +
                                                  self.stl_path_text +
@@ -357,7 +363,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                 else:
                     self.stl_path_isvalid = False
                     UIDriver.fire_event(
-                        UserEvent(UserEventType.INPUT_VALIDATION,
+                        UserEvent(UserEventType.LOG_INFO,
                                   LogMessage(LogType.ERROR,
                                              "Input file must have .stl extension.")))
             else:
@@ -367,7 +373,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                 else:
                     log_msg = "The path '" + self.stl_path_text + "' could not be found."
                 UIDriver.fire_event(
-                    UserEvent(UserEventType.INPUT_VALIDATION,
+                    UserEvent(UserEventType.LOG_INFO,
                               LogMessage(LogType.ERROR, log_msg)))
             self.check_input()
         event.Skip()
@@ -402,11 +408,11 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                 self.part_dir = Util.get_parent(pathname)  # Only the dir
                 self.part_name = Util.get_filename(pathname)  # Only filename
                 self.ldraw_name_isvalid = True
-                self.save_settings()
+                SettingsManager.save_settings("part_dir", self.part_dir)
                 self.ldraw_name_input.SetValue(self.out_file)
                 self.check_input()
                 UIDriver.fire_event(
-                    UserEvent(UserEventType.INPUT_VALIDATION,
+                    UserEvent(UserEventType.LOG_INFO,
                               LogMessage(LogType.INFORMATION,
                                          "Output file will be saved as: '" +
                                          self.out_file + "'.")))
@@ -435,7 +441,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         output_text = self.ldraw_name_input.GetValue()
         if len(output_text) <= 0:
             UIDriver.fire_event(
-                UserEvent(UserEventType.INPUT_VALIDATION,
+                UserEvent(UserEventType.LOG_INFO,
                           LogMessage(LogType.ERROR,
                                      "Output file path cannot be blank.")))
         event.Skip()
@@ -453,11 +459,11 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         if author != self.author_text and author != "":
             self.author_text = author
             UIDriver.fire_event(
-                UserEvent(UserEventType.INPUT_VALIDATION,
+                UserEvent(UserEventType.LOG_INFO,
                           LogMessage(LogType.INFORMATION,
                                      "Author changed to: " +
                                      self.author_text)))
-            self.save_settings()
+            SettingsManager.save_settings("author", self.author_text)
 
         elif len(author) == 0:
             self.reset_author()
@@ -472,11 +478,11 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         if license_input_text != self.license_text and license_input_text != "":
             self.license_text = license_input_text
             UIDriver.fire_event(
-                UserEvent(UserEventType.INPUT_VALIDATION,
+                UserEvent(UserEventType.LOG_INFO,
                           LogMessage(LogType.INFORMATION,
                                      "License changed to: " +
                                      self.license_text)))
-            self.save_settings()
+            SettingsManager.save_settings("license", self.license_text)
 
         elif len(license_input_text) == 0:
             self.reset_license()
@@ -519,86 +525,24 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         """
         pass
 
-    def create_settings(self, name):
-        """Generate initial settings file based on current working directory.
-
-        :param name:
-        :return:
-        """
-        # default stl directory
-        default_stl_dir = Util.path_conversion("assets/models/")
-        # default part name
-        default_part_name = "untitled.dat"
-        # default part name directory
-        default_part_dir = Util.path_conversion("assets/parts/")
-        # default author
-        default_author = "First Last"
-        # default license
-        default_license = "Redistributable under CCAL version 2.0 : see CAreadme.txt"
-
-        self.default_settings = [default_stl_dir, default_part_name,
-                                 default_part_dir, default_author,
-                                 default_license]
-        file_path = Util.path_conversion(f"assets/settings/{name}")
-
-        try:
-            with open(file_path, "w") as file:
-                for setting in self.default_settings:
-                    print(setting, file=file)
-        except FileNotFoundError as ferr:
-            print(ferr)
-
-    def save_settings(self):
-        """Save changes to user settings file.
-        """
-        # Determine changes to settings file
-        # Write out changes to stl_dir, part_dir, author, license
-        # default_part_name is always "untitled.dat"
-
-        settings = [self.stl_dir, "untitled.dat", self.part_dir,
-                    self.author_text, self.license_text]
-        file_path = Util.path_conversion("assets/settings/user_settings.txt")
-        try:
-            with open(file_path, "w") as file:
-                for setting in settings:
-                    if setting is not None:
-                        print(setting, file=file)
-
-        except FileNotFoundError as ferr:
-            print(ferr)
-
     def load_settings(self):
         """Load settings values into memory on startup.
         """
-        settings_path = Util.path_conversion("assets/settings")
-        filename = "user_settings.txt"
-        file_path = settings_path + "/" + filename
-
         # If settings file doesnt exist
-        if not Util.is_file(file_path):
+        if not Util.is_file(SettingsManager.file_path):
             # If directory doesnt exist
-            if not Util.is_dir(settings_path):
-                Util.mkdir(settings_path)
+            if not Util.is_dir(SettingsManager.settings_path):
+                Util.mkdir(SettingsManager.settings_path)
             # Create user settings with default
-            self.create_settings(filename)
+            SettingsManager.create_settings(SettingsManager.filename)
 
-        with open(file_path, "r") as file:
-            file_settings = file.readlines()
-
-            self.stl_dir = file_settings[0].rstrip()
-            self.part_name = file_settings[1].rstrip()
-            self.part_dir = file_settings[2].rstrip()
-            self.author_default = file_settings[3].rstrip()
-            self.license_default = file_settings[4].rstrip()
-
-    def display_settings(self):
-        """Display all settings and stl file path to standard out."""
-        print("\n\nDisplay settings\n")
-        all_settings = [self.stl_path_text, self.stl_dir, self.part_name,
-                        self.part_dir, self.author_default,
-                        self.license_default]
-        for setting in all_settings:
-            print(setting)
+        with open(SettingsManager.file_path, "r") as file:
+            file_settings = json.load(file)
+            self.stl_dir = file_settings["stl_dir"]
+            self.part_name = file_settings["part_name"]
+            self.part_dir = file_settings["part_dir"]
+            self.author_default = file_settings["author"]
+            self.license_default = file_settings["license"]
 
     def get_stl_path_text(self):
         """Return the string of the path to the input stl file.
@@ -616,9 +560,13 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         return self.out_file
 
     def get_part_dir(self):
-        """Return the string of to the parts directory.
+        """Return the string of the parts directory.
         """
         return self.part_dir
+
+    def get_part_name(self):
+        """Return string of the part name."""
+        return self.part_name
 
     def get_author(self):
         """Return the string of the author.

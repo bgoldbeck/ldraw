@@ -23,6 +23,8 @@ class BaseJob:
         self.is_done = threading.Event()
         self.is_running = threading.Event()
         self.is_killed = False
+        self.status = ""
+        self.name = ""
 
 
     def do_job(self):
@@ -58,4 +60,10 @@ class BaseJob:
         :return: None
         """
         self.feedback_log.put(log_msg)
+
+    def get_status(self):
+        """Gets status of job as string
+        :return: None
+        """
+        return self.status
 
