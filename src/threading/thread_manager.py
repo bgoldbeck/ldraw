@@ -10,6 +10,9 @@
 import queue
 from src.threading.worker_thread import *
 from src.threading.worker_state import WorkerState
+from src.ui.user_event import UserEvent
+from src.ui.user_event_type import UserEventType
+
 from src.threading.test_job_A import TestJobA
 from src.threading.test_job_B import TestJobB
 from src.model_conversion.convert_job import ConvertJob
@@ -30,7 +33,7 @@ class ThreadManager:
         self.worker_thread = None
 
         # Fill this list with whatever jobs need doing, in order
-        self.job_list = [ConvertJob(self.feedback_log).__class__,]
+        self.job_list = [ConvertJob(self.feedback_log).__class__]
 
     def has_message_available(self):
         """Checks if message queue is not empty
@@ -47,6 +50,24 @@ class ThreadManager:
         message = self.feedback_log.get(block=True)
         self.feedback_log.task_done()
         return message
+
+    def on_event(self, event: UserEvent):
+        """A user event was passed to the thread manager.
+
+        :param event: The recorded UserEvent.
+        :return: None
+        """
+        if event.get_event_type() == UserEventType.CONVERSION_STARTED:
+            self.start_work()
+
+        elif event.get_event_type() == UserEventType.CONVERSION_PAUSED:
+            self.pause_work()
+
+        elif event.get_event_type() == UserEventType.CONVERSION_RESUMED:
+            self.continue_work()
+
+        elif event.get_event_type() == UserEventType.CONVERSION_CANCELED:
+            self.kill_work()
 
     def pause_work(self):
         """Change worker state to PAUSE
@@ -83,4 +104,21 @@ class ThreadManager:
         if self.worker_thread is not None:
             self.worker_thread.change_state(WorkerState.RUNNING)
 
+    def get_worker_state(self):
+        """Gets worker state
 
+        :return: WorkerState
+        """
+        if self.worker_thread == None:
+            return None
+        else:
+            return self.worker_thread.get_state()
+
+    def get_job_status(self):
+        """Gets status of current job as string
+        :return: None
+        """
+        if self.worker_thread == None:
+            return None
+        else:
+            return self.worker_thread.get_status()

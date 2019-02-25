@@ -44,6 +44,8 @@ class WorkerThread(threading.Thread):
         if self.state != WorkerState.STOP:
             self.put_feedback("All jobs complete", LogType.DEBUG)
 
+        self.kill()
+
     def put_feedback(self, msg, log_type):
         """Puts a LogMessage into the feedback queue
         :param msg: message text
@@ -70,7 +72,7 @@ class WorkerThread(threading.Thread):
         elif new_state == WorkerState.STOP:
             self.current_job.is_killed = True
             self.current_job.go()
-            self.put_feedback("Processing cancelled.", LogType.DEBUG)
+            self.put_feedback("Processing ended.", LogType.DEBUG)
 
 
     def start(self):
@@ -88,3 +90,18 @@ class WorkerThread(threading.Thread):
         """
         self.change_state(WorkerState.STOP)
 
+    def get_state(self):
+        """Gets worker state
+
+        :return: WorkerState
+        """
+        return self.state
+
+    def get_status(self):
+        """Gets status of current job as string
+        :return: None
+        """
+        if self.current_job == None:
+            return None
+        else:
+            return self.current_job.get_status()

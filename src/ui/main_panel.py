@@ -52,12 +52,27 @@ class MainPanel(wx.Panel, IUIBehavior):
         self.log_panel = LogPanel(self)
         self.opengl_panel = OpenGLPanel(self)
 
+        log_panel_height = UIStyle.log_panel_size[1]
+
+        # Add more height to the log panel if OpenGL cannot be used.
+        if not self.opengl_panel.can_use_opengl():
+            log_panel_height += (UIStyle.opengl_panel_size[1] - 10)
+
+        self.log_panel.resize_log_ctrl_height(log_panel_height)
+
         # Create the layout of the sub-panels.
         vertical_layout = wx.BoxSizer(wx.VERTICAL)
         vertical_layout.Add(self.metadata_panel, 0, wx.ALIGN_CENTER_HORIZONTAL)
-        vertical_layout.Add(self.opengl_panel, 0, wx.ALIGN_CENTER_HORIZONTAL)
+
+        # Don't add the OpenGL Panel if OpenGL is not supported.
+        if self.opengl_panel.can_use_opengl():
+            vertical_layout.Add(self.opengl_panel, 0, wx.ALIGN_CENTER_HORIZONTAL)
+        else:
+            self.opengl_panel.Show(False)
+            self.opengl_panel = None
+
         vertical_layout.Add(self.conversion_panel, 0, wx.ALIGN_CENTER_HORIZONTAL)
-        vertical_layout.Add(self.log_panel, 0, wx.ALIGN_CENTER_HORIZONTAL)
+        vertical_layout.Add(self.log_panel, 0, wx.EXPAND)
 
         self.SetSizer(vertical_layout)
 

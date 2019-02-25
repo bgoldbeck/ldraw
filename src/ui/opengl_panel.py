@@ -9,6 +9,7 @@
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 import wx, time
 from wx.lib.masked import NumCtrl
+from OpenGL.GL import *
 from src.ui.opengl_canvas import OpenGLCanvas
 from src.ui.iui_behavior import IUIBehavior
 from src.ui.application_state import ApplicationState
@@ -33,7 +34,7 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
 
         :param parent: The parent wx object for this panel.
         """
-        wx.Panel.__init__(self, parent, size=(1024, 300), style=UIStyle.conversion_border)
+        wx.Panel.__init__(self, parent, size=UIStyle.opengl_panel_size, style=UIStyle.conversion_border)
         self.parent = parent
         self.stl_preview_context = True
         self.cb_wire_frame = None
@@ -56,6 +57,7 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
 
         :return: None
         """
+        # Create the controls.
         self.cb_wire_frame = wx.CheckBox(self, label=" Wireframe")
         self.cb_wire_frame.SetForegroundColour(UIStyle.opengl_label_color)
 
@@ -67,6 +69,7 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
         self.scale_static_text.SetForegroundColour(UIStyle.metadata_label_color)
 
         self.scale_up_button = Button(self, label="+", size=(23, 23))
+
         self.scale_down_button = Button(self, label="-", size=(23, 23))
 
         self.scale_input = wx.lib.masked.NumCtrl(
@@ -76,7 +79,6 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
             integerWidth=10,
             fractionWidth=10,
             min=0.0)
-
         self.scale_input.SetBackgroundColour(UIStyle.opengl_input_background)
         self.scale_input.SetForegroundColour(UIStyle.opengl_input_foreground)
 
@@ -101,6 +103,39 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
         self.help_zoom_static_text_ctrl.SetFont(wx.Font(12, wx.DECORATIVE, wx.ITALIC, wx.NORMAL))
 
         self.opengl_canvas = OpenGLCanvas(self)
+        show = glInitGl42VERSION()
+        # Build the layout and show the controls if correct OpenGL version
+        self._build_layout(show)
+
+        # Bind events to functions.
+        self.Bind(wx.EVT_CHECKBOX, self.on_wire_frame_pressed, self.cb_wire_frame)
+        self.Bind(wx.EVT_BUTTON, self.on_cycle_preview_pressed, self.cycle_preview_button)
+        self.Bind(wx.EVT_BUTTON, self.on_scale_up, self.scale_up_button)
+        self.Bind(wx.EVT_BUTTON, self.on_scale_down, self.scale_down_button)
+
+        self.scale_input.Bind(wx.lib.masked.EVT_NUM, self.on_scale_value_changed)
+
+        # Disable widgets until they are necessary from application state context.
+        self.set_widget_rendering_contexts(False)
+
+    def _build_layout(self, show: bool):
+        """Set up how the wx controls are laid out on the log panel.
+
+        :param show: Whether or not to enable all the controls of this panel.
+        :return:
+        """
+        self.cb_wire_frame.Show(show)
+        self.zoom_static_text_ctrl.Show(show)
+        self.scale_static_text.Show(show)
+        self.scale_up_button.Show(show)
+        self.scale_down_button.Show(show)
+        self.scale_input.Show(show)
+        self.cycle_preview_button.Show(show)
+        self.camera_rotation_static_text_ctrl.Show(show)
+        self.camera_position_static_text_ctrl.Show(show)
+        self.help_rotate_static_text_ctrl.Show(show)
+        self.help_zoom_static_text_ctrl.Show(show)
+        self.opengl_canvas.Show(show)
 
         # Layout the UI
         # Left Side
@@ -142,17 +177,6 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
 
         self.SetSizer(horizontal_layout)
 
-        # Bind events to functions.
-        self.Bind(wx.EVT_CHECKBOX, self.on_wire_frame_pressed, self.cb_wire_frame)
-        self.Bind(wx.EVT_BUTTON, self.on_cycle_preview_pressed, self.cycle_preview_button)
-        self.Bind(wx.EVT_BUTTON, self.on_scale_up, self.scale_up_button)
-        self.Bind(wx.EVT_BUTTON, self.on_scale_down, self.scale_down_button)
-
-        self.scale_input.Bind(wx.lib.masked.EVT_NUM, self.on_scale_value_changed)
-
-        # Disable widgets until they are necessary from application state context.
-        self.set_widget_rendering_contexts(False)
-
     def on_state_changed(self, new_state: ApplicationState):
         """A state change was passed to the ConversionPanel.
 
@@ -169,11 +193,13 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
         """
         if event is not None:
             if event.get_event_type() == UserEventType.RENDERING_MOUSE_WHEEL_EVENT:
-                # Log Message here is of derived class FloatMessage.
-                if isinstance(event.get_log_message(), FloatMessage):
-                    self.zoom_static_text_ctrl.SetLabelText(
-                        "Camera Distance to Origin: {0:0.3f}".format(event.get_log_message().get_float()))
+                if self.can_use_opengl():
+                    # Log Message here is of derived class FloatMessage.
+                    if isinstance(event.get_log_message(), FloatMessage):
+                        self.zoom_static_text_ctrl.SetLabelText(
+                            "Camera Distance to Origin: {0:0.3f}".format(event.get_log_message().get_float()))
             elif event.get_event_type() == UserEventType.INPUT_MODEL_READY:
+                if self.can_use_opengl():
                     self.set_widget_rendering_contexts(True)
                     self.cycle_preview_button.Enabled = False
                     self.zoom_static_text_ctrl.SetLabelText(
@@ -285,3 +311,7 @@ class OpenGLPanel(wx.Panel, IUIBehavior):
                                 position[0],
                                 position[1],
                                 position[2]))
+
+    def can_use_opengl(self):
+        return self.opengl_canvas is not None and glInitGl42VERSION()
+

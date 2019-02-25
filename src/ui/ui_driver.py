@@ -15,6 +15,8 @@ from src.util import Util
 from src.threading.thread_manager import *
 from src.log_messages.output_model_message import OutputModelMessage
 from src.ui.user_event_type import UserEventType
+from src.threading.worker_state import WorkerState
+import time
 
 
 class UIDriver:
@@ -27,6 +29,7 @@ class UIDriver:
     application_state = None
     root_frame = None
     thread_manager = None
+    timer_5_sec = None
 
     def __init__(self, root):
         """Default constructor for the UIDriver object.
@@ -45,6 +48,8 @@ class UIDriver:
             # Automatically go right into WAITING_INPUT state.
             UIDriver.change_application_state(ApplicationState.WAITING_INPUT)
 
+            UIDriver.timer_5_sec = time.time()
+
     @staticmethod
     def get_all_ui_behaviors(root, behaviors):
         """Traverse the child-parent relationship between wx widgets. Return all the children objects that
@@ -60,8 +65,9 @@ class UIDriver:
         children = root.GetChildren()
 
         for child in children:
-            if isinstance(child, IUIBehavior):
-                behaviors.append(child)
+            if child is not None:
+                if isinstance(child, IUIBehavior):
+                    behaviors.append(child)
             UIDriver.get_all_ui_behaviors(child, behaviors)
 
     @staticmethod
@@ -77,6 +83,22 @@ class UIDriver:
 
         for ui_behavior in ui_behaviors:
             ui_behavior.on_event(event)
+
+        # Also notify thread_manager
+        UIDriver.thread_manager.on_event(event)
+
+        # Make state changes based on event
+        if event.get_event_type() == UserEventType.CONVERSION_STARTED:
+            UIDriver.change_application_state(ApplicationState.WORKING)
+
+        elif event.get_event_type() == UserEventType.CONVERSION_CANCELED:
+            UIDriver.change_application_state(ApplicationState.WAITING_GO)
+
+        elif event.get_event_type() == UserEventType.INPUT_VALID:
+            UIDriver.change_application_state(ApplicationState.WAITING_GO)
+
+        elif event.get_event_type() == UserEventType.INPUT_INVALID:
+            UIDriver.change_application_state(ApplicationState.WAITING_INPUT)
 
     @staticmethod
     def change_application_state(new_state: ApplicationState):
@@ -132,6 +154,19 @@ class UIDriver:
 
         for ui_behavior in ui_behaviors:
             ui_behavior.update(dt)
+
+        now = time.time()
+        #If job is running, and 5 seconds have passed, log job status
+        if now - UIDriver.timer_5_sec >= 5:
+            if UIDriver.thread_manager.get_worker_state() == WorkerState.RUNNING:
+                status = UIDriver.thread_manager.get_job_status()
+                if status == None:
+                    status = "Job status unknown." # Shouldn't happen...
+                UIDriver.fire_event(
+                    UserEvent(UserEventType.WORKER_LOG_MESSAGE_AVAILABLE,
+                              LogMessage(LogType.INFORMATION, status)))
+
+            UIDriver.timer_5_sec = now # Reset timer start point
 
         if UIDriver.thread_manager.has_message_available():
             msg = UIDriver.thread_manager.get_message()

@@ -38,6 +38,7 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         # Call the base constructor for the OpenGL canvas.
         glcanvas.GLCanvas.__init__(self, parent, -1, size=self.canvas_size)
         self.parent = parent
+        self.scene = None
         self.context = None
         self.scene = None
         self.wire_frame = False
@@ -50,6 +51,11 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         self.Bind(wx.EVT_PAINT, self.on_paint)
         self.Bind(wx.EVT_MOUSEWHEEL, self.on_mouse_wheel)
         self.Bind(wx.EVT_MOTION, self.on_mouse_move)
+        self.Bind(wx.EVT_ERASE_BACKGROUND, self.process_erase_background)
+
+        if not self.init:
+            self.init_gl()
+            self.init = True
 
     def on_mouse_move(self, event):
         """Called when the user moves the mouse.
@@ -82,9 +88,9 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         :param event: The wxpython Event.
         :return: None
         """
-        #if self.is_painting is True:
         wx.PaintDC(self)
-        self.draw()
+        if self.init:
+            self.draw()
 
     def init_gl(self):
         """Initialize OpenGL functionality.
@@ -93,15 +99,17 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         """
         self.context = glcanvas.GLContext(self)
         self.SetCurrent(self.context)
-        glClearColor(UIStyle.opengl_canvas_background_color[0],  # Red
-                     UIStyle.opengl_canvas_background_color[1],  # Green
-                     UIStyle.opengl_canvas_background_color[2],  # Blue
-                     UIStyle.opengl_canvas_background_color[3])  # Alpha
+        if glInitGl42VERSION():
+            glClearColor(UIStyle.opengl_canvas_background_color[0],  # Red
+                         UIStyle.opengl_canvas_background_color[1],  # Green
+                         UIStyle.opengl_canvas_background_color[2],  # Blue
+                         UIStyle.opengl_canvas_background_color[3])  # Alpha
 
-        glEnable(GL_DEPTH_TEST)
+            glEnable(GL_DEPTH_TEST)
 
-        glViewport(0, 0, self.canvas_size[0], self.canvas_size[1])
-        self.scene = Scene()
+            glViewport(0, 0, self.canvas_size[0], self.canvas_size[1])
+            self.scene = Scene()
+            self.Show()
 
         print("OpenGL Major: " + str(RenderingEngine.gl_version_major_minor()[0]))
         print("OpenGL Minor: " + str(RenderingEngine.gl_version_major_minor()[1]))
@@ -120,7 +128,8 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
         self.Refresh()
-        self.scene.draw()
+        if self.scene is not None:
+            self.scene.draw()
         self.SwapBuffers()
 
     def on_state_changed(self, new_state: ApplicationState):
@@ -137,20 +146,21 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         :param event: The recorded UserEvent.
         :return: None
         """
-        if event is not None:
-            if event.get_event_type() == UserEventType.INPUT_MODEL_READY:
-                self.scene.replace_input_model_mesh(ModelShipper.input_model.mesh)
-                self.scene.replace_output_model_mesh(None)
-                self.scene.set_input_model_active(True)
-            if event.get_event_type() == UserEventType.RENDERING_WIRE_FRAME_PRESSED:
-                # A log message of this type is a BoolMessage.
-                self.wire_frame = event.get_log_message().get_bool()
-            if event.get_event_type() == UserEventType.RENDERING_CANVAS_DISABLE:
-                self.Unbind(wx.EVT_PAINT)
-                self.Refresh()
-            if event.get_event_type() == UserEventType.RENDERING_CANVAS_ENABLE:
-                self.Bind(wx.EVT_PAINT, self.on_paint)
-                self.Refresh()
+        if glInitGl42VERSION():
+            if event is not None:
+                if event.get_event_type() == UserEventType.INPUT_MODEL_READY:
+                    self.scene.replace_input_model_mesh(ModelShipper.input_model.mesh)
+                    self.scene.replace_output_model_mesh(None)
+                    self.scene.set_input_model_active(True)
+                if event.get_event_type() == UserEventType.RENDERING_WIRE_FRAME_PRESSED:
+                    # A log message of this type is a BoolMessage.
+                    self.wire_frame = event.get_log_message().get_bool()
+                if event.get_event_type() == UserEventType.RENDERING_CANVAS_DISABLE:
+                    self.Unbind(wx.EVT_PAINT)
+                    self.Refresh()
+                if event.get_event_type() == UserEventType.RENDERING_CANVAS_ENABLE:
+                    self.Bind(wx.EVT_PAINT, self.on_paint)
+                    self.Refresh()
 
     def update(self, dt: float):
         """Called every loop by the GUIEventLoop
@@ -158,9 +168,10 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
         :param dt: The delta time between the last call.
         :return: None
         """
-        if not self.init:
-            self.init_gl()
-            self.init = True
-
         if self.scene is not None:
             self.scene.update(dt)
+
+    def process_erase_background(self, event):
+        """Process the erase background event.
+        """
+        pass  # Do nothing, to avoid flashing on MSWin

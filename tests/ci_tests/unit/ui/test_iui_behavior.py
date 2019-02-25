@@ -18,7 +18,7 @@ class TestIuiBehavior(unittest.TestCase):
 
     def setUp(self):
         self.new_state = ApplicationState.STARTUP
-        self.event = UserEvent(UserEventType.INPUT_VALIDATION, LogMessage(LogType.ERROR, "this is test"))
+        self.event = UserEvent(UserEventType.LOG_INFO, LogMessage(LogType.ERROR, "this is test"))
         self.iui = IUIBehavior()
 
     def test_on_state_changed(self):
