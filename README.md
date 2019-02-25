@@ -44,7 +44,7 @@ Open terminal and follow these steps.
 
     `$ git clone https://github.com/bgoldbeck/lscan.git`
 
-2. Change direcorty to **lscan**
+2. Change directory to **lscan**
 
     `$ cd lscan`
 
@@ -61,7 +61,7 @@ Open Git Bash and follow these steps.
 
     `$ git clone https://github.com/bgoldbeck/lscan.git`
 
-2. Change direcorty to **lscan**
+2. Change directory to **lscan**
 
     `$ cd lscan`
 
@@ -71,6 +71,30 @@ Open Git Bash and follow these steps.
 
 
 We recommend [PyCharm](https://www.jetbrains.com/pycharm/) for an IDE for this project. If you use pycharm you can skip step 2 and step 3. You can use PyCharm's settings to setup the environment.
+
+## Setup Using PyCharm ##
+1. Open PyCharm and load LScan project
+
+2. Add Python interpreter.
+
+    - Click `File` -> `Settings` -> `Project Interpreter`
+    - Click gear and click `Add...`
+    ![Add interpreter](assets/images/dev_setup/add_interpreter.png) 
+    - Add base interpreter and click `OK`
+    ![Base interpreter](assets/images/dev_setup/interpreter.PNG)
+    
+3. Follow these steps to install dependencies.
+    - Open `requirements.txt`
+    - Click `Install requirements` to top right corner.
+    ![Install Dependencies](assets/images/dev_setup/install-packages.PNG)
+    - A window with packages list appears. Select all and click `Install`
+    ![Install](assets/images/dev_setup/install.PNG)
+
+4. Right click `src/lscan.py` and click `Run` to test the environment setup.
+   ![Run](assets/images/dev_setup/run_lscan.png)
+
+5. Development environment is complete once LScan runs without any issues.
+   ![LScan](assets/images/dev_setup/lscan.PNG)
 ## How to Use LScan ###
 ... Program flow
 
