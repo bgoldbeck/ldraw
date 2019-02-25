@@ -78,7 +78,7 @@ We recommend [PyCharm](https://www.jetbrains.com/pycharm/) for an IDE for this p
 2. Add Python interpreter.
 
     - Click `File` -> `Settings` -> `Project Interpreter`
-    - Click gear and click `Add...`
+    - Click :gear: and click `Add...`
     ![Add interpreter](assets/images/dev_setup/add_interpreter.png) 
     - Add base interpreter and click `OK`
     ![Base interpreter](assets/images/dev_setup/interpreter.PNG)
@@ -117,4 +117,3 @@ An Huynh: anvanphuchuynh@gmail.com <br />
 ## Copyright ##
 Copyright (C) 2018 
 "Brandon Goldbeck", "Anthony Namba", "Brandon Le", "Ann Peake", "Sohan Tamang", "Theron Anderson", "An Huynh"
- 
