@@ -130,5 +130,6 @@ class ModelShipper:
         """
 
         ModelShipper.output_metadata_text = "0 " + "LScan auto generated part " + file_name + "\n"
-        ModelShipper.output_metadata_text += "0 " + "Name: " + author + "\n"
+        ModelShipper.output_metadata_text += "0 " + "Name: " + file_name + "\n"
+        ModelShipper.output_metadata_text += "0 " + "Author: " + author + "\n"
         ModelShipper.output_metadata_text += "0 " + "!LICENSE " + license_info + "\n"
