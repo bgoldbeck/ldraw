@@ -34,7 +34,7 @@ class Scene:
         self.last_mouse_position = (0.0, 0.0)
         self.delta_mouse = (0.0, 0.0)
         self._last_time = time.process_time()
-        self.active_scene_model = None
+        self.active_scene_object = None
         self.mouse_rotate_sensitivity = 1.0
         self.scene_objects = {
             "camera": Camera("camera"),
@@ -96,9 +96,10 @@ class Scene:
         dy = self.delta_mouse[1] * self.mouse_rotate_sensitivity
         dx = self.delta_mouse[0] * self.mouse_rotate_sensitivity
 
-        if self.active_scene_model is not None and (dx != 0 or dy != 0):
+        if self.active_scene_object is not None and (dx != 0 or dy != 0):
             # Rotation of the camera.
-            self.active_scene_model.transform.euler_angles += Vector3([-dy, -dx, 0.0])
+            self.active_scene_object.transform.euler_angles += Vector3([-dy, -dx, 0.0])
+            RenderingEngine.camera.target = self.active_scene_object.transform.position
 
         RenderingEngine.camera.update()
 
@@ -138,7 +139,6 @@ class Scene:
             self.scene_objects.update({tag: BasicMeshObject(tag, mesh)})
             self.scene_objects[tag].transform.position = Vector3([0.0, 0.0, 0.0])
             self.scene_objects[tag].transform.euler_angles = Vector3([0.0, 0.0, 0.0])
-            RenderingEngine.camera.target = self.scene_objects[tag].transform.position
         else:
             self.scene_objects.update({tag: None})
 
@@ -165,13 +165,13 @@ class Scene:
         :param value: The enable/disable state of the model.
         :return: None
         """
+
         if self.scene_objects[tag] is not None:
             if value is True:
                 self.active_scene_object = self.scene_objects[tag]
                 self.scene_objects[tag].enable()
             else:
                 self.scene_objects[tag].disable()
-        self.active_scene_model = self.scene_objects[tag]
 
     def remove_scene_object(self, tag):
         """Destroy a scene object.
@@ -194,7 +194,7 @@ class Scene:
 
         :return: The active model in the scene.
         """
-        return self.active_scene_model
+        return self.active_scene_object
 
     def get_camera_distance_to_origin(self):
         """Retrieve the distance the main camera is from the origin.
