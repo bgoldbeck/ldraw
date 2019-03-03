@@ -12,9 +12,6 @@ from src.threading.worker_thread import *
 from src.threading.worker_state import WorkerState
 from src.ui.user_event import UserEvent
 from src.ui.user_event_type import UserEventType
-
-from src.threading.test_job_A import TestJobA
-from src.threading.test_job_B import TestJobB
 from src.model_conversion.convert_job import ConvertJob
 
 

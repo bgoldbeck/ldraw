@@ -404,11 +404,11 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                     pathname = pathname + '.dat'
 
                 self.out_file = pathname  # Full path
-                ModelShipper.output_path = pathname
                 self.part_dir = Util.get_parent(pathname)  # Only the dir
                 self.part_name = Util.get_filename(pathname)  # Only filename
                 self.ldraw_name_isvalid = True
                 SettingsManager.save_settings("part_dir", self.part_dir)
+                SettingsManager.save_settings("part_name", self.part_name)
                 self.ldraw_name_input.SetValue(self.out_file)
                 self.check_input()
                 UIDriver.fire_event(

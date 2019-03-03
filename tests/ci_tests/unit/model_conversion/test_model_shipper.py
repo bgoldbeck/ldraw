@@ -28,7 +28,6 @@ class ModelShipperTest(unittest.TestCase):
         ModelShipper.input_model = ModelShipper.load_stl_model(path)
         ModelShipper.output_model = None
         ModelShipper.output_data_text = None
-        ModelShipper.output_path = None
         ModelShipper.output_metadata_text = None
 
     def test_get_input_model(self):
