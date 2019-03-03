@@ -12,8 +12,8 @@
 import logging
 from stl import Mesh
 from src.model_conversion.ldraw_model import LDrawModel
-from src.log_messages.log_type import LogType
-from src.log_messages.log_message import LogMessage
+from src.settings_manager import SettingsManager
+import json
 
 
 class ModelShipper:
@@ -26,7 +26,6 @@ class ModelShipper:
     output_model = None # LDraw file
     output_data_text = None # The text to write out to output path when save pressed
     output_path = None
-    output_metadata_text = None # Metadata text of converted file
 
     @staticmethod
     def load_stl_model(file_path: str):
@@ -121,15 +120,22 @@ class ModelShipper:
         return ModelShipper.input_model
 
     @staticmethod
-    def update_metadata(author, file_name, license_info):
-        """Update the metadata text to be written to output file
-        :param author: Author Name Str
-        :param file_name: File Name (eg: brick.dat)
-        :param license_info: License Str
-        :return:
+    def get_metadata():
+        """Build and return a string of metadata lines
+        :return: String containing all metadata lines
         """
 
-        ModelShipper.output_metadata_text = "0 " + "LScan auto generated part " + file_name + "\n"
-        ModelShipper.output_metadata_text += "0 " + "Name: " + file_name + "\n"
-        ModelShipper.output_metadata_text += "0 " + "Author: " + author + "\n"
-        ModelShipper.output_metadata_text += "0 " + "!LICENSE " + license_info + "\n"
+        with open(SettingsManager.file_path, "r") as file:
+            file_settings = json.load(file)
+            file_name = file_settings["part_name"]
+            part_name = file_name
+            if part_name.endswith(".dat"):
+                part_name = part_name[:-4]
+            author = file_settings["author"]
+            license = file_settings["license"]
+
+        metadata_text = "0 " + "LScan auto generated part " + part_name + "\n"
+        metadata_text += "0 " + "Name: " + file_name + "\n"
+        metadata_text += "0 " + "Author: " + author + "\n"
+        metadata_text += "0 " + "!LICENSE " + license + "\n"
+        return metadata_text

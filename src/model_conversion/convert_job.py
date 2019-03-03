@@ -46,26 +46,6 @@ class ConvertJob(BaseJob):
             mesh = model.get_mesh()
             children = model.get_children()
 
-        # Write out the metadata information
-        self.is_running.wait()
-        if not self.is_killed:
-            # Write out the model name.
-            if model.get_name() != "":
-                ModelShipper.output_metadata_text = ("0 " + "LScan auto generated part " + model.get_name() + "\n")
-                ModelShipper.output_metadata_text += ("0 " + "Name: " + model.get_name() + "\n")
-
-        self.is_running.wait()
-        if not self.is_killed:
-            # Write out the author name.
-            if model.get_author() != "":
-                ModelShipper.output_metadata_text += ("0 " + "Author: " + model.get_author() + "\n")
-
-        self.is_running.wait()
-        if not self.is_killed:
-            # Write out the license
-            if model.get_name() != "":
-                ModelShipper.output_metadata_text += ("0 " + "!LICENSE " + model.get_license_info() + "\n")
-
         # Write out output file data section
         ModelShipper.output_data_text = ""
         self.status = "Writing out main mesh..."
