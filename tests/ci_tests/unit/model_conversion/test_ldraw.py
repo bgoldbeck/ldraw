@@ -24,17 +24,15 @@ class LDrawModelTest(unittest.TestCase):
     :return: None
     """
     def setUp(self):
-        self.name = "test"
-        self.author = "author"
         self.mesh = Mesh.from_file(path)
-        self.license_info = "license_info"
         self.children = []
-        self.ldraw_model = LDrawModel(self.name, self.author, self.license_info, self.mesh)
+        self.ldraw_model = LDrawModel(self.mesh)
 
     def test_initialized(self):
-        self.assertEqual(self.name, self.ldraw_model.get_name())
-        self.assertEqual(self.author, self.ldraw_model.get_author())
-        self.assertEqual(self.license_info, self.ldraw_model.get_license_info())
+        pass
+        #self.assertEqual(self.name, self.ldraw_model.get_name())
+        #self.assertEqual(self.author, self.ldraw_model.get_author())
+        #self.assertEqual(self.license_info, self.ldraw_model.get_license_info())
 
     def test_mesh(self):
         self.assertEqual(len(self.mesh), len(self.ldraw_model.get_mesh()))
@@ -42,9 +40,9 @@ class LDrawModelTest(unittest.TestCase):
 
     def test_children(self):
         self.ldraw_model.add_child(self.ldraw_model)
-        self.assertEqual(self.name, self.ldraw_model.children[0].get_name())
-        self.assertEqual(self.author, self.ldraw_model.children[0].get_author())
-        self.assertEqual(self.license_info, self.ldraw_model.children[0].get_license_info())
+        #self.assertEqual(self.name, self.ldraw_model.children[0].get_name())
+        #self.assertEqual(self.author, self.ldraw_model.children[0].get_author())
+       # self.assertEqual(self.license_info, self.ldraw_model.children[0].get_license_info())
         self.assertEqual(len(self.mesh), len(self.ldraw_model.children[0].get_mesh()))
         self.assertTrue(numpy.array_equal(self.mesh.data, self.ldraw_model.children[0].get_mesh().data))
         self.assertTrue(len(self.ldraw_model.children), len(self.ldraw_model.get_children()))
