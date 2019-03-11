@@ -26,16 +26,11 @@ class ConvertJob(BaseJob):
     def __init__(self, feedback_log):
         super().__init__(feedback_log)
         self.name = "mesh to LDraw conversion"
-        self.status = "Starting " + self.name + "."
+        self.update_status("Starting " + self.name + ".")
 
 
     def do_job(self):
-        self.put_feedback(LogMessage(LogType.INFORMATION, "Starting " + self.name
-                                     + "."))
-
         self.is_running.wait()
-        self.status = "Writing out metadata."
-        print(self.status)
         # Setting output model as input LDraw object
         model = None # LDraw model
         mesh = None # mesh in LDraw model
@@ -46,29 +41,10 @@ class ConvertJob(BaseJob):
             mesh = model.get_mesh()
             children = model.get_children()
 
-        # Write out the metadata information
-        self.is_running.wait()
-        if not self.is_killed:
-            # Write out the model name.
-            if model.get_name() != "":
-                ModelShipper.output_metadata_text = ("0 " + "LScan auto generated part " + model.get_name() + "\n")
-                ModelShipper.output_metadata_text += ("0 " + "Name: " + model.get_name() + "\n")
-
-        self.is_running.wait()
-        if not self.is_killed:
-            # Write out the author name.
-            if model.get_author() != "":
-                ModelShipper.output_metadata_text += ("0 " + "Author: " + model.get_author() + "\n")
-
-        self.is_running.wait()
-        if not self.is_killed:
-            # Write out the license
-            if model.get_name() != "":
-                ModelShipper.output_metadata_text += ("0 " + "!LICENSE " + model.get_license_info() + "\n")
-
         # Write out output file data section
+        self.update_status("Converting main mesh...")
+
         ModelShipper.output_data_text = ""
-        self.status = "Writing out main mesh..."
         for i in range(len(mesh.normals)):
             # Write out line 3 types for main mesh
             self.is_running.wait()
@@ -86,44 +62,38 @@ class ConvertJob(BaseJob):
                                               + " " + str(mesh.v0[i][2])
                                               + "\n")
 
-        self.status = "Writing out child meshes..."
-        for i in range(len(model.get_children())):
-            # For each child mesh
-            self.is_running.wait()
-            if self.is_killed:
-                break
-
-            for j in range(len(children[i].normals)):
-                # For each normal in this child mesh
+        if children:
+            self.update_status("Converting children meshes...")
+            for i in range(len(model.get_children())):
+                # For each child mesh
                 self.is_running.wait()
                 if self.is_killed:
                     break
-                # Export vertices information in ldraw format
-                ModelShipper.output_data_text += ("3 4 " + str(mesh.v2[j][0])
-                                                  + " " + str(mesh.v2[j][1])
-                                                  + " " + str(mesh.v2[j][2])
-                                                  + " " + str(mesh.v1[j][0])
-                                                  + " " + str(mesh.v1[j][1])
-                                                  + " " + str(mesh.v1[j][2])
-                                                  + " " + str(mesh.v0[j][0])
-                                                  + " " + str(mesh.v0[j][1])
-                                                  + " " + str(mesh.v0[j][2])
-                                                  + "\n")
-        self.status = "Finishing up..."
+
+                for j in range(len(children[i].normals)):
+                    # For each normal in this child mesh
+                    self.is_running.wait()
+                    if self.is_killed:
+                        break
+                    # Export vertices information in ldraw format
+                    ModelShipper.output_data_text += ("3 4 " + str(mesh.v2[j][0])
+                                                      + " " + str(mesh.v2[j][1])
+                                                      + " " + str(mesh.v2[j][2])
+                                                      + " " + str(mesh.v1[j][0])
+                                                      + " " + str(mesh.v1[j][1])
+                                                      + " " + str(mesh.v1[j][2])
+                                                      + " " + str(mesh.v0[j][0])
+                                                      + " " + str(mesh.v0[j][1])
+                                                      + " " + str(mesh.v0[j][2])
+                                                      + "\n")
         self.is_running.wait()
         if not self.is_killed: # Job completed (not killed)
-            fake_mesh = Mesh(numpy.zeros(3, dtype=Mesh.dtype),
-                                  remove_empty_areas=False)
-            fake_model = LDrawModel("", "", "", fake_mesh)
-            self.put_feedback(LogMessage(LogType.INFORMATION, "Finished " +
-                                         self.name + "."))
-
+            self.update_status("Finished " + self.name + ".")
             self.put_feedback(OutputModelMessage(LogType.INFORMATION,
                                                  "Conversion Complete. Ready to Save.",
-                                                 fake_model))
+                                                 ModelShipper.output_model))
         else: # Job was killed
             #do any cleanup before exiting
-            self.put_feedback(LogMessage(LogType.DEBUG,
-                                         "Cancelled during " + self.name + "."))
+            self.update_status("Cancelled during " + self.name + ".")
 
         self.is_done.set()  # Set this so thread manager knows job is done

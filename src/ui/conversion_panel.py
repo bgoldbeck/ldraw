@@ -18,7 +18,8 @@ from src.ui.ui_style import *
 from src.ui.user_event_type import UserEventType
 from src.model_conversion.model_shipper import ModelShipper
 from src.ui.button import Button
-from src.util import Util
+from src.settings_manager import SettingsManager
+import json
 
 
 class ConversionPanel(wx.Panel, IUIBehavior):
@@ -127,22 +128,21 @@ class ConversionPanel(wx.Panel, IUIBehavior):
         :param event: The wx event that was recorded.
         :return: None
         """
-
-        # Update the metadata information to update changes after conversion complete
-        author = self.parent.metadata_panel.get_author()
-        file = Util.get_filename(self.parent.metadata_panel.get_out_file())
-        license_name = self.parent.metadata_panel.get_license()
-        ModelShipper.update_metadata(author, file, license_name)
-
         self.save_button.Disable()
-        with open(ModelShipper.output_path, "w") as text_file:
-            text_file.write(ModelShipper.output_metadata_text + '\n' + ModelShipper.output_data_text)
+
+        with open(SettingsManager.file_path, "r") as file:
+            file_settings = json.load(file)
+            part_dir = file_settings["part_dir"]
+            part_name = file_settings["part_name"]
+
+        with open(part_dir + "\\" + part_name, "w") as text_file:
+            text_file.write(ModelShipper.get_metadata() + ModelShipper.output_data_text)
         self.save_button.Enable()
         UIDriver.fire_event(
             UserEvent(UserEventType.LOG_INFO,
                       LogMessage(LogType.INFORMATION,
-                                 "File was saved to '" + ModelShipper.output_path
-                                 + "'.")))
+                                 "File was saved to '" + part_dir + "\\" +
+                                 part_name + "'.")))
 
     def on_state_changed(self, new_state: ApplicationState):
         """A state change was passed to the ConversionPanel.
