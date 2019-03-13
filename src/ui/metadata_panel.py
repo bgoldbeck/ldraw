@@ -284,6 +284,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             # If valid, pass to worker thread who will check data
             if self.stl_path_text != filename:
                 self.stl_path_input.SetValue(filename)
+                self.stl_path_input.SetValue(MetadataPanel.reduce_text_path(self.stl_path_input.GetValue()))
 
                 # Only update stuff if selection changed
                 # Check if this .stl is valid
@@ -324,6 +325,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         """
         prev_text = self.stl_path_text
         self.stl_path_text = self.stl_path_input.GetValue()
+        self.stl_path_input.SetValue(MetadataPanel.reduce_text_path(self.stl_path_input.GetValue()))
 
         if prev_text != self.stl_path_text:
 
@@ -579,3 +581,36 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         :return: None
         """
         pass
+
+    @staticmethod
+    def reduce_text_path(path_text):
+        """
+        Reduce text length until the length is less than or equal to 70
+        :param path_text:
+        :return: the text
+        """
+        list_str = path_text.split("\\")
+        length_text = MetadataPanel.list_string_length(list_str)
+        pop = False
+        while length_text > 66 or len(list_str) == 1:
+            list_str.pop(0)
+            pop = True
+            length_text = MetadataPanel.list_string_length(list_str)
+        text = "/"
+        text = text.join(list_str)
+        if pop:
+            text = ".../" + text
+        return text
+
+
+    @staticmethod
+    def list_string_length(list_str):
+        """
+        Return the length of the path
+        :param list_str: list of string after the list.
+        :return:
+        """
+        sum_str = 0
+        for a_str in list_str:
+            sum_str += len(a_str)
+        return len(list_str) + sum_str - 1
