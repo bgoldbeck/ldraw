@@ -592,7 +592,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         windows = False
         # Both Linux and Mac start with "/", so they have to do in the other way.
         if path_text:
-            if path_text[0]:
+            if path_text[0] != "/":
                 windows = True
         if windows:
             list_str = path_text.split("\\")
