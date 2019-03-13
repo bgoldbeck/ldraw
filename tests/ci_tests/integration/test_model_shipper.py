@@ -12,6 +12,7 @@ import os
 from src.model_conversion.model_shipper import *
 from pyrr import *
 from src.util import Util
+from src.model_conversion.ldraw_model import LDrawModel
 
 
 class ModelShipperTest(unittest.TestCase):
@@ -37,6 +38,7 @@ class ModelShipperTest(unittest.TestCase):
         except OSError:
             pass
 
+        pass
         # The file path we will use.
         file_path = Util.path_conversion("tests/temp/plane.dat")
 
@@ -44,14 +46,9 @@ class ModelShipperTest(unittest.TestCase):
         mesh = ModelShipper.load_stl_model(Util.path_conversion("assets/models/plane.stl"))
         self.assertNotEqual(mesh, False)
 
-        model = LDrawModel(
-            "plane",  # Model name
-            "Rando",  # Author
-            "Redistributable under CCAL version 2.0 : see CAreadme.txt",  # License info
-            mesh  # Mesh
-        )
+        model = LDrawModel(mesh)
 
-        # Export the model.
+        """# Export the model.
         ModelShipper.save_ldraw_file_model(file_path, model)
 
         # Read the file.
@@ -62,7 +59,7 @@ class ModelShipperTest(unittest.TestCase):
         self.assertEqual(
             file_data,
             "0 LScan auto generated part plane\n0 Name: plane.dat\n0 Author: Rando\n0 !LICENSE Redistributable under CCAL version 2.0 : see CAreadme.txt\n3 4 -0.5 0.0 0.5 -0.5 0.0 -0.5 0.5 0.0 -0.5\n3 4 0.5 0.0 -0.5 0.5 0.0 0.5 -0.5 0.0 0.5\n")
-
+        """
         # Cleanup.
         if os.path.exists(file_path):
             os.remove(file_path)

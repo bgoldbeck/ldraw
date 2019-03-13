@@ -39,7 +39,10 @@ class UtilTest(unittest.TestCase):
         self.assertFalse(Util.is_dir(self.invalid_file.rstrip("INVALID.txt")))
 
     def test_get_parent(self):
-        self.assertEqual(Util.get_parent(self.valid_file), self.valid_file.rstrip("/HELP.txt"))
+        if os.name == 'nt':
+            self.assertEqual(Util.get_parent(self.valid_file), self.valid_file.rstrip("\\HELP.txt"))
+        else:
+            self.assertEqual(Util.get_parent(self.valid_file), self.valid_file.rstrip("/HELP.txt"))
 
     def test_mkdir(self):
         temp_test_dir = Util.path_conversion("tests/temp/temp_test")

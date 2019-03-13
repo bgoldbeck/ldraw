@@ -290,10 +290,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                 mesh = ModelShipper.load_stl_model(filename)
                 if mesh:
                     # Load in LDraw object to input model
-                    ModelShipper.input_model = LDrawModel(self.part_name,
-                                                          self.get_author(),
-                                                          self.get_license(),
-                                                          mesh)
+                    ModelShipper.input_model = LDrawModel(mesh)
                     self.stl_dir = Util.get_parent(filename)  # Only the dir
                     self.stl_path_text = filename  # The whole path to file
                     self.stl_path_isvalid = True
@@ -340,10 +337,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
                     if mesh:
                         # Load in LDraw object to input model
-                        ModelShipper.input_model = LDrawModel(self.part_name,
-                                                              self.get_author(),
-                                                              self.get_license(),
-                                                              mesh)
+                        ModelShipper.input_model = LDrawModel(mesh)
                         self.stl_dir = Util.get_parent(self.stl_path_text)  # Only the dir
                         SettingsManager.save_settings("stl_dir", self.stl_dir)
                         self.stl_path_isvalid = True
@@ -404,11 +398,11 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                     pathname = pathname + '.dat'
 
                 self.out_file = pathname  # Full path
-                ModelShipper.output_path = pathname
                 self.part_dir = Util.get_parent(pathname)  # Only the dir
                 self.part_name = Util.get_filename(pathname)  # Only filename
                 self.ldraw_name_isvalid = True
                 SettingsManager.save_settings("part_dir", self.part_dir)
+                SettingsManager.save_settings("part_name", self.part_name)
                 self.ldraw_name_input.SetValue(self.out_file)
                 self.check_input()
                 UIDriver.fire_event(
