@@ -96,7 +96,7 @@ We recommend [PyCharm](https://www.jetbrains.com/pycharm/) for an IDE for this p
 5. Development environment is complete once LScan runs without any issues.
    ![LScan](assets/images/dev_setup/lscan.PNG)
 ## How to Use LScan ###
-... Program flow
+![Using LScan](assets/images/using_lscan.gif)
 
 ## Bug Tracker ##
 https://github.com/bgoldbeck/lscan/issues
