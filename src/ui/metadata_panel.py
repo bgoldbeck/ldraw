@@ -406,6 +406,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                 SettingsManager.save_settings("part_dir", self.part_dir)
                 SettingsManager.save_settings("part_name", self.part_name)
                 self.ldraw_name_input.SetValue(self.out_file)
+                self.ldraw_name_input.SetValue(MetadataPanel.reduce_text_path(self.ldraw_name_input.GetValue()))
                 self.check_input()
                 UIDriver.fire_event(
                     UserEvent(UserEventType.LOG_INFO,
@@ -436,6 +437,8 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         """
         output_text = self.ldraw_name_input.GetValue()
         if len(output_text) <= 0:
+            self.ldraw_name_input.SetValue("Browse output -->")
+            self.ldraw_name_input.SetBackgroundColour(UIStyle.metadata_input_valid_background)
             UIDriver.fire_event(
                 UserEvent(UserEventType.LOG_INFO,
                           LogMessage(LogType.ERROR,
@@ -585,45 +588,49 @@ class MetadataPanel(wx.Panel, IUIBehavior):
     @staticmethod
     def reduce_text_path(path_text):
         """
-        Reduce text length until the length is less than or equal to 70
+        Reduce text length to fit the wx.textctrl box
         :param path_text:
-        :return: the text
+        :return: the reduce text that is long equal or less than 64 characters.(Unless the file's name is super long)
         """
         windows = False
-        # Both Linux and Mac start with "/", so they have to do in the other way.
+        # Both Linux and Mac start with "/", so we could decide what kind of path is it.
         if path_text:
             if path_text[0] != "/":
                 windows = True
-        if windows:
-            list_str = path_text.split("\\")
-            length_text = MetadataPanel.list_string_length(list_str)
-            pop = False
-            while length_text > 66 or len(list_str) == 1:
-                list_str.pop(0)
-                pop = True
+            if windows:
+                # Windows format.
+                # The file path format is Root:\something\something\file.stl
+                list_str = path_text.split("\\")
                 length_text = MetadataPanel.list_string_length(list_str)
-            text = "\\"
-            text = text.join(list_str)
-            if pop:
-                text = "...\\" + text
-            return text
-        else:
-            # The file format is /something/something/.../file.stl
-            list_str = path_text.split("/")
-            list_str.pop()
-            length_text = MetadataPanel.list_string_length(list_str)
-            pop = False
-            while length_text > 65 or len(list_str) == 1:
+                pop = False
+                while length_text > 60 and len(list_str) > 1:
+                    list_str.pop(0)
+                    pop = True
+                    length_text = MetadataPanel.list_string_length(list_str)
+                text = "\\"
+                text = text.join(list_str)
+                if pop:
+                    text = "...\\" + text
+                return text
+            else:
+                # Mac or Linux format.
+                # The file format is /something/something/.../file.stl
+                list_str = path_text.split("/")
                 list_str.pop(0)
-                pop = True
                 length_text = MetadataPanel.list_string_length(list_str)
-            text = "/"
-            text = text.join(list_str)
-            if pop:
-                text = "/.../" + text
-            return text
+                pop = False
+                while length_text > 59 and len(list_str) != 1:
+                    list_str.pop(0)
+                    pop = True
+                    length_text = MetadataPanel.list_string_length(list_str)
+                text = "/"
+                text = text.join(list_str)
+                if pop:
+                    text = "/.../" + text
+                else:
+                    text = "/" + text
+                return text
         return path_text
-
 
     @staticmethod
     def list_string_length(list_str):
