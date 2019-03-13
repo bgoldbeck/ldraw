@@ -589,18 +589,40 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         :param path_text:
         :return: the text
         """
-        list_str = path_text.split("\\")
-        length_text = MetadataPanel.list_string_length(list_str)
-        pop = False
-        while length_text > 66 or len(list_str) == 1:
-            list_str.pop(0)
-            pop = True
+        windows = False
+        # Both Linux and Mac start with "/", so they have to do in the other way.
+        if path_text:
+            if path_text[0]:
+                windows = True
+        if windows:
+            list_str = path_text.split("\\")
             length_text = MetadataPanel.list_string_length(list_str)
-        text = "/"
-        text = text.join(list_str)
-        if pop:
-            text = ".../" + text
-        return text
+            pop = False
+            while length_text > 66 or len(list_str) == 1:
+                list_str.pop(0)
+                pop = True
+                length_text = MetadataPanel.list_string_length(list_str)
+            text = "\\"
+            text = text.join(list_str)
+            if pop:
+                text = "...\\" + text
+            return text
+        else:
+            # The file format is /something/something/.../file.stl
+            list_str = path_text.split("/")
+            list_str.pop()
+            length_text = MetadataPanel.list_string_length(list_str)
+            pop = False
+            while length_text > 65 or len(list_str) == 1:
+                list_str.pop(0)
+                pop = True
+                length_text = MetadataPanel.list_string_length(list_str)
+            text = "/"
+            text = text.join(list_str)
+            if pop:
+                text = "/.../" + text
+            return text
+        return path_text
 
 
     @staticmethod
