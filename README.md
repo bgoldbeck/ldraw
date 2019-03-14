@@ -1,10 +1,9 @@
 # LScan
 
+![LScan Logo](assets/images/lscan_256x256.bmp)
+
 
 Travis CI [![Build Status](https://travis-ci.org/bgoldbeck/lscan.svg?branch=master)](https://travis-ci.org/bgoldbeck/lscan)
-
-
-
 
 
 ## What is this repository for? ##
