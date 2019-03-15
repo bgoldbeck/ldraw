@@ -9,6 +9,7 @@ Travis CI [![Build Status](https://travis-ci.org/bgoldbeck/lscan.svg?branch=mast
 ## What is this repository for? ##
 
 * This repository contains the 2018-2019 capstone team project for computer science with professor Bart Massey.
+* Find the documentation here: https://bgoldbeck.github.io/lscan/docs/index.html
 
 ## Dependencies ##
 - [Python3](https://docs.python.org/3.6/)
@@ -35,38 +36,6 @@ Before setting up this project, download latest version of Python3
 
 
 Follow the following steps to setup **LScan**
-### Mac OS ###
-
-Open terminal and follow these steps.
-
-1. From the terminal clone LScan repo
-
-    `$ git clone https://github.com/bgoldbeck/lscan.git`
-
-2. Change directory to **lscan**
-
-    `$ cd lscan`
-
-3. Install dependencies
-
-    `$ pip install -r requirements.txt`
-    
-    
-### Windows OS ###
-
-Open Git Bash and follow these steps.
-
-1. Clone LScan repo
-
-    `$ git clone https://github.com/bgoldbeck/lscan.git`
-
-2. Change directory to **lscan**
-
-    `$ cd lscan`
-
-3. Install dependencies
-
-    `$ pip install -r requirements.txt`
 
 
 We recommend [PyCharm](https://www.jetbrains.com/pycharm/) for an IDE for this project. If you use pycharm you can skip step 2 and step 3. You can use PyCharm's settings to setup the environment.
@@ -94,6 +63,43 @@ We recommend [PyCharm](https://www.jetbrains.com/pycharm/) for an IDE for this p
 
 5. Development environment is complete once LScan runs without any issues.
    ![LScan](assets/images/dev_setup/lscan.PNG)
+   
+### Mac OS ###
+Open terminal and follow these steps.
+
+1. From the terminal clone LScan repo
+
+    `$ git clone https://github.com/bgoldbeck/lscan.git`
+
+2. Change directory to **lscan**
+
+    `$ cd lscan`
+
+3. Install dependencies
+
+    `$ pip install -r requirements.txt`
+    
+
+## Setup Without PyCharm ##  
+Follow these steps if you are not using PyCharm.
+
+### Windows OS ###
+
+Open Git Bash and follow these steps.
+
+1. Clone LScan repo
+
+    `$ git clone https://github.com/bgoldbeck/lscan.git`
+
+2. Change directory to **lscan**
+
+    `$ cd lscan`
+
+3. Install dependencies
+
+    `$ pip install -r requirements.txt`
+    
+
 ## How to Use LScan ###
 ![Using LScan](assets/images/using_lscan.gif)
 
