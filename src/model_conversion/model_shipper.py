@@ -13,6 +13,8 @@ import logging
 from stl import Mesh
 from src.settings_manager import SettingsManager
 import json
+import numpy
+import warnings
 
 
 class ModelShipper:
@@ -32,9 +34,12 @@ class ModelShipper:
         :param file_path: The path to the stl file.
         :return: The BaseStl model (numpy-stl) loaded from the file_path or None.
         """
+        # turn numpy RuntimeWarning to actual error to avoid invalid STL files
+        numpy.seterr(all='warn')
+        warnings.filterwarnings('error')
         try:
             return Mesh.from_file(file_path)
-        except Exception as err:
+        except (Exception, RuntimeWarning) as err:
             logging.error(f"Failed to open the STL file : {err}")
             return False
 
