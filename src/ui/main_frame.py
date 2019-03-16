@@ -9,7 +9,8 @@
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 import wx
 import sys
-from src.ui.main_panel import *
+from src.ui.main_panel import MainPanel
+from src.ui.ui_style import UIStyle
 
 
 class MainFrame(wx.Frame):

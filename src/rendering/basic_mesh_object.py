@@ -9,15 +9,11 @@
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License.
 # See LICENSE file for the full text.
+import numpy
 from OpenGL.GL import *
-from stl import mesh
-from pyrr import *
 from src.rendering.basic_material import BasicMaterial
 from src.rendering.scene_object import SceneObject
 from src.rendering.rendering_engine import RenderingEngine
-import random
-import numpy
-import time
 
 
 class BasicMeshObject(SceneObject):

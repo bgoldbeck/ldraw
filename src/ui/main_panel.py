@@ -8,19 +8,14 @@
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 import wx
-from src.ui.opengl_canvas import OpenGLCanvas
-from src.threading.thread_manager import *
 from src.ui.log_panel import LogPanel
 from src.ui.conversion_panel import ConversionPanel
 from src.ui.opengl_panel import OpenGLPanel
 from src.ui.metadata_panel import MetadataPanel
 from src.ui.iui_behavior import IUIBehavior
 from src.ui.application_state import ApplicationState
-from src.ui.user_event import UserEvent
-from src.ui.user_event_type import UserEventType
-from src.ui.ui_style import *
-from src.threading.thread_manager import *
-# Adding the threading system files
+from src.ui.ui_style import UIStyle
+from src.threading.thread_manager import UserEvent
 
 
 class MainPanel(wx.Panel, IUIBehavior):

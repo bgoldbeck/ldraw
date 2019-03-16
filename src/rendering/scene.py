@@ -9,13 +9,11 @@
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License.
 # See LICENSE file for the full text.
+import time
 from src.rendering.basic_mesh_object import BasicMeshObject
 from src.rendering.camera import Camera
 from src.rendering.rendering_engine import RenderingEngine
-from src.rendering.tranform import Transform
 from pyrr import *
-import pyrr
-import time, wx, math
 
 
 class Scene:

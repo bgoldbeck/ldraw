@@ -66,3 +66,4 @@ class ModelShipper:
         metadata_text += "0 " + "Author: " + author + "\n"
         metadata_text += "0 " + "!LICENSE " + license + "\n"
         return metadata_text
+

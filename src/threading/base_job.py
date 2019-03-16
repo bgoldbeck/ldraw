@@ -12,6 +12,7 @@ import threading
 from src.log_messages.log_message import LogMessage
 from src.log_messages.log_type import LogType
 
+
 class BaseJob:
     """The pseudo interface for processing jobs to
     inherit method properties from.
@@ -57,8 +58,7 @@ class BaseJob:
 
     def put_feedback(self, log_msg):
         """Puts a LogMessage into the feedback queue
-        :param msg: message text
-        :param log_type: type of log
+        :param log_msg: log message
         :return: None
         """
         self.feedback_log.put(log_msg)

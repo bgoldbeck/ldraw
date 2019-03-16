@@ -15,7 +15,6 @@ from src.ui.user_event_type import UserEventType
 from src.model_conversion.convert_job import ConvertJob
 
 
-
 class ThreadManager:
     """Has instance of work threads, manages communications between them
     and the classes that would interact with LogMessage data.
@@ -106,7 +105,7 @@ class ThreadManager:
 
         :return: WorkerState
         """
-        if self.worker_thread == None:
+        if self.worker_thread is None:
             return None
         else:
             return self.worker_thread.get_state()
@@ -115,7 +114,8 @@ class ThreadManager:
         """Gets status of current job as string
         :return: None
         """
-        if self.worker_thread == None:
+        if self.worker_thread is None:
             return None
         else:
             return self.worker_thread.get_status()
+

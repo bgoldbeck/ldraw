@@ -7,7 +7,8 @@
 # “An Huynh” <an35@pdx.edu>
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
-import wx, time
+import wx
+import time
 from src.ui.ui_driver import UIDriver
 
 
@@ -56,7 +57,7 @@ class UIEventLoop(wx.GUIEventLoop):
                 if 'wxOSX' in wx.PlatformInfo:
                     self.ProcessIdle()
 
-            # Proces remaining queued messages, if any
+            # Process remaining queued messages, if any
             while True:
                 checkAgain = False
                 if wx.GetApp() and wx.GetApp().HasPendingEvents():

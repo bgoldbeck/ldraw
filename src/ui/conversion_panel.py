@@ -14,7 +14,7 @@ from src.ui.user_event import UserEvent
 from src.ui.ui_driver import UIDriver
 from src.log_messages.log_message import LogMessage
 from src.log_messages.log_type import LogType
-from src.ui.ui_style import *
+from src.ui.ui_style import UIStyle
 from src.ui.user_event_type import UserEventType
 from src.model_conversion.model_shipper import ModelShipper
 from src.ui.button import Button

@@ -7,16 +7,14 @@
 # “An Huynh” <an35@pdx.edu>
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
-import wx, os
+import time
 from src.ui.application_state import ApplicationState
-from src.ui.user_event import UserEvent
 from src.ui.iui_behavior import IUIBehavior
 from src.util import Util
 from src.threading.thread_manager import *
 from src.log_messages.output_model_message import OutputModelMessage
 from src.ui.user_event_type import UserEventType
 from src.threading.worker_state import WorkerState
-import time
 
 
 class UIDriver:
@@ -156,11 +154,11 @@ class UIDriver:
             ui_behavior.update(dt)
 
         now = time.time()
-        #If job is running, and 5 seconds have passed, log job status
+        # If job is running, and 5 seconds have passed, log job status
         if now - UIDriver.timer_5_sec >= 5:
             if UIDriver.thread_manager.get_worker_state() == WorkerState.RUNNING:
                 status = UIDriver.thread_manager.get_job_status()
-                if status == None:
+                if status is None:
                     status = "Job status unknown." # Shouldn't happen...
                 UIDriver.fire_event(
                     UserEvent(UserEventType.WORKER_LOG_MESSAGE_AVAILABLE,

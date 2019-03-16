@@ -8,6 +8,7 @@
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 import wx
+import json
 from src.ui.iui_behavior import IUIBehavior
 from src.ui.application_state import ApplicationState
 from src.ui.user_event import UserEvent
@@ -17,12 +18,11 @@ from src.model_conversion.model_shipper import ModelShipper
 from src.model_conversion.ldraw_model import LDrawModel
 from src.log_messages.log_message import LogMessage
 from src.log_messages.log_type import LogType
-from src.ui.ui_style import *
+from src.ui.ui_style import UIStyle
 from src.util import Util
 from src.ui.popup import Popup
 from src.ui.button import Button
 from src.settings_manager import SettingsManager
-import json
 
 
 class MetadataPanel(wx.Panel, IUIBehavior):
@@ -46,23 +46,22 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self.browse_stl_button = None
         self.author_input = None
         self.license_input = None
-        self.stl_path_input = None # The input element
-        self.stl_path_text = None # The text entered
+        self.stl_path_input = None  # The input element
+        self.stl_path_text = None  # The text entered
         self.stl_path_isvalid = False
         self.ldraw_name_input = None
         self.ldraw_name_isvalid = False
-        self.out_file = None #entire output file path
+        self.out_file = None  # entire output file path
 
         # Settings
-        self.stl_dir = None # Essentially stl_path_text minus file part
-        self.part_dir = None # ldraw_name_text minus file part
-        self.part_name = None # "untitled.dat" or whatever user entered
-        self.author_default = None # The one loaded from file at start
+        self.stl_dir = None  # Essentially stl_path_text minus file part
+        self.part_dir = None  # ldraw_name_text minus file part
+        self.part_name = None  # "untitled.dat" or whatever user entered
+        self.author_default = None  # The one loaded from file at start
         self.license_default = None
-        #self.default_settings = None
         self.load_settings()
         self.license_text = self.license_default
-        self.author_text = self.author_default # The text entered by user
+        self.author_text = self.author_default  # The text entered by user
         self._build_gui()
         self.parent.Layout()
 
@@ -213,7 +212,6 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                 UIDriver.fire_event(UserEvent(
                     UserEventType.INPUT_INVALID,
                     LogMessage(LogType.IGNORE, "")))
-
 
         # Set colors
         if self.ldraw_name_isvalid:

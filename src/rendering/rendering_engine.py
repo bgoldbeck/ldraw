@@ -55,7 +55,6 @@ class RenderingEngine:
         """Extracts the major and minor versions from an OpenGL version string.
         Can handle driver's appending their specific driver version to the string.
         """
-        import re
         # version is guaranteed to be 'MAJOR.MINOR<XXX>'
         # there can be a 3rd version
         version = version.decode("utf-8")

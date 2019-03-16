@@ -11,6 +11,7 @@
 import wx
 from src.ui.ui_style import UIStyle
 
+
 class Popup(wx.Frame):
     """Popup window that displays text. Can only be closed and moved.
     """

@@ -11,7 +11,6 @@
 # See LICENSE file for the full text.
 from src.log_messages.log_message import LogMessage
 from src.log_messages.log_type import LogType
-from src.model_conversion.ldraw_model import LDrawModel
 
 
 class BoolMessage(LogMessage):
