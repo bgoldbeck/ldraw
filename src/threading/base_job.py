@@ -9,6 +9,8 @@
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 
 import threading
+from src.log_messages.log_message import LogMessage
+from src.log_messages.log_type import LogType
 
 class BaseJob:
     """The pseudo interface for processing jobs to
@@ -66,4 +68,8 @@ class BaseJob:
         :return: None
         """
         return self.status
+
+    def update_status(self, new_status):
+        self.status = new_status
+        self.put_feedback(LogMessage(LogType.INFORMATION, self.status))
 

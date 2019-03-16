@@ -191,6 +191,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
         # Bind input field change events
         self.stl_path_input.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_input_on_kill_focus)
+        self.stl_path_input.Bind(wx.EVT_SET_FOCUS, self.text_ctrl_input_on_gain_focus)
         self.ldraw_name_input.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_output_on_kill_focus)
         self.ldraw_name_input.Bind(wx.EVT_SET_FOCUS, self.text_ctrl_placeholder_on_gain_focus)
         self.author_input.Bind(wx.EVT_KILL_FOCUS, self.text_ctrl_author_on_kill_focus)
@@ -284,16 +285,14 @@ class MetadataPanel(wx.Panel, IUIBehavior):
             # If valid, pass to worker thread who will check data
             if self.stl_path_text != filename:
                 self.stl_path_input.SetValue(filename)
+                self.stl_path_input.SetValue(MetadataPanel.reduce_text_path(self.stl_path_input.GetValue()))
 
                 # Only update stuff if selection changed
                 # Check if this .stl is valid
                 mesh = ModelShipper.load_stl_model(filename)
                 if mesh:
                     # Load in LDraw object to input model
-                    ModelShipper.input_model = LDrawModel(self.part_name,
-                                                          self.get_author(),
-                                                          self.get_license(),
-                                                          mesh)
+                    ModelShipper.input_model = LDrawModel(mesh)
                     self.stl_dir = Util.get_parent(filename)  # Only the dir
                     self.stl_path_text = filename  # The whole path to file
                     self.stl_path_isvalid = True
@@ -320,6 +319,16 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
         dialog.Destroy()
 
+    def text_ctrl_input_on_gain_focus(self, event):
+        """ Return the path to the original.
+        :param event:
+        :return:
+        """
+        if self.stl_path_text:
+            self.stl_path_input.SetValue(self.stl_path_text)
+
+        event.Skip()
+
     def text_ctrl_input_on_kill_focus(self, event):
         """Get the path for STL input file from user typing into TextCtrl element.
         :param event:
@@ -327,6 +336,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         """
         prev_text = self.stl_path_text
         self.stl_path_text = self.stl_path_input.GetValue()
+        self.stl_path_input.SetValue(MetadataPanel.reduce_text_path(self.stl_path_input.GetValue()))
 
         if prev_text != self.stl_path_text:
 
@@ -340,10 +350,7 @@ class MetadataPanel(wx.Panel, IUIBehavior):
 
                     if mesh:
                         # Load in LDraw object to input model
-                        ModelShipper.input_model = LDrawModel(self.part_name,
-                                                              self.get_author(),
-                                                              self.get_license(),
-                                                              mesh)
+                        ModelShipper.input_model = LDrawModel(mesh)
                         self.stl_dir = Util.get_parent(self.stl_path_text)  # Only the dir
                         SettingsManager.save_settings("stl_dir", self.stl_dir)
                         self.stl_path_isvalid = True
@@ -404,12 +411,13 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                     pathname = pathname + '.dat'
 
                 self.out_file = pathname  # Full path
-                ModelShipper.output_path = pathname
                 self.part_dir = Util.get_parent(pathname)  # Only the dir
                 self.part_name = Util.get_filename(pathname)  # Only filename
                 self.ldraw_name_isvalid = True
                 SettingsManager.save_settings("part_dir", self.part_dir)
+                SettingsManager.save_settings("part_name", self.part_name)
                 self.ldraw_name_input.SetValue(self.out_file)
+                self.ldraw_name_input.SetValue(MetadataPanel.reduce_text_path(self.ldraw_name_input.GetValue()))
                 self.check_input()
                 UIDriver.fire_event(
                     UserEvent(UserEventType.LOG_INFO,
@@ -440,6 +448,9 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         """
         output_text = self.ldraw_name_input.GetValue()
         if len(output_text) <= 0:
+            self.ldraw_name_input.SetValue("Browse output -->")
+            if len(self.ldraw_name_input.GetValue()) > 0:
+                self.ldraw_name_input.SetBackgroundColour(UIStyle.metadata_input_valid_background)
             UIDriver.fire_event(
                 UserEvent(UserEventType.LOG_INFO,
                           LogMessage(LogType.ERROR,
@@ -585,3 +596,62 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         :return: None
         """
         pass
+
+    @staticmethod
+    def reduce_text_path(path_text):
+        """
+        Reduce text length to fit the wx.textctrl box
+        :param path_text:
+        :return: the reduce text that is long equal or less than 64 characters.(Unless the file's name is super long)
+        """
+        windows = False
+        # Both Linux and Mac start with "/", so we could decide what kind of path is it.
+        if path_text:
+            if path_text[0] != "/":
+                windows = True
+            if windows:
+                # Windows format.
+                # The file path format is Root:\something\something\file.stl
+                list_str = path_text.split("\\")
+                length_text = MetadataPanel.list_string_length(list_str)
+                pop = False
+                while length_text > 60 and len(list_str) > 1:
+                    list_str.pop(0)
+                    pop = True
+                    length_text = MetadataPanel.list_string_length(list_str)
+                text = "\\"
+                text = text.join(list_str)
+                if pop:
+                    text = "...\\" + text
+                return text
+            else:
+                # Mac or Linux format.
+                # The file format is /something/something/.../file.stl
+                list_str = path_text.split("/")
+                list_str.pop(0)
+                length_text = MetadataPanel.list_string_length(list_str)
+                pop = False
+                while length_text > 59 and len(list_str) != 1:
+                    list_str.pop(0)
+                    pop = True
+                    length_text = MetadataPanel.list_string_length(list_str)
+                text = "/"
+                text = text.join(list_str)
+                if pop:
+                    text = "/.../" + text
+                else:
+                    text = "/" + text
+                return text
+        return path_text
+
+    @staticmethod
+    def list_string_length(list_str):
+        """
+        Return the length of the path
+        :param list_str: list of string after the list.
+        :return:
+        """
+        sum_str = 0
+        for a_str in list_str:
+            sum_str += len(a_str)
+        return len(list_str) + sum_str - 1

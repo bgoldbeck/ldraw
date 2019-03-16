@@ -200,7 +200,8 @@ class LogPanel(wx.Panel, IUIBehavior):
             height = 0
 
         style = wx.TE_MULTILINE | wx.TE_READONLY | wx.HSCROLL | wx.TE_RICH
-
-        self.log_text_ctrl = rt.RichTextCtrl(self, size=(self.log_text_ctrl.Size[0], height), style=style)
+        size = (self.log_text_ctrl.Size[0], height)
+        self.log_text_ctrl.Destroy()  # Destroy current text control before creating new
+        self.log_text_ctrl = rt.RichTextCtrl(self, size=size, style=style)
         self.log_text_ctrl.SetBackgroundColour(wx.Colour(UIStyle.log_text_background_color))
         self._build_layout()
