@@ -8,6 +8,7 @@
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
 import time
+import wx
 from src.ui.application_state import ApplicationState
 from src.ui.iui_behavior import IUIBehavior
 from src.util import Util
