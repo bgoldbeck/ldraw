@@ -7,7 +7,7 @@
 # “An Huynh” <an35@pdx.edu>
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
-import wx, time
+import wx
 from wx.lib.masked import NumCtrl
 from OpenGL.GL import *
 from src.ui.opengl_canvas import OpenGLCanvas
@@ -16,7 +16,6 @@ from src.ui.application_state import ApplicationState
 from src.ui.user_event import UserEvent
 from src.ui.user_event_type import UserEventType
 from src.ui.ui_driver import UIDriver
-from src.log_messages.log_message import LogMessage
 from src.log_messages.float_message import FloatMessage
 from src.log_messages.bool_message import BoolMessage
 from src.log_messages.log_type import LogType

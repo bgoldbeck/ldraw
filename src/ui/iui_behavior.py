@@ -31,7 +31,7 @@ class IUIBehavior:
 
     def update(self, dt: float):
         """
-        :param event:
+        :param dt:
         :return:
         """
         raise NotImplementedError("This method is not implemented")

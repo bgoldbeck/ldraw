@@ -17,7 +17,6 @@ from src.ui.user_event_type import UserEventType
 from src.ui.iui_behavior import IUIBehavior
 from src.model_conversion.model_shipper import ModelShipper
 from src.ui.ui_driver import UIDriver
-from src.log_messages.log_message import LogMessage
 from src.log_messages.float_message import FloatMessage
 from src.log_messages.log_type import LogType
 from src.ui.ui_style import UIStyle
@@ -195,7 +194,6 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
     def set_output_preview_active(self):
         """Set the state of the output model to active.
 
-        :param show: Whether to show the model
         :return: None.
         """
         self.scene.set_output_model_active(True)
@@ -203,7 +201,6 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
     def set_input_preview_active(self):
         """Set the state of the input model to active.
 
-        :param show: Whether to show the model
         :return: None.
         """
         self.scene.set_input_model_active(True)
@@ -211,7 +208,6 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
     def set_output_preview_inactive(self):
         """Set the state of the output model to inactive.
 
-        :param show: Whether to show the model
         :return: None.
         """
         self.scene.set_output_model_active(False)
@@ -219,7 +215,6 @@ class OpenGLCanvas(glcanvas.GLCanvas, IUIBehavior):
     def set_input_preview_inactive(self):
         """Set the state of the input model to inactive.
 
-        :param show: Whether to show the model
         :return: None.
         """
         self.scene.set_input_model_active(False)

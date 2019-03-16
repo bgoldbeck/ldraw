@@ -10,9 +10,7 @@
 # This software is licensed under the MIT License.
 # See LICENSE file for the full text.
 from OpenGL.GL import *
-import OpenGL.GL.shaders
 from pyrr import Vector3
-from src.rendering.rendering_engine import RenderingEngine
 
 
 class Material:

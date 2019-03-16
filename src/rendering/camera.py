@@ -11,9 +11,7 @@
 # See LICENSE file for the full text.
 from pyrr import *
 from src.rendering.scene_object import SceneObject
-from src.rendering.tranform import Transform
 from math import sin, cos, radians
-import math
 
 
 # Code is attributed to totex/PyOpenGL_season_02

@@ -7,7 +7,7 @@
 # “An Huynh” <an35@pdx.edu>
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
-import threading, time
+import threading
 from src.threading.worker_state import WorkerState
 from src.log_messages.log_message import LogMessage
 from src.log_messages.log_type import LogType
@@ -20,7 +20,7 @@ class WorkerThread(threading.Thread):
         threading.Thread.__init__(self)
         self.feedback_log = feedback_log
         self.job_list = []
-        for job in job_list: #fill up job list with new instances
+        for job in job_list:  # fill up job list with new instances
             self.job_list.append(job(feedback_log))
         self.current_job = None
         self.state = WorkerState.RUNNING
@@ -35,7 +35,7 @@ class WorkerThread(threading.Thread):
                 break # Stop doing jobs if killed
             # add a check for if paused here too... maybe use an event
             self.current_job = job
-            if(self.current_job and not self.current_job.is_running.isSet()):
+            if self.current_job and not self.current_job.is_running.isSet():
                 self.current_job.go()
 
             self.current_job.do_job()
@@ -74,7 +74,6 @@ class WorkerThread(threading.Thread):
             self.current_job.go()
             self.put_feedback("Processing ended.", LogType.DEBUG)
 
-
     def start(self):
         """Change worker state to RUNNING and start its main routine
 
@@ -101,7 +100,7 @@ class WorkerThread(threading.Thread):
         """Gets status of current job as string
         :return: None
         """
-        if self.current_job == None:
+        if self.current_job is None:
             return None
         else:
             return self.current_job.get_status()

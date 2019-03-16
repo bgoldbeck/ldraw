@@ -46,23 +46,22 @@ class MetadataPanel(wx.Panel, IUIBehavior):
         self.browse_stl_button = None
         self.author_input = None
         self.license_input = None
-        self.stl_path_input = None # The input element
-        self.stl_path_text = None # The text entered
+        self.stl_path_input = None  # The input element
+        self.stl_path_text = None  # The text entered
         self.stl_path_isvalid = False
         self.ldraw_name_input = None
         self.ldraw_name_isvalid = False
-        self.out_file = None #entire output file path
+        self.out_file = None  # entire output file path
 
         # Settings
-        self.stl_dir = None # Essentially stl_path_text minus file part
-        self.part_dir = None # ldraw_name_text minus file part
-        self.part_name = None # "untitled.dat" or whatever user entered
-        self.author_default = None # The one loaded from file at start
+        self.stl_dir = None  # Essentially stl_path_text minus file part
+        self.part_dir = None  # ldraw_name_text minus file part
+        self.part_name = None  # "untitled.dat" or whatever user entered
+        self.author_default = None  # The one loaded from file at start
         self.license_default = None
-        #self.default_settings = None
         self.load_settings()
         self.license_text = self.license_default
-        self.author_text = self.author_default # The text entered by user
+        self.author_text = self.author_default  # The text entered by user
         self._build_gui()
         self.parent.Layout()
 
@@ -213,7 +212,6 @@ class MetadataPanel(wx.Panel, IUIBehavior):
                 UIDriver.fire_event(UserEvent(
                     UserEventType.INPUT_INVALID,
                     LogMessage(LogType.IGNORE, "")))
-
 
         # Set colors
         if self.ldraw_name_isvalid:

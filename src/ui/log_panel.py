@@ -17,7 +17,6 @@ from src.log_messages.log_message import LogMessage
 from src.log_messages.log_type import LogType
 from src.ui.ui_style import *
 from src.ui.button import Button
-from src.util import Util
 import json
 from src.ui.ui_driver import UIDriver
 from src.settings_manager import SettingsManager
@@ -75,9 +74,10 @@ class LogPanel(wx.Panel, IUIBehavior):
         self.Show()
 
     def save_log(self, event):
-        """Save the feedback log to a file.
-
-        :return: None
+        """
+        Save the feedback log to a file
+        :param event:
+        :return:
         """
         try:
             UIDriver.fire_event(UserEvent(

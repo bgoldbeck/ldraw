@@ -11,8 +11,6 @@
 # See LICENSE file for the full text.
 from pyrr import *
 import math
-import numpy as np
-from pyquaternion import Quaternion
 
 
 class Transform:

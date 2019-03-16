@@ -56,7 +56,7 @@ class UIEventLoop(wx.GUIEventLoop):
                 if 'wxOSX' in wx.PlatformInfo:
                     self.ProcessIdle()
 
-            # Proces remaining queued messages, if any
+            # Process remaining queued messages, if any
             while True:
                 checkAgain = False
                 if wx.GetApp() and wx.GetApp().HasPendingEvents():
