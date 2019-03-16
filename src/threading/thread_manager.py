@@ -13,7 +13,7 @@ from src.threading.worker_state import WorkerState
 from src.ui.user_event import UserEvent
 from src.ui.user_event_type import UserEventType
 from src.model_conversion.convert_job import ConvertJob
-
+from src.model_conversion.simplify_job import SimplifyJob
 
 
 class ThreadManager:
@@ -30,7 +30,8 @@ class ThreadManager:
         self.worker_thread = None
 
         # Fill this list with whatever jobs need doing, in order
-        self.job_list = [ConvertJob(self.feedback_log).__class__]
+        self.job_list = [SimplifyJob(self.feedback_log).__class__,
+                         ConvertJob(self.feedback_log).__class__]
 
     def has_message_available(self):
         """Checks if message queue is not empty

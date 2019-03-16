@@ -26,17 +26,15 @@ class ConvertJob(BaseJob):
     def __init__(self, feedback_log):
         super().__init__(feedback_log)
         self.name = "mesh to LDraw conversion"
-        self.update_status("Starting " + self.name + ".")
-
 
     def do_job(self):
+        self.update_status("Starting " + self.name + ".")
         self.is_running.wait()
         # Setting output model as input LDraw object
         model = None # LDraw model
         mesh = None # mesh in LDraw model
         children = None
         if not self.is_killed:
-            ModelShipper.output_model = copy.deepcopy(ModelShipper.input_model)
             model = ModelShipper.output_model
             mesh = model.get_mesh()
             children = model.get_children()
