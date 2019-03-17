@@ -12,8 +12,6 @@
 
 import numpy
 import unittest
-import json
-from src.settings_manager import SettingsManager
 from src.util import Util
 from src.model_conversion.model_shipper import ModelShipper
 
@@ -35,15 +33,3 @@ class ModelShipperTest(unittest.TestCase):
         self.assertEqual(len(ModelShipper.input_model), len(ModelShipper.get_input_model()))
         self.assertTrue(numpy.array_equal(ModelShipper.input_model.data, ModelShipper.get_input_model().data))
 
-    def test_update_metadata(self):
-        with open(SettingsManager.file_path, "r") as file:
-            file_settings = json.load(file)
-            file_name = file_settings["part_name"]
-            part_name = file_name
-            if part_name.endswith(".dat"):
-                part_name = part_name[:-4]
-            author = file_settings["author"]
-            license = file_settings["license"]
-        test_file_info = f"0 LScan auto generated part {file_name}\n0 Name: {file_name}\n0 Author: {author}\n" \
-            f"0 !LICENSE {license}\n"
-        self.assertEqual(test_file_info, ModelShipper.get_metadata())
