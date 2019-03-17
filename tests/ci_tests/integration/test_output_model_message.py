@@ -22,7 +22,7 @@ class TestInputModelMessage(unittest.TestCase):
     def test_(self):
 
         # Load the model from the assets folder.
-        input_model = ModelShipper.load_stl_model(Util.path_conversion("assets/models/plane.stl"))
+        input_model = ModelShipper.load_stl_model(Util.path_conversion("tests/test_models/plane.stl"))
         output_model = LDrawModel(
             input_model  # Mesh
         )
@@ -35,4 +35,4 @@ class TestInputModelMessage(unittest.TestCase):
         self.assertEqual(model_message.get_message(), test_message)
         self.assertEqual(model_message.get_message_type(), log_type)
         self.assertIsNotNone(model_message.get_timestamp())
-        #self.assertEqual(model_message.get_model(), output_model)
+

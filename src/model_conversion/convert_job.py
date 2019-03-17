@@ -12,7 +12,6 @@ from src.threading.base_job import BaseJob
 from src.log_messages.log_type import LogType
 from src.log_messages.output_model_message import OutputModelMessage
 from src.model_conversion.model_shipper import ModelShipper
-import copy
 
 
 class ConvertJob(BaseJob):
@@ -25,13 +24,13 @@ class ConvertJob(BaseJob):
         self.update_status("Starting " + self.name + ".")
 
     def do_job(self):
+        self.update_status("Starting " + self.name + ".")
         self.is_running.wait()
         # Setting output model as input LDraw object
         model = None # LDraw model
         mesh = None # mesh in LDraw model
         children = None
         if not self.is_killed:
-            ModelShipper.output_model = copy.deepcopy(ModelShipper.input_model)
             model = ModelShipper.output_model
             mesh = model.get_mesh()
             children = model.get_children()

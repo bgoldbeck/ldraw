@@ -21,7 +21,7 @@ class TestInputModelMessage(unittest.TestCase):
     def test_(self):
         test_message = "test input model message"
 
-        input_model = ModelShipper.load_stl_model(Util.path_conversion("assets/models/plane.stl"))
+        input_model = ModelShipper.load_stl_model(Util.path_conversion("tests/test_models/plane.stl"))
 
         model_message = InputModelMessage(LogType.INFORMATION, test_message, input_model)
 

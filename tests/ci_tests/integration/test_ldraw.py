@@ -15,7 +15,7 @@ from src.util import Util
 from src.model_conversion.ldraw_model import LDrawModel
 
 
-path = Util.path_conversion("assets/models/cube.stl")
+path = Util.path_conversion("tests/test_models/cube.stl")
 
 
 class LDrawModelTest(unittest.TestCase):

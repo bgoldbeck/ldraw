@@ -7,19 +7,30 @@
 # “An Huynh” <an35@pdx.edu>
 # “Theron Anderson” <atheron@pdx.edu>
 # This software is licensed under the MIT License. See LICENSE file for the full text.
+
 import unittest
 import os
-from src.model_conversion.model_shipper import *
-from pyrr import *
+import unittest
+import numpy
+from src.model_conversion.model_shipper import ModelShipper
+from pyrr import Vector3
 from src.util import Util
+path = Util.path_conversion("tests/test_models/cube.stl")
 from src.model_conversion.ldraw_model import LDrawModel
 
 
-class ModelShipperTest(unittest.TestCase):
+class TestModelShipper(unittest.TestCase):
+
+    def setUp(self):
+        ModelShipper.input_model = ModelShipper.load_stl_model(path)
+        ModelShipper.output_model = None
+        ModelShipper.output_data_text = None
+        ModelShipper.output_path = None
+        ModelShipper.output_metadata_text = None
 
     def testImportPlane(self):
         # Load the model from the assets folder.
-        mesh = ModelShipper.load_stl_model(Util.path_conversion("assets/models/plane.stl"))
+        mesh = ModelShipper.load_stl_model(Util.path_conversion("tests/test_models/plane.stl"))
         self.assertNotEqual(mesh, False)
         # First triangle facet.
         self.assertEqual(mesh.v0[0], Vector3([0.5, 0., -0.5]))
@@ -43,7 +54,7 @@ class ModelShipperTest(unittest.TestCase):
         file_path = Util.path_conversion("tests/temp/plane.dat")
 
         # Import the model.
-        mesh = ModelShipper.load_stl_model(Util.path_conversion("assets/models/plane.stl"))
+        mesh = ModelShipper.load_stl_model(Util.path_conversion("tests/test_models/plane.stl"))
         self.assertNotEqual(mesh, False)
 
         model = LDrawModel(mesh)
@@ -64,3 +75,7 @@ class ModelShipperTest(unittest.TestCase):
         if os.path.exists(file_path):
             os.remove(file_path)
         os.rmdir(Util.path_conversion("tests/temp/"))
+
+    def test_get_input_model(self):
+        self.assertEqual(len(ModelShipper.input_model), len(ModelShipper.get_input_model()))
+        self.assertTrue(numpy.array_equal(ModelShipper.input_model.data, ModelShipper.get_input_model().data))
