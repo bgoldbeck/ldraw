@@ -110,3 +110,6 @@ venv.bak/
 #temp files
 tests/temp/
 
+#ignore local settings
+assets/settings/
+
