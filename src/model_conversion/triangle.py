@@ -162,10 +162,10 @@ class Triangle:
     @staticmethod
     def match_triangle_indices(edge: Edge, triangles):
         """
-        Checks if an any triangle has a matching edge or not
-        :param edge: An Edge to check for matching traingle
+        Gets the indices of triangles with matching Edge
+        :param edge: An Edge to check for matching triangle
         :param triangles: List of Triangles
-        :return: An index of matching triangle or None
+        :return: A list of indices of matching triangle
         """
         triangle_indices = []
         for index, triangle in enumerate(triangles):

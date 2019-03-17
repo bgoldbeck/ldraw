@@ -48,8 +48,8 @@ class TestTriangle(unittest.TestCase):
         self.assertTrue(Triangle.are_neighbors(self.triangle, triangle_2))
         self.assertFalse(Triangle.are_neighbors(self.triangle, triangle_3))
 
-    def testMacthTriangleIndex(self):
+    def testMacthTriangleIndices(self):
         triangles = [self.triangle]
         invalid_edge = Edge(5, 4, 3, 2, 0, 0)
-        #self.assertIsNone(Triangle.match_triangle_index(invalid_edge, triangles))
-        #self.assertEqual(Triangle.match_triangle_index(self.test_edge1, triangles), 0)
+        self.assertCountEqual(Triangle.match_triangle_indices(self.test_edge1, triangles), [0])
+        self.assertCountEqual(Triangle.match_triangle_indices(invalid_edge, triangles), [])

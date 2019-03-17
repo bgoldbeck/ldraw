@@ -66,7 +66,7 @@ class ModelShipper:
             author = file_settings["author"]
             license = file_settings["license"]
 
-        metadata_text = "0 " + "LScan auto generated part " + part_name + "\n"
+        metadata_text = "0 " + "LScan auto generated part " + part_name + ".dat\n"
         metadata_text += "0 " + "Name: " + file_name + "\n"
         metadata_text += "0 " + "Author: " + author + "\n"
         metadata_text += "0 " + "!LICENSE " + license + "\n"

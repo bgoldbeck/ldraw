@@ -29,10 +29,8 @@ class LDrawModelTest(unittest.TestCase):
         self.ldraw_model = LDrawModel(self.mesh)
 
     def test_initialized(self):
-        pass
-        #self.assertEqual(self.name, self.ldraw_model.get_name())
-        #self.assertEqual(self.author, self.ldraw_model.get_author())
-        #self.assertEqual(self.license_info, self.ldraw_model.get_license_info())
+        self.assertEqual(self.mesh.__dict__, self.ldraw_model.mesh.__dict__)
+        self.assertEqual([], self.ldraw_model.children)
 
     def test_mesh(self):
         self.assertEqual(len(self.mesh), len(self.ldraw_model.get_mesh()))
@@ -40,9 +38,6 @@ class LDrawModelTest(unittest.TestCase):
 
     def test_children(self):
         self.ldraw_model.add_child(self.ldraw_model)
-        #self.assertEqual(self.name, self.ldraw_model.children[0].get_name())
-        #self.assertEqual(self.author, self.ldraw_model.children[0].get_author())
-       # self.assertEqual(self.license_info, self.ldraw_model.children[0].get_license_info())
         self.assertEqual(len(self.mesh), len(self.ldraw_model.children[0].get_mesh()))
         self.assertTrue(numpy.array_equal(self.mesh.data, self.ldraw_model.children[0].get_mesh().data))
         self.assertTrue(len(self.ldraw_model.children), len(self.ldraw_model.get_children()))
